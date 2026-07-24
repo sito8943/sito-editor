@@ -1,0 +1,1 @@
+export { pathName } from "./path";

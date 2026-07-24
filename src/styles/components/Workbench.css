@@ -1,0 +1,35 @@
+.Workbench {
+  display: grid;
+  grid-template-columns:
+    var(--size-explorer)
+    minmax(0, 1fr)
+    var(--size-agents);
+  grid-template-rows: minmax(0, 1fr) var(--size-terminal);
+  min-width: 0;
+  min-height: 0;
+}
+
+.Workbench_explorer {
+  grid-row: 1 / 3;
+  min-width: 0;
+  min-height: 0;
+  border-right: var(--size-border) solid var(--color-border);
+}
+
+.Workbench_editor {
+  min-width: 0;
+  min-height: 0;
+}
+
+.Workbench_agents {
+  min-width: 0;
+  min-height: 0;
+  border-left: var(--size-border) solid var(--color-border);
+}
+
+.Workbench_terminal {
+  grid-column: 2 / 4;
+  min-width: 0;
+  min-height: 0;
+  border-top: var(--size-border) solid var(--color-border);
+}

@@ -1,0 +1,35 @@
+.TerminalPanel {
+  display: grid;
+  grid-template-rows: var(--size-tab) minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  background: var(--color-editor);
+}
+
+.TerminalPanel > header {
+  display: flex;
+  align-items: center;
+  padding: var(--space-0) var(--space-3);
+  border-bottom: var(--size-border) solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.TerminalPanel_pending {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.TerminalPanel_pending strong {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+}
+
+.TerminalPanel_pending span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

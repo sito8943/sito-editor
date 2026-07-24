@@ -1,0 +1,4 @@
+export const pathName = (path: string): string => {
+  const segments = path.split(/[\\/]/).filter(Boolean);
+  return segments[segments.length - 1] ?? path;
+};

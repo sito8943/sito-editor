@@ -1,6 +1,17 @@
-# Tauri + React + Typescript
+# Sito Editor
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Lightweight agentic programming workbench built with Tauri and React.
+
+The current scaffold establishes four independent surfaces:
+
+- workspace Explorer;
+- text/code editor;
+- structured agent dashboard;
+- native terminal host reserved for `libghostty`.
+
+Filesystem access comes from the sibling `tauri-plugin-sito-workspace` project. The initial slice is
+read-only while atomic saving, external-change conflicts and workspace permission scopes are
+designed.
 
 ## Recommended IDE Setup
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "sito-editor",
+  "productName": "Sito Editor",
   "version": "0.1.0",
   "identifier": "com.sito8943.editor",
   "build": {
@@ -12,13 +12,16 @@
   "app": {
     "windows": [
       {
-        "title": "sito-editor",
-        "width": 800,
-        "height": 600
+        "title": "Sito Editor",
+        "width": 1200,
+        "minWidth": 880,
+        "height": 760,
+        "minHeight": 600,
+        "center": true
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: https://asset.localhost"
     }
   },
   "bundle": {
