@@ -47,6 +47,7 @@
   --line-height-editor: 1.6;
 
   --sito-ui-color-text: var(--color-text);
+  --sito-ui-color-text-muted: var(--color-text-muted);
   --sito-ui-color-surface: var(--color-panel-raised);
   --sito-ui-color-border: var(--color-border-strong);
   --sito-ui-color-default-text: var(--color-text);

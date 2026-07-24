@@ -8,6 +8,8 @@ export type WorkspaceTreeState = {
   loadingPaths: ReadonlySet<string>;
   error: string | null;
   chooseWorkspace: () => Promise<string | null>;
+  collapseAll: () => void;
+  refreshDirectory: (path: string) => Promise<void>;
   refreshRoot: () => Promise<void>;
   toggleDirectory: (path: string) => Promise<void>;
 };
@@ -15,5 +17,4 @@ export type WorkspaceTreeState = {
 export type ExplorerProps = {
   tree: WorkspaceTreeState;
   activePath: string | null;
-  onOpenDocument: (path: string) => void;
 };

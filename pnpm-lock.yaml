@@ -15,8 +15,8 @@ importers:
         specifier: link:../tauri-plugin-sito-workspace
         version: link:../tauri-plugin-sito-workspace
       '@sito/ui':
-        specifier: 0.3.3
-        version: 0.3.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: link:../../lib/ui
+        version: link:../../lib/ui
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
@@ -485,13 +485,6 @@ packages:
     resolution: {integrity: sha512-BfzEnDJOt9T8M989/lA37EcJgat01wLRnoi5dQf3QzOH7jzpqTAzdDbVfRljVr5r+jzKqpbHeyOfAaXxAd0PAA==}
     cpu: [x64]
     os: [win32]
-
-  '@sito/ui@0.3.3':
-    resolution: {integrity: sha512-kItJChJetoXH4eCjkgSyPwv2wrFkoofpN2T+wVXTEtiuR0P6QxkAUR6XZE6DGq22iR4RX6Qh8InoXCq9EVykCw==}
-    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
-    peerDependencies:
-      react: ^19.0.0
-      react-dom: ^19.0.0
 
   '@tauri-apps/api@2.11.1':
     resolution: {integrity: sha512-M2FPuYND2m+wh5hfW9ZpSdxMPdEJovPBWwoHJmwUpysTYNHaOkVFN419m/K0LIgjb/7KU2vBgsUepJWugQCvAA==}
@@ -1151,11 +1144,6 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
-
-  '@sito/ui@0.3.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
-    dependencies:
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
 
   '@tauri-apps/api@2.11.1': {}
 

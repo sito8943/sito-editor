@@ -13,7 +13,7 @@
   "dependencies": {
     "@sito/commands": "link:../../lib/sito-commands",
     "@sito/plugin-workspace": "link:../tauri-plugin-sito-workspace",
-    "@sito/ui": "0.3.3",
+    "@sito/ui": "link:../../lib/ui",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "@tauri-apps/api": "^2",

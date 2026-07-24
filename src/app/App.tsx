@@ -7,7 +7,11 @@ import {
   useDocuments,
   useEditorCommands,
 } from "@/features/editor";
-import { Explorer, useWorkspaceTree } from "@/features/explorer";
+import {
+  Explorer,
+  useExplorerCommands,
+  useWorkspaceTree,
+} from "@/features/explorer";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
@@ -18,6 +22,7 @@ const App = () => {
   const workspaceTree = useWorkspaceTree();
   const documents = useDocuments();
   useEditorCommands(documents);
+  useExplorerCommands(workspaceTree);
 
   const chooseWorkspace = async () => {
     if (documents.hasSavingDocuments) {
@@ -64,7 +69,6 @@ const App = () => {
           <Explorer
             tree={workspaceTree}
             activePath={documents.activePath}
-            onOpenDocument={(path) => void documents.openDocument(path)}
           />
         }
         editor={<EditorSurface state={documents} />}

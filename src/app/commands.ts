@@ -4,42 +4,46 @@ import {
   type Keymap,
 } from "@sito/commands";
 
-export const EDITOR_COMMAND = {
+export const APP_COMMAND = {
+  OPEN_DOCUMENT: "editor.open_document",
   CLOSE_DOCUMENT: "editor.close_document",
   SAVE_DOCUMENT: "editor.save_document",
+  TOGGLE_DIRECTORY: "explorer.toggle_directory",
+  REFRESH_DIRECTORY: "explorer.refresh_directory",
+  COLLAPSE_EXPLORER: "explorer.collapse_all",
 } as const;
 
-export type EditorCommandId =
-  (typeof EDITOR_COMMAND)[keyof typeof EDITOR_COMMAND];
+export type AppCommandId =
+  (typeof APP_COMMAND)[keyof typeof APP_COMMAND];
 
-export type EditorCommandContext = {
+export type AppCommandContext = {
   path?: string;
 };
 
-export const EDITOR_HOTKEY_SCOPE = {
+export const APP_HOTKEY_SCOPE = {
   GLOBAL: "global",
 } as const;
 
-type EditorHotkeyScope =
-  (typeof EDITOR_HOTKEY_SCOPE)[keyof typeof EDITOR_HOTKEY_SCOPE];
+type AppHotkeyScope =
+  (typeof APP_HOTKEY_SCOPE)[keyof typeof APP_HOTKEY_SCOPE];
 
-export const EDITOR_KEYMAP: Keymap<EditorCommandId> = {
-  [EDITOR_COMMAND.CLOSE_DOCUMENT]: {
+export const APP_KEYMAP: Keymap<AppCommandId> = {
+  [APP_COMMAND.CLOSE_DOCUMENT]: {
     keys: ["w"],
     mod: true,
   },
-  [EDITOR_COMMAND.SAVE_DOCUMENT]: {
+  [APP_COMMAND.SAVE_DOCUMENT]: {
     keys: ["s"],
     mod: true,
   },
 };
 
-export const EDITOR_HOTKEY_CONFIG = {
-  globalScope: EDITOR_HOTKEY_SCOPE.GLOBAL,
+export const APP_HOTKEY_CONFIG = {
+  globalScope: APP_HOTKEY_SCOPE.GLOBAL,
   precedence: {
-    [EDITOR_HOTKEY_SCOPE.GLOBAL]: 0,
+    [APP_HOTKEY_SCOPE.GLOBAL]: 0,
   },
-} satisfies HotkeyConfig<EditorHotkeyScope>;
+} satisfies HotkeyConfig<AppHotkeyScope>;
 
-export const createEditorCommandRegistry = () =>
-  new CommandRegistry<EditorCommandContext>();
+export const createAppCommandRegistry = () =>
+  new CommandRegistry<AppCommandContext>();

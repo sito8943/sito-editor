@@ -5,8 +5,8 @@ import {
 } from "@sito/commands/react";
 
 import {
-  EDITOR_COMMAND,
-  type EditorCommandContext,
+  APP_COMMAND,
+  type AppCommandContext,
 } from "@/app/commands";
 import { t } from "@/lang";
 import { pathName } from "@/shared/utils";
@@ -18,12 +18,12 @@ import "@/styles/components/EditorSurface.css";
 
 export const EditorSurface = ({ state }: EditorSurfaceProps) => {
   const activeDocument = state.activeDocument;
-  const commands = useCommandRegistry<EditorCommandContext>();
-  const saveContext: EditorCommandContext = {
+  const commands = useCommandRegistry<AppCommandContext>();
+  const saveContext: AppCommandContext = {
     path: activeDocument?.path,
   };
   const saveState = useCommandState(
-    EDITOR_COMMAND.SAVE_DOCUMENT,
+    APP_COMMAND.SAVE_DOCUMENT,
     saveContext,
   );
 
@@ -64,7 +64,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 disabled={document.saving}
                 aria-label={`${t.editor.close}: ${pathName(document.path)}`}
                 onClick={() =>
-                  void commands.execute(EDITOR_COMMAND.CLOSE_DOCUMENT, {
+                  void commands.execute(APP_COMMAND.CLOSE_DOCUMENT, {
                     path: document.path,
                   })
                 }
@@ -81,7 +81,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
             disabled={!saveState.enabled}
             onClick={() => {
               void commands.execute(
-                EDITOR_COMMAND.SAVE_DOCUMENT,
+                APP_COMMAND.SAVE_DOCUMENT,
                 saveContext,
               );
             }}

@@ -11,6 +11,13 @@ export const en = {
     empty: "This folder is empty.",
     loading: "Loading folder…",
     refresh: "Refresh",
+    open: "Open",
+    toggleFolder: "Expand or collapse folder",
+    expandFolder: "Expand folder",
+    collapseFolder: "Collapse folder",
+    refreshFolder: "Refresh folder",
+    collapseAll: "Collapse all folders",
+    contextMenu: "Explorer actions",
   },
   workbench: {
     resizeExplorer: "Resize Explorer",
@@ -19,6 +26,7 @@ export const en = {
   },
   editor: {
     title: "Editor",
+    open: "Open document",
     emptyTitle: "No document open",
     emptyBody: "Choose a text file from the Explorer.",
     loading: "Opening document…",

@@ -7,23 +7,23 @@ import {
 
 import App from "./app/App";
 import {
-  createEditorCommandRegistry,
-  EDITOR_HOTKEY_CONFIG,
-  EDITOR_KEYMAP,
+  APP_HOTKEY_CONFIG,
+  APP_KEYMAP,
+  createAppCommandRegistry,
 } from "./app/commands";
 
 import "@sito/ui/styles.css";
 import "./styles/theme.css";
 import "./styles/index.css";
 
-const commandRegistry = createEditorCommandRegistry();
+const commandRegistry = createAppCommandRegistry();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <CommandProvider registry={commandRegistry}>
       <HotkeyProvider
-        keymap={EDITOR_KEYMAP}
-        config={EDITOR_HOTKEY_CONFIG}
+        keymap={APP_KEYMAP}
+        config={APP_HOTKEY_CONFIG}
       >
         <App />
       </HotkeyProvider>

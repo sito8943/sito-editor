@@ -6,8 +6,8 @@ import {
 } from "@sito/commands/react";
 
 import {
-  EDITOR_COMMAND,
-  type EditorCommandContext,
+  APP_COMMAND,
+  type AppCommandContext,
 } from "@/app/commands";
 import { t } from "@/lang";
 
@@ -15,17 +15,26 @@ import type { DocumentsState } from "../types";
 
 const findDocument = (
   state: DocumentsState,
-  context: EditorCommandContext,
+  context: AppCommandContext,
 ) => {
   const path = context.path ?? state.activePath;
   return state.documents.find((document) => document.path === path);
 };
 
 export const useEditorCommands = (state: DocumentsState): void => {
-  const registry = useCommandRegistry<EditorCommandContext>();
+  const registry = useCommandRegistry<AppCommandContext>();
 
-  useCommand<EditorCommandContext>({
-    id: EDITOR_COMMAND.SAVE_DOCUMENT,
+  useCommand<AppCommandContext>({
+    id: APP_COMMAND.OPEN_DOCUMENT,
+    title: () => t.editor.open,
+    isEnabled: (context) => Boolean(context.path),
+    execute: async (context) => {
+      if (context.path) await state.openDocument(context.path);
+    },
+  });
+
+  useCommand<AppCommandContext>({
+    id: APP_COMMAND.SAVE_DOCUMENT,
     title: () => t.editor.save,
     isEnabled: (context) => {
       const document = findDocument(state, context);
@@ -39,8 +48,8 @@ export const useEditorCommands = (state: DocumentsState): void => {
     },
   });
 
-  useCommand<EditorCommandContext>({
-    id: EDITOR_COMMAND.CLOSE_DOCUMENT,
+  useCommand<AppCommandContext>({
+    id: APP_COMMAND.CLOSE_DOCUMENT,
     title: () => t.editor.close,
     isEnabled: (context) => {
       const document = findDocument(state, context);
@@ -65,24 +74,24 @@ export const useEditorCommands = (state: DocumentsState): void => {
   });
 
   useHotkey(
-    EDITOR_COMMAND.SAVE_DOCUMENT,
+    APP_COMMAND.SAVE_DOCUMENT,
     () => {
-      void registry.execute(EDITOR_COMMAND.SAVE_DOCUMENT, {});
+      void registry.execute(APP_COMMAND.SAVE_DOCUMENT, {});
     },
     { allowInInput: true },
   );
 
   useHotkey(
-    EDITOR_COMMAND.CLOSE_DOCUMENT,
+    APP_COMMAND.CLOSE_DOCUMENT,
     () => {
-      const context: EditorCommandContext = {};
+      const context: AppCommandContext = {};
       const document = findDocument(state, context);
       if (!document) return false;
 
       if (
-        registry.getState(EDITOR_COMMAND.CLOSE_DOCUMENT, context).enabled
+        registry.getState(APP_COMMAND.CLOSE_DOCUMENT, context).enabled
       ) {
-        void registry.execute(EDITOR_COMMAND.CLOSE_DOCUMENT, context);
+        void registry.execute(APP_COMMAND.CLOSE_DOCUMENT, context);
       }
     },
     { allowInInput: true },
