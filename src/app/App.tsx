@@ -1,4 +1,5 @@
 import { Button } from "@sito/ui";
+import { confirm, message } from "@tauri-apps/plugin-dialog";
 
 import { AgentDashboard } from "@/features/agents";
 import { EditorSurface, useDocuments } from "@/features/editor";
@@ -14,6 +15,24 @@ const App = () => {
   const documents = useDocuments();
 
   const chooseWorkspace = async () => {
+    if (documents.hasSavingDocuments) {
+      await message(t.editor.waitForSave, {
+        title: t.app.name,
+        kind: "warning",
+      });
+      return;
+    }
+
+    if (
+      documents.hasDirtyDocuments &&
+      !(await confirm(t.editor.discardWorkspaceChanges, {
+        title: t.app.name,
+        kind: "warning",
+      }))
+    ) {
+      return;
+    }
+
     const selected = await workspaceTree.chooseWorkspace();
     if (selected) documents.resetDocuments();
   };
@@ -23,7 +42,7 @@ const App = () => {
       <header className="App_header">
         <div className="App_identity">
           <strong>{t.app.name}</strong>
-          <span>{workspaceTree.rootPath ?? t.app.readOnlyMilestone}</span>
+          <span>{workspaceTree.rootPath ?? t.app.editingMilestone}</span>
         </div>
         <Button
           color="primary"
@@ -48,7 +67,7 @@ const App = () => {
       />
 
       <footer className="App_status">
-        <span>{t.app.readOnlyMilestone}</span>
+        <span>{t.app.editingMilestone}</span>
         <span>{workspaceTree.rootName ?? t.explorer.noWorkspace}</span>
       </footer>
     </div>

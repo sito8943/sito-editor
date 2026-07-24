@@ -1,7 +1,6 @@
 import { EditorView } from "codemirror";
 
-export const READONLY_EDITOR_EXTENSIONS = [
-  EditorView.editable.of(false),
+export const EDITOR_EXTENSIONS = [
   EditorView.lineWrapping,
   EditorView.theme({
     "&": {

@@ -2,7 +2,7 @@ export const en = {
   app: {
     name: "Sito Editor",
     openWorkspace: "Open workspace",
-    readOnlyMilestone: "Read-only workspace milestone",
+    editingMilestone: "Safe workspace editing",
   },
   explorer: {
     title: "Explorer",
@@ -18,7 +18,19 @@ export const en = {
     emptyBody: "Choose a text file from the Explorer.",
     loading: "Opening document…",
     close: "Close document",
-    readonlyLabel: "Read-only text editor",
+    editorLabel: "Text editor",
+    save: "Save",
+    saving: "Saving…",
+    saveShortcut: "⌘/Ctrl S",
+    unsaved: "Unsaved changes",
+    discardChanges: "Discard the unsaved changes in this document?",
+    discardWorkspaceChanges:
+      "Discard all unsaved changes and open another workspace?",
+    waitForSave: "Wait for the current save to finish.",
+    fileReadonly: "This file is read-only.",
+    mixedLineEndings:
+      "Files with mixed line endings are read-only until preservation is supported.",
+    reloadDiscard: "Reload and discard draft",
   },
   agents: {
     title: "Agents",

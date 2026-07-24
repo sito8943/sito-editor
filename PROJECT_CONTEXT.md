@@ -56,8 +56,10 @@ Explorer / editor hook
   -> blocking filesystem worker
 ```
 
-The initial workspace API is read-only: list, stat and read UTF-8 text. Safe writes, file events and
-workspace-root scopes are separate milestones.
+The workspace API lists, stats and reads UTF-8 text. Existing regular files can be saved through
+atomic replacement when their content hash still matches the opened snapshot. Write access uses an
+explicit non-default capability. File events, creation/deletion and workspace-root scopes are
+separate milestones.
 
 Terminal integration is not implemented by the workspace plugin. `libghostty`, PTY lifecycle,
 focus/input, renderer hosting and terminal processes belong to a dedicated native terminal plugin.

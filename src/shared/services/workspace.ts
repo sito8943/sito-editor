@@ -1,9 +1,12 @@
+import type { WorkspaceErrorCode } from "@sito/plugin-workspace";
+
 export {
   LINE_ENDING,
   WORKSPACE_ENTRY_KIND,
   listDirectory,
   readTextFile,
   statEntry,
+  writeTextFile,
 } from "@sito/plugin-workspace";
 
 export type {
@@ -12,8 +15,9 @@ export type {
   WorkspaceEntry,
   WorkspaceEntryKind,
   WorkspaceError,
-  WorkspaceErrorCode,
 } from "@sito/plugin-workspace";
+
+export type { WorkspaceErrorCode };
 
 export const workspaceErrorMessage = (error: unknown): string => {
   if (typeof error === "object" && error !== null && "message" in error) {
@@ -21,4 +25,14 @@ export const workspaceErrorMessage = (error: unknown): string => {
     if (typeof message === "string") return message;
   }
   return String(error);
+};
+
+export const workspaceErrorCode = (
+  error: unknown,
+): WorkspaceErrorCode | null => {
+  if (typeof error === "object" && error !== null && "code" in error) {
+    const code = (error as { code?: unknown }).code;
+    if (typeof code === "string") return code as WorkspaceErrorCode;
+  }
+  return null;
 };

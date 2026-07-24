@@ -5,7 +5,10 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "dialog:allow-confirm",
+    "dialog:allow-message",
     "dialog:allow-open",
-    "sito-workspace:default"
+    "sito-workspace:default",
+    "sito-workspace:allow-write-text-file"
   ]
 }

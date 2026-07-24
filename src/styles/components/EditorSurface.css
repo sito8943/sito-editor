@@ -8,10 +8,18 @@
 
 .EditorSurface_tabs {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   min-width: 0;
-  overflow-x: auto;
   border-bottom: var(--size-border) solid var(--color-border);
   background: var(--color-panel);
+}
+
+.EditorSurface_tabList {
+  display: flex;
+  align-self: stretch;
+  min-width: 0;
+  overflow-x: auto;
 }
 
 .EditorSurface_tab {
@@ -37,11 +45,29 @@
 }
 
 .EditorSurface_tabSelect {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   min-width: 0;
   overflow: hidden;
   padding: var(--space-0) var(--space-2);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.EditorSurface_dirty {
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+}
+
+.EditorSurface_actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: var(--space-2);
+  padding: var(--space-0) var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
 }
 
 .EditorSurface_tabClose {
@@ -84,6 +110,7 @@
   color: var(--color-text-muted);
 }
 
+.EditorSurface_notice,
 .EditorSurface_error {
   position: absolute;
   right: var(--space-3);
@@ -94,4 +121,16 @@
   border-radius: var(--radius-sm);
   color: var(--color-danger);
   background: var(--color-panel-raised);
+}
+
+.EditorSurface_notice {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+.EditorSurface_error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
