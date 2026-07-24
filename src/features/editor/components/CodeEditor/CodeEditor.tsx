@@ -11,28 +11,15 @@ export const CodeEditor = ({
   value,
   readonly,
   onChange,
-  onSave,
 }: CodeEditorProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
-  const onSaveRef = useRef(onSave);
 
   onChangeRef.current = onChange;
-  onSaveRef.current = onSave;
 
   useEffect(() => {
     if (!hostRef.current) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        (event.metaKey || event.ctrlKey) &&
-        event.key.toLowerCase() === "s"
-      ) {
-        event.preventDefault();
-        onSaveRef.current();
-      }
-    };
 
     const view = new EditorView({
       doc: value,
@@ -50,10 +37,8 @@ export const CodeEditor = ({
       parent: hostRef.current,
     });
     viewRef.current = view;
-    view.dom.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      view.dom.removeEventListener("keydown", handleKeyDown);
       view.destroy();
       viewRef.current = null;
     };

@@ -2,7 +2,11 @@ import { Button } from "@sito/ui";
 import { confirm, message } from "@tauri-apps/plugin-dialog";
 
 import { AgentDashboard } from "@/features/agents";
-import { EditorSurface, useDocuments } from "@/features/editor";
+import {
+  EditorSurface,
+  useDocuments,
+  useEditorCommands,
+} from "@/features/editor";
 import { Explorer, useWorkspaceTree } from "@/features/explorer";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
@@ -13,6 +17,7 @@ import "@/styles/views/App.css";
 const App = () => {
   const workspaceTree = useWorkspaceTree();
   const documents = useDocuments();
+  useEditorCommands(documents);
 
   const chooseWorkspace = async () => {
     if (documents.hasSavingDocuments) {

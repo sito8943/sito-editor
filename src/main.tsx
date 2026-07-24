@@ -1,13 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import {
+  CommandProvider,
+  HotkeyProvider,
+} from "@sito/commands/react";
+
 import App from "./app/App";
+import {
+  createEditorCommandRegistry,
+  EDITOR_HOTKEY_CONFIG,
+  EDITOR_KEYMAP,
+} from "./app/commands";
 
 import "@sito/ui/styles.css";
 import "./styles/theme.css";
 import "./styles/index.css";
 
+const commandRegistry = createEditorCommandRegistry();
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <CommandProvider registry={commandRegistry}>
+      <HotkeyProvider
+        keymap={EDITOR_KEYMAP}
+        config={EDITOR_HOTKEY_CONFIG}
+      >
+        <App />
+      </HotkeyProvider>
+    </CommandProvider>
   </React.StrictMode>,
 );

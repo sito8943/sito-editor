@@ -20,6 +20,7 @@ focused changes without carrying the weight of a full IDE.
 - Tauri 2 desktop shell.
 - React 19 + TypeScript + Vite.
 - `@sito/ui` for shared UI primitives.
+- `@sito/commands` for command registration and scoped hotkeys.
 - CodeMirror 6 for the text editor.
 - `@sito/plugin-workspace` + `tauri-plugin-sito-workspace` for filesystem/document access.
 - Plain CSS with app-owned semantic tokens.

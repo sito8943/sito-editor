@@ -36,5 +36,4 @@ export type CodeEditorProps = {
   value: string;
   readonly: boolean;
   onChange: (value: string) => void;
-  onSave: () => void;
 };

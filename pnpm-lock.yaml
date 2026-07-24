@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@sito/commands':
+        specifier: link:../../lib/sito-commands
+        version: link:../../lib/sito-commands
       '@sito/plugin-workspace':
         specifier: link:../tauri-plugin-sito-workspace
         version: link:../tauri-plugin-sito-workspace

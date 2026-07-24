@@ -1,6 +1,13 @@
 import { Button } from "@sito/ui";
-import { confirm } from "@tauri-apps/plugin-dialog";
+import {
+  useCommandRegistry,
+  useCommandState,
+} from "@sito/commands/react";
 
+import {
+  EDITOR_COMMAND,
+  type EditorCommandContext,
+} from "@/app/commands";
 import { t } from "@/lang";
 import { pathName } from "@/shared/utils";
 
@@ -11,20 +18,14 @@ import "@/styles/components/EditorSurface.css";
 
 export const EditorSurface = ({ state }: EditorSurfaceProps) => {
   const activeDocument = state.activeDocument;
-
-  const closeDocument = async (path: string, dirty: boolean) => {
-    if (
-      dirty &&
-      !(await confirm(t.editor.discardChanges, {
-        title: t.app.name,
-        kind: "warning",
-      }))
-    ) {
-      return;
-    }
-
-    state.closeDocument(path);
+  const commands = useCommandRegistry<EditorCommandContext>();
+  const saveContext: EditorCommandContext = {
+    path: activeDocument?.path,
   };
+  const saveState = useCommandState(
+    EDITOR_COMMAND.SAVE_DOCUMENT,
+    saveContext,
+  );
 
   return (
     <section className="EditorSurface" aria-label={t.editor.title}>
@@ -63,7 +64,9 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 disabled={document.saving}
                 aria-label={`${t.editor.close}: ${pathName(document.path)}`}
                 onClick={() =>
-                  void closeDocument(document.path, document.dirty)
+                  void commands.execute(EDITOR_COMMAND.CLOSE_DOCUMENT, {
+                    path: document.path,
+                  })
                 }
               >
                 ×
@@ -75,18 +78,17 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
           <span>{t.editor.saveShortcut}</span>
           <Button
             size="sm"
-            disabled={
-              !activeDocument?.editable ||
-              !activeDocument.dirty ||
-              activeDocument.saving
-            }
+            disabled={!saveState.enabled}
             onClick={() => {
-              if (activeDocument) {
-                void state.saveDocument(activeDocument.path);
-              }
+              void commands.execute(
+                EDITOR_COMMAND.SAVE_DOCUMENT,
+                saveContext,
+              );
             }}
           >
-            {activeDocument?.saving ? t.editor.saving : t.editor.save}
+            {saveState.running || activeDocument?.saving
+              ? t.editor.saving
+              : t.editor.save}
           </Button>
         </div>
       </header>
@@ -110,7 +112,6 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
             onChange={(draft) =>
               state.updateDocument(activeDocument.path, draft)
             }
-            onSave={() => void state.saveDocument(activeDocument.path)}
           />
         )}
         {activeDocument && !activeDocument.editable && (
