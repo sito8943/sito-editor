@@ -63,6 +63,7 @@ const App = () => {
         explorer={
           <Explorer
             tree={workspaceTree}
+            activePath={documents.activePath}
             onOpenDocument={(path) => void documents.openDocument(path)}
           />
         }

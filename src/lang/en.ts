@@ -12,6 +12,11 @@ export const en = {
     loading: "Loading folder…",
     refresh: "Refresh",
   },
+  workbench: {
+    resizeExplorer: "Resize Explorer",
+    resizeAgents: "Resize Agents",
+    resizeTerminal: "Resize Terminal",
+  },
   editor: {
     title: "Editor",
     emptyTitle: "No document open",

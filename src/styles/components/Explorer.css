@@ -77,6 +77,12 @@
   background: var(--color-editor-active-line);
 }
 
+.Explorer_row.active {
+  box-shadow: inset 2px 0 var(--color-accent);
+  color: var(--color-text);
+  background: var(--color-editor-active-line);
+}
+
 .Explorer_chevron {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);

@@ -13,12 +13,14 @@ import "@/styles/components/Explorer.css";
 type TreeLevelProps = {
   parentPath: string;
   tree: WorkspaceTreeState;
+  activePath: string | null;
   onOpenDocument: (path: string) => void;
 };
 
 const TreeLevel = ({
   parentPath,
   tree,
+  activePath,
   onOpenDocument,
 }: TreeLevelProps) => {
   const entries = tree.childrenByPath[parentPath] ?? [];
@@ -33,9 +35,15 @@ const TreeLevel = ({
     return (
       <div className="Explorer_node" key={entry.path}>
         <button
-          className="Explorer_row"
+          className={
+            entry.path === activePath
+              ? "Explorer_row active"
+              : "Explorer_row"
+          }
           type="button"
           aria-expanded={directory ? expanded : undefined}
+          aria-current={entry.path === activePath ? "page" : undefined}
+          title={entry.path}
           onClick={() => {
             if (directory) void tree.toggleDirectory(entry.path);
             else if (file) onOpenDocument(entry.path);
@@ -52,6 +60,7 @@ const TreeLevel = ({
             <TreeLevel
               parentPath={entry.path}
               tree={tree}
+              activePath={activePath}
               onOpenDocument={onOpenDocument}
             />
           </div>
@@ -61,7 +70,11 @@ const TreeLevel = ({
   });
 };
 
-export const Explorer = ({ tree, onOpenDocument }: ExplorerProps) => {
+export const Explorer = ({
+  tree,
+  activePath,
+  onOpenDocument,
+}: ExplorerProps) => {
   const rootEntries = tree.rootPath
     ? (tree.childrenByPath[tree.rootPath] ?? [])
     : [];
@@ -97,6 +110,7 @@ export const Explorer = ({ tree, onOpenDocument }: ExplorerProps) => {
           <TreeLevel
             parentPath={tree.rootPath}
             tree={tree}
+            activePath={activePath}
             onOpenDocument={onOpenDocument}
           />
         )}

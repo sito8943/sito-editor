@@ -1,35 +1,103 @@
 .Workbench {
   display: grid;
   grid-template-columns:
-    var(--size-explorer)
+    var(--workbench-explorer-width, var(--size-explorer))
+    var(--size-resizer)
     minmax(0, 1fr)
-    var(--size-agents);
-  grid-template-rows: minmax(0, 1fr) var(--size-terminal);
+    var(--size-resizer)
+    var(--workbench-agents-width, var(--size-agents));
+  grid-template-rows:
+    minmax(0, 1fr)
+    var(--size-resizer)
+    var(--workbench-terminal-height, var(--size-terminal));
   min-width: 0;
   min-height: 0;
 }
 
 .Workbench_explorer {
-  grid-row: 1 / 3;
+  grid-column: 1;
+  grid-row: 1 / 4;
   min-width: 0;
   min-height: 0;
-  border-right: var(--size-border) solid var(--color-border);
 }
 
 .Workbench_editor {
+  grid-column: 3;
+  grid-row: 1;
   min-width: 0;
   min-height: 0;
 }
 
 .Workbench_agents {
+  grid-column: 5;
+  grid-row: 1;
   min-width: 0;
   min-height: 0;
-  border-left: var(--size-border) solid var(--color-border);
 }
 
 .Workbench_terminal {
-  grid-column: 2 / 4;
+  grid-column: 3 / 6;
+  grid-row: 3;
   min-width: 0;
   min-height: 0;
-  border-top: var(--size-border) solid var(--color-border);
+}
+
+.Workbench_resizer {
+  position: relative;
+  z-index: 1;
+  padding: var(--space-0);
+  border: 0;
+  background: transparent;
+  touch-action: none;
+}
+
+.Workbench_resizer::after {
+  position: absolute;
+  content: "";
+  background: var(--color-border);
+  transition: background-color 120ms ease;
+}
+
+.Workbench_resizer:hover::after,
+.Workbench_resizer:focus-visible::after {
+  background: var(--color-accent);
+}
+
+.Workbench_resizer:focus-visible {
+  outline: none;
+}
+
+.Workbench_explorerResizer {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  cursor: col-resize;
+}
+
+.Workbench_agentsResizer {
+  grid-column: 4;
+  grid-row: 1;
+  cursor: col-resize;
+}
+
+.Workbench_explorerResizer::after,
+.Workbench_agentsResizer::after {
+  top: var(--space-0);
+  bottom: var(--space-0);
+  left: 50%;
+  width: var(--size-border);
+  transform: translateX(-50%);
+}
+
+.Workbench_terminalResizer {
+  grid-column: 3 / 6;
+  grid-row: 2;
+  cursor: row-resize;
+}
+
+.Workbench_terminalResizer::after {
+  top: 50%;
+  right: var(--space-0);
+  left: var(--space-0);
+  height: var(--size-border);
+  transform: translateY(-50%);
 }

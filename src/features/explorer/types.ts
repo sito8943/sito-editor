@@ -14,5 +14,6 @@ export type WorkspaceTreeState = {
 
 export type ExplorerProps = {
   tree: WorkspaceTreeState;
+  activePath: string | null;
   onOpenDocument: (path: string) => void;
 };
