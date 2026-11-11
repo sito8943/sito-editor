@@ -93,6 +93,7 @@ export const PathBar = ({
         <IconButton
           size="sm"
           variant="text"
+          className="PathBar_historyButton"
           aria-label={t.navigation.back}
           title={`${t.navigation.back} (⌃-)`}
           icon={<Chevron direction="left" />}
@@ -102,6 +103,7 @@ export const PathBar = ({
         <IconButton
           size="sm"
           variant="text"
+          className="PathBar_historyButton"
           aria-label={t.navigation.forward}
           title={`${t.navigation.forward} (⌃⇧-)`}
           icon={<Chevron direction="right" />}
