@@ -31,8 +31,10 @@ Done when items 1-3 work: the editor is usable day to day.
 
 - [x] 1. Syntax highlighting: `CodeEditor/language.ts` (lazy `@codemirror/language-data`) +
   `HighlightStyle` with `--color-syntax-*` tokens. Verified at runtime 2026-11-11.
-- [ ] 2. Quick open
-- [ ] 3. Project search
+- [x] 2. Quick open: path bar (`features/navigation`) turns into a fuzzy search on Cmd+P, backed by
+  `list_workspace_files` in the plugin. Also back/forward history and Cmd+O / Cmd+Shift+O.
+  Verified at runtime 2026-11-11.
+- [ ] 3. Project search (adds the "Search in project" box to the right of the path bar)
 - [x] 4. Find/replace, go to line: `@codemirror/search` + line numbers in `CodeEditor/constants.ts`. Verified at runtime 2026-11-11 (incl. high-contrast caret + I-beam pointer).
 - [ ] 5. Tabs + recent files
 - [ ] 6. Open from the terminal
