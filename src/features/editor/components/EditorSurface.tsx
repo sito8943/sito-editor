@@ -104,6 +104,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
         {!state.loadingPath && activeDocument && (
           <CodeEditor
             key={activeDocument.path}
+            path={activeDocument.path}
             label={`${t.editor.editorLabel}: ${pathName(
               activeDocument.path,
             )}`}

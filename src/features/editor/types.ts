@@ -32,6 +32,7 @@ export type EditorSurfaceProps = {
 };
 
 export type CodeEditorProps = {
+  path: string;
   label: string;
   value: string;
   readonly: boolean;
