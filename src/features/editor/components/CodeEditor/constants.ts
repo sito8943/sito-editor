@@ -1,6 +1,17 @@
 import { EditorView } from "codemirror";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
+import {
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  keymap,
+  lineNumbers,
+} from "@codemirror/view";
+import {
+  highlightSelectionMatches,
+  search,
+  searchKeymap,
+} from "@codemirror/search";
 
 const SYNTAX_HIGHLIGHT_STYLE = HighlightStyle.define([
   {
@@ -53,6 +64,14 @@ const SYNTAX_HIGHLIGHT_STYLE = HighlightStyle.define([
 
 export const EDITOR_EXTENSIONS = [
   syntaxHighlighting(SYNTAX_HIGHLIGHT_STYLE),
+  lineNumbers(),
+  highlightActiveLine(),
+  highlightActiveLineGutter(),
+  // Cmd/Ctrl+F find, Cmd/Ctrl+Alt+F replace (via panel), Cmd/Ctrl+G next match,
+  // Cmd/Ctrl+Alt+G go to line, Cmd/Ctrl+D select next occurrence.
+  search({ top: true }),
+  highlightSelectionMatches(),
+  keymap.of(searchKeymap),
   EditorView.lineWrapping,
   EditorView.theme({
     "&": {
@@ -71,6 +90,36 @@ export const EDITOR_EXTENSIONS = [
     },
     ".cm-activeLine, .cm-activeLineGutter": {
       backgroundColor: "var(--color-editor-active-line)",
+    },
+    ".cm-panels": {
+      backgroundColor: "var(--color-panel)",
+      color: "var(--color-text)",
+    },
+    ".cm-panels.cm-panels-top": {
+      borderBottom: "1px solid var(--color-border)",
+    },
+    ".cm-panel input[type=text], .cm-textfield": {
+      backgroundColor: "var(--color-editor)",
+      color: "var(--color-text)",
+      border: "1px solid var(--color-border-strong)",
+      borderRadius: "4px",
+    },
+    ".cm-panel button, .cm-button": {
+      backgroundImage: "none",
+      backgroundColor: "var(--color-panel-raised)",
+      color: "var(--color-text)",
+      border: "1px solid var(--color-border-strong)",
+      borderRadius: "4px",
+    },
+    ".cm-searchMatch": {
+      backgroundColor: "rgb(224 175 104 / 0.25)",
+      outline: "1px solid rgb(224 175 104 / 0.5)",
+    },
+    ".cm-searchMatch.cm-searchMatch-selected": {
+      backgroundColor: "rgb(122 162 247 / 0.35)",
+    },
+    ".cm-selectionMatch": {
+      backgroundColor: "rgb(122 162 247 / 0.15)",
     },
   }),
 ];
