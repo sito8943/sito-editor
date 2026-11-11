@@ -55,4 +55,6 @@ export type PathBarProps = {
   activePath: string | null;
   history: FileHistoryState;
   quickOpen: QuickOpenState;
+  /** Trigger shown in place of the breadcrumb while no workspace is open. */
+  onOpenFolder: () => void;
 };

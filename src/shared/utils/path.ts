@@ -13,3 +13,11 @@ export const joinPath = (root: string, relative: string): string => {
   return `${base}${separator}${relative.split("/").join(separator)}`;
 };
 
+/** Parent directory of a native path (the path itself when it has none). */
+export const parentPath = (path: string): string => {
+  const trimmed = path.replace(/[\\/]+$/, "");
+  const index = Math.max(trimmed.lastIndexOf("/"), trimmed.lastIndexOf("\\"));
+  if (index < 0) return path;
+  if (index === 0) return trimmed[0];
+  return trimmed.slice(0, index);
+};

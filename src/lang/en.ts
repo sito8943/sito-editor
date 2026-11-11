@@ -1,7 +1,9 @@
 export const en = {
   app: {
     name: "Sito Editor",
-    openWorkspace: "Open workspace",
+    openFolder: "Open folder",
+    openFile: "Open file",
+    openFileTitle: "Open a file",
     editingMilestone: "Safe workspace editing",
   },
   explorer: {
@@ -50,6 +52,7 @@ export const en = {
     back: "Go back",
     forward: "Go forward",
     noWorkspace: "Open a folder to start",
+    openShortcuts: "⌘O folder · ⌘⇧O file",
     quickOpenHint: "Search files (⌘P)",
   },
   quickOpen: {

@@ -41,18 +41,30 @@
   white-space: nowrap;
 }
 
-.PathBar_breadcrumb[aria-disabled="true"] {
-  cursor: default;
-}
-
-.PathBar_breadcrumb:hover:not([aria-disabled="true"]),
+.PathBar_breadcrumb:hover,
 .PathBar_breadcrumb:focus-visible {
   border-color: var(--color-border-strong);
   outline: none;
 }
 
-.PathBar_placeholder {
+/* Plain trigger: no press/scale feedback, just a hover border. */
+.PathBar_openFolder {
+  justify-content: space-between;
   color: var(--color-text-muted);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.PathBar_openFolder:hover {
+  color: var(--color-text);
+}
+
+.PathBar_shortcut {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: var(--font-size-xs);
 }
 
 .PathBar_separator {

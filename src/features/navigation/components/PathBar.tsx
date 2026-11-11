@@ -83,6 +83,7 @@ export const PathBar = ({
   activePath,
   history,
   quickOpen,
+  onOpenFolder,
 }: PathBarProps) => {
   const segments = rootPath ? breadcrumbSegments(rootPath, activePath) : [];
 
@@ -110,15 +111,23 @@ export const PathBar = ({
       </div>
 
       <div className="PathBar_field">
-        {quickOpen.open ? (
+        {!rootPath ? (
+          <button
+            type="button"
+            className="PathBar_breadcrumb PathBar_openFolder"
+            onClick={onOpenFolder}
+          >
+            <span>{t.navigation.noWorkspace}</span>
+            <kbd className="PathBar_shortcut">{t.navigation.openShortcuts}</kbd>
+          </button>
+        ) : quickOpen.open ? (
           <QuickOpenInput state={quickOpen} />
         ) : (
           <div
             className="PathBar_breadcrumb"
             role="button"
-            tabIndex={rootPath ? 0 : -1}
-            aria-disabled={!rootPath}
-            title={rootPath ? t.navigation.quickOpenHint : undefined}
+            tabIndex={0}
+            title={t.navigation.quickOpenHint}
             onClick={() => quickOpen.show()}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
@@ -127,11 +136,6 @@ export const PathBar = ({
               }
             }}
           >
-            {segments.length === 0 && (
-              <span className="PathBar_placeholder">
-                {t.navigation.noWorkspace}
-              </span>
-            )}
             {segments.map((segment, index) => (
               <Fragment key={segment.relativePath || "root"}>
                 {index > 0 && (

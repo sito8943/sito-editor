@@ -11,6 +11,8 @@ export const APP_COMMAND = {
   TOGGLE_DIRECTORY: "explorer.toggle_directory",
   REFRESH_DIRECTORY: "explorer.refresh_directory",
   COLLAPSE_EXPLORER: "explorer.collapse_all",
+  OPEN_FOLDER: "workspace.open_folder",
+  OPEN_FILE: "workspace.open_file",
   QUICK_OPEN: "navigation.quick_open",
   GO_BACK: "navigation.back",
   GO_FORWARD: "navigation.forward",
@@ -38,6 +40,15 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
   [APP_COMMAND.SAVE_DOCUMENT]: {
     keys: ["s"],
     mod: true,
+  },
+  [APP_COMMAND.OPEN_FOLDER]: {
+    keys: ["o"],
+    mod: true,
+  },
+  [APP_COMMAND.OPEN_FILE]: {
+    keys: ["o"],
+    mod: true,
+    shift: true,
   },
   [APP_COMMAND.QUICK_OPEN]: {
     keys: ["p"],

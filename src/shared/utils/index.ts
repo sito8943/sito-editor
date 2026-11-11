@@ -1,1 +1,1 @@
-export { joinPath, pathName } from "./path";
+export { joinPath, parentPath, pathName } from "./path";

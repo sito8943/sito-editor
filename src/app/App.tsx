@@ -1,6 +1,3 @@
-import { Button } from "@sito/ui";
-import { confirm, message } from "@tauri-apps/plugin-dialog";
-
 import { AgentDashboard } from "@/features/agents";
 import {
   EditorSurface,
@@ -16,6 +13,8 @@ import { PathBar, useFileHistory, useQuickOpen } from "@/features/navigation";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
+
+import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
 
 import "@/styles/views/App.css";
 
@@ -34,28 +33,7 @@ const App = () => {
     onOpenFile: documents.openDocument,
   });
 
-  const chooseWorkspace = async () => {
-    if (documents.hasSavingDocuments) {
-      await message(t.editor.waitForSave, {
-        title: t.app.name,
-        kind: "warning",
-      });
-      return;
-    }
-
-    if (
-      documents.hasDirtyDocuments &&
-      !(await confirm(t.editor.discardWorkspaceChanges, {
-        title: t.app.name,
-        kind: "warning",
-      }))
-    ) {
-      return;
-    }
-
-    const selected = await workspaceTree.chooseWorkspace();
-    if (selected) documents.resetDocuments();
-  };
+  const workspaceActions = useWorkspaceActions(workspaceTree, documents);
 
   return (
     <div className="App">
@@ -68,15 +46,8 @@ const App = () => {
           activePath={documents.activePath}
           history={fileHistory}
           quickOpen={quickOpen}
+          onOpenFolder={() => void workspaceActions.openFolder()}
         />
-        <Button
-          color="primary"
-          size="sm"
-          variant="outlined"
-          onClick={() => void chooseWorkspace()}
-        >
-          {t.app.openWorkspace}
-        </Button>
       </header>
 
       <Workbench
