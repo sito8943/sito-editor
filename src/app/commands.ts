@@ -16,6 +16,7 @@ export const APP_COMMAND = {
   QUICK_OPEN: "navigation.quick_open",
   GO_BACK: "navigation.back",
   GO_FORWARD: "navigation.forward",
+  PROJECT_SEARCH: "search.project",
 } as const;
 
 export type AppCommandId =
@@ -53,6 +54,11 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
   [APP_COMMAND.QUICK_OPEN]: {
     keys: ["p"],
     mod: true,
+  },
+  [APP_COMMAND.PROJECT_SEARCH]: {
+    keys: ["f"],
+    mod: true,
+    shift: true,
   },
   // Ctrl+- / Ctrl+Shift+- (VS Code). Cmd+[ and Cmd+] belong to CodeMirror indentation.
   [APP_COMMAND.GO_BACK]: {

@@ -10,6 +10,7 @@ import {
   useWorkspaceTree,
 } from "@/features/explorer";
 import { PathBar, useFileHistory, useQuickOpen } from "@/features/navigation";
+import { ProjectSearch, useProjectSearch } from "@/features/search";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
@@ -33,6 +34,10 @@ const App = () => {
     onOpenFile: documents.openDocument,
   });
 
+  const projectSearch = useProjectSearch({
+    rootPath: workspaceTree.rootPath,
+    onOpenMatch: documents.openDocumentAt,
+  });
   const workspaceActions = useWorkspaceActions(workspaceTree, documents);
 
   return (
@@ -48,6 +53,7 @@ const App = () => {
           quickOpen={quickOpen}
           onOpenFolder={() => void workspaceActions.openFolder()}
         />
+        <ProjectSearch state={projectSearch} />
       </header>
 
       <Workbench

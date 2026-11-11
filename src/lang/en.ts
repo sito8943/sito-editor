@@ -62,6 +62,20 @@ export const en = {
     empty: "No matching files.",
     truncated: "Showing the first files only; the workspace is very large.",
   },
+  search: {
+    label: "Search in project",
+    placeholder: "Search in project",
+    shortcut: "⌘⇧F",
+    caseSensitive: "Match case",
+    regex: "Use regular expression",
+    searching: "Searching…",
+    empty: "No results.",
+    truncated: "Too many results; showing the first ones.",
+    summary: (results: number, files: number) =>
+      `${results} ${results === 1 ? "result" : "results"} in ${files} ${
+        files === 1 ? "file" : "files"
+      }`,
+  },
   agents: {
     title: "Agents",
     emptyTitle: "No agent sessions",
