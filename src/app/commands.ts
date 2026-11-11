@@ -11,6 +11,9 @@ export const APP_COMMAND = {
   TOGGLE_DIRECTORY: "explorer.toggle_directory",
   REFRESH_DIRECTORY: "explorer.refresh_directory",
   COLLAPSE_EXPLORER: "explorer.collapse_all",
+  QUICK_OPEN: "navigation.quick_open",
+  GO_BACK: "navigation.back",
+  GO_FORWARD: "navigation.forward",
 } as const;
 
 export type AppCommandId =
@@ -35,6 +38,20 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
   [APP_COMMAND.SAVE_DOCUMENT]: {
     keys: ["s"],
     mod: true,
+  },
+  [APP_COMMAND.QUICK_OPEN]: {
+    keys: ["p"],
+    mod: true,
+  },
+  // Ctrl+- / Ctrl+Shift+- (VS Code). Cmd+[ and Cmd+] belong to CodeMirror indentation.
+  [APP_COMMAND.GO_BACK]: {
+    keys: ["-"],
+    ctrl: true,
+  },
+  [APP_COMMAND.GO_FORWARD]: {
+    keys: ["-", "_"],
+    ctrl: true,
+    shift: true,
   },
 };
 

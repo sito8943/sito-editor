@@ -45,6 +45,20 @@ export const en = {
       "Files with mixed line endings are read-only until preservation is supported.",
     reloadDiscard: "Reload and discard draft",
   },
+  navigation: {
+    label: "File path",
+    back: "Go back",
+    forward: "Go forward",
+    noWorkspace: "Open a folder to start",
+    quickOpenHint: "Search files (⌘P)",
+  },
+  quickOpen: {
+    title: "Go to file",
+    placeholder: "Search files by name",
+    loading: "Listing files…",
+    empty: "No matching files.",
+    truncated: "Showing the first files only; the workspace is very large.",
+  },
   agents: {
     title: "Agents",
     emptyTitle: "No agent sessions",

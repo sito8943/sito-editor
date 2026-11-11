@@ -12,6 +12,7 @@ import {
   useExplorerCommands,
   useWorkspaceTree,
 } from "@/features/explorer";
+import { PathBar, useFileHistory, useQuickOpen } from "@/features/navigation";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
@@ -23,6 +24,15 @@ const App = () => {
   const documents = useDocuments();
   useEditorCommands(documents);
   useExplorerCommands(workspaceTree);
+  const quickOpen = useQuickOpen({
+    rootPath: workspaceTree.rootPath,
+    onOpenFile: documents.openDocument,
+  });
+  const fileHistory = useFileHistory({
+    rootPath: workspaceTree.rootPath,
+    activePath: documents.activePath,
+    onOpenFile: documents.openDocument,
+  });
 
   const chooseWorkspace = async () => {
     if (documents.hasSavingDocuments) {
@@ -52,8 +62,13 @@ const App = () => {
       <header className="App_header">
         <div className="App_identity">
           <strong>{t.app.name}</strong>
-          <span>{workspaceTree.rootPath ?? t.app.editingMilestone}</span>
         </div>
+        <PathBar
+          rootPath={workspaceTree.rootPath}
+          activePath={documents.activePath}
+          history={fileHistory}
+          quickOpen={quickOpen}
+        />
         <Button
           color="primary"
           size="sm"
