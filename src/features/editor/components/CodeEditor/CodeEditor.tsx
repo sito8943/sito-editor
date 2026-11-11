@@ -13,13 +13,17 @@ export const CodeEditor = ({
   label,
   value,
   readonly,
+  reveal,
+  onRevealed,
   onChange,
 }: CodeEditorProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
+  const onRevealedRef = useRef(onRevealed);
 
   onChangeRef.current = onChange;
+  onRevealedRef.current = onRevealed;
 
   useEffect(() => {
     if (!hostRef.current) return;
@@ -69,6 +73,23 @@ export const CodeEditor = ({
       },
     });
   }, [value]);
+
+  // Declared after the view is created, so it also runs on mount.
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view || !reveal) return;
+
+    const { doc } = view.state;
+    const line = doc.line(Math.min(Math.max(reveal.line, 1), doc.lines));
+    const anchor = Math.min(line.from + reveal.column, line.to);
+    const head = Math.min(anchor + reveal.length, line.to);
+    view.dispatch({
+      selection: { anchor, head },
+      effects: EditorView.scrollIntoView(anchor, { y: "center" }),
+    });
+    view.focus();
+    onRevealedRef.current?.();
+  }, [reveal]);
 
   return <div className="CodeEditor" ref={hostRef} />;
 };

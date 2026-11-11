@@ -110,6 +110,12 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
             )}`}
             value={activeDocument.draft}
             readonly={!activeDocument.editable}
+            reveal={
+              state.revealTarget?.path === activeDocument.path
+                ? state.revealTarget
+                : null
+            }
+            onRevealed={state.clearReveal}
             onChange={(draft) =>
               state.updateDocument(activeDocument.path, draft)
             }

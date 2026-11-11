@@ -9,7 +9,11 @@ import {
   type TextDocumentSnapshot,
 } from "@/shared/services/workspace";
 
-import type { DocumentsState, OpenDocument } from "../types";
+import type {
+  DocumentsState,
+  OpenDocument,
+  RevealTarget,
+} from "../types";
 
 const normalizeEditorContent = (content: string): string =>
   content.replace(/\r\n/g, "\n");
@@ -43,6 +47,9 @@ export const useDocuments = (): DocumentsState => {
   const [activePath, setActivePath] = useState<string | null>(null);
   const [loadingPath, setLoadingPath] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [revealTarget, setRevealTarget] = useState<RevealTarget | null>(
+    null,
+  );
 
   const openDocument = useCallback(
     async (path: string): Promise<void> => {
@@ -65,6 +72,21 @@ export const useDocuments = (): DocumentsState => {
     },
     [documents],
   );
+
+  const openDocumentAt = useCallback(
+    async (
+      path: string,
+      line: number,
+      column: number,
+      length = 0,
+    ): Promise<void> => {
+      await openDocument(path);
+      setRevealTarget({ path, line, column, length });
+    },
+    [openDocument],
+  );
+
+  const clearReveal = useCallback(() => setRevealTarget(null), []);
 
   const selectDocument = useCallback((path: string) => {
     setActivePath(path);
@@ -185,6 +207,7 @@ export const useDocuments = (): DocumentsState => {
     setActivePath(null);
     setLoadingPath(null);
     setError(null);
+    setRevealTarget(null);
   }, []);
 
   const activeDocument =
@@ -201,7 +224,10 @@ export const useDocuments = (): DocumentsState => {
       activeDocument,
       loadingPath,
       error,
+      revealTarget,
       openDocument,
+      openDocumentAt,
+      clearReveal,
       selectDocument,
       closeDocument,
       updateDocument,
@@ -212,6 +238,7 @@ export const useDocuments = (): DocumentsState => {
     [
       activeDocument,
       activePath,
+      clearReveal,
       closeDocument,
       documents,
       error,
@@ -219,8 +246,10 @@ export const useDocuments = (): DocumentsState => {
       hasSavingDocuments,
       loadingPath,
       openDocument,
+      openDocumentAt,
       reloadDocument,
       resetDocuments,
+      revealTarget,
       saveDocument,
       selectDocument,
       updateDocument,
