@@ -121,5 +121,13 @@ export const EDITOR_EXTENSIONS = [
     ".cm-selectionMatch": {
       backgroundColor: "rgb(122 162 247 / 0.15)",
     },
-  }),
+    // The drawn caret itself is styled in CodeEditor.css (--color-editor-caret).
+    ".cm-content": {
+      caretColor: "var(--color-editor-caret)",
+    },
+    "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
+      {
+        backgroundColor: "rgb(122 162 247 / 0.3)",
+      },
+  }, { dark: true }),
 ];
