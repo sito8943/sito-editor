@@ -60,8 +60,12 @@ jobs:
           node-version: 22
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        # Pinned: Rust 1.100 moved build-script output dirs, and tauri-build
+        # (2.7.x) then copies the sito-editor resource onto a directory
+        # ("Is a directory (os error 21)"). Unpin once tauri-build handles it.
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: 1.99.1
           targets: ${{ matrix.target }}
 
       - name: Cache Rust build
