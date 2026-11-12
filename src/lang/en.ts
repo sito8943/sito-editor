@@ -96,6 +96,19 @@ export const en = {
     position: (line: number, column: number) => `Ln ${line}, Col ${column}`,
     plainText: "Plain Text",
   },
+  settings: {
+    menu: "Editor settings",
+    spaces: (size: number) => `Spaces: ${size}`,
+    editorFontSize: "Editor text size",
+    terminalFontSize: "Terminal text size",
+    fontSizeValue: (size: number) => `${size} px`,
+    bigger: "Bigger text",
+    smaller: "Smaller text",
+    resetSize: "Default size",
+    tabSize: "Tab width",
+    tabSizeValue: (size: number) => `${size} spaces`,
+    wordWrap: "Word wrap",
+  },
   privacy: {
     notice: {
       title: "Help improve Sito Editor",

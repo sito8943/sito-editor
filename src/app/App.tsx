@@ -20,6 +20,7 @@ import { useFileOperations } from "./hooks/useFileOperations";
 import { useGitBranch } from "./hooks/useGitBranch";
 import { useGitBaseline, useGitStatus } from "./hooks/useGitStatus";
 import { useLaunchPath } from "./hooks/useLaunchPath";
+import { useSettingsHotkeys } from "./hooks/useSettingsHotkeys";
 import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
 import { useWorkspaceSession } from "./hooks/useWorkspaceSession";
 import { useWorkspaceWatcher } from "./hooks/useWorkspaceWatcher";
@@ -33,6 +34,7 @@ const App = () => {
   useExplorerCommands(workspaceTree);
   useFileOperations(workspaceTree, documents);
   useWorkspaceWatcher(workspaceTree, documents);
+  useSettingsHotkeys();
   const gitBranch = useGitBranch(workspaceTree.rootPath);
   const gitStatus = useGitStatus(workspaceTree.rootPath);
   const gitBaseline = useGitBaseline(documents.activePath, gitStatus);

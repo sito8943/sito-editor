@@ -7,6 +7,7 @@ import {
 
 import App from "./app/App";
 import { USAGE_FEATURES } from "./app/usage";
+import { SettingsProvider } from "./shared/settings";
 import { UsageProvider } from "./shared/usage";
 import {
   APP_HOTKEY_CONFIG,
@@ -33,7 +34,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         config={APP_HOTKEY_CONFIG}
       >
         <UsageProvider features={USAGE_FEATURES}>
-          <App />
+          <SettingsProvider>
+            <App />
+          </SettingsProvider>
         </UsageProvider>
       </HotkeyProvider>
     </CommandProvider>
