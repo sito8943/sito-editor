@@ -108,6 +108,9 @@ export const en = {
     tabSize: "Tab width",
     tabSizeValue: (size: number) => `${size} spaces`,
     wordWrap: "Word wrap",
+    terminalEngine: "Terminal engine",
+    engineXterm: "xterm.js",
+    engineGhostty: "Ghostty (beta)",
   },
   privacy: {
     notice: {

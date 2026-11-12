@@ -9,6 +9,7 @@ import {
 import { APP_COMMAND } from "@/app/commands";
 import { t } from "@/lang";
 import { SurfaceButton, TabStrip } from "@/shared/components";
+import { useSettings } from "@/shared/settings";
 import { USAGE_EVENT, useTrackedHotkey, useUsage } from "@/shared/usage";
 import { pathName } from "@/shared/utils";
 
@@ -35,16 +36,20 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
   const [activeId, setActiveId] = useState(1);
   const focusers = useRef(new Map<number, () => void>());
 
-  const previousCwdRef = useRef(cwd);
+  const engine = useSettings().settings.terminalEngine;
+
+  // A new workspace or terminal engine replaces every session with a fresh one.
+  const previousRef = useRef({ cwd, engine });
   useEffect(() => {
-    if (previousCwdRef.current === cwd) return;
-    previousCwdRef.current = cwd;
+    const previous = previousRef.current;
+    if (previous.cwd === cwd && previous.engine === engine) return;
+    previousRef.current = { cwd, engine };
     const session = newSession();
     setSessions([session]);
     setActiveId(session.id);
     // newSession only reads a ref.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cwd]);
+  }, [cwd, engine]);
 
   const addSession = () => {
     track(USAGE_EVENT.TERMINAL.NEW_SESSION);
@@ -141,6 +146,7 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
           >
             <TerminalView
               cwd={cwd}
+              engine={engine}
               onFocusReady={(focus) => {
                 if (focus) focusers.current.set(session.id, focus);
                 else focusers.current.delete(session.id);

@@ -1,3 +1,5 @@
+import type { TerminalEngine } from "@/shared/settings";
+
 export type TerminalPanelProps = {
   /** Workspace folder the shells start in; null starts them in $HOME. */
   cwd: string | null;
@@ -12,6 +14,8 @@ export type TerminalSession = {
 
 export type TerminalViewProps = {
   cwd: string | null;
+  /** What draws it; fixed for the session's life. */
+  engine: TerminalEngine;
   /** Receives a function that focuses this terminal, and null on unmount. */
   onFocusReady?: (focus: (() => void) | null) => void;
   onSpawn?: () => void;

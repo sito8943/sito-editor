@@ -2,7 +2,9 @@ export {
   DEFAULT_SETTINGS,
   FONT_SIZES,
   FONT_TARGET,
+  TERMINAL_ENGINE,
   type FontTarget,
+  type TerminalEngine,
   TAB_SIZES,
   type EditorSettings,
 } from "./constants";

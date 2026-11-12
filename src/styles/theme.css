@@ -6,6 +6,9 @@
   --color-panel-raised: #1d2129;
   --color-editor: #12151a;
   --color-editor-active-line: #1a1f27;
+  /* Same look over the editor, but see-through: CodeMirror draws the selection
+     behind the lines, so a solid active line would hide it. */
+  --color-editor-active-line-overlay: rgb(122 162 247 / 0.06);
   /* Explorer rows: hover is a shade darker than the open file. */
   --color-row-hover: #1b2028;
   --color-row-active: #222935;

@@ -1,0 +1,14 @@
+diff --git a/dist/ghostty-web.js b/dist/ghostty-web.js
+index a4ca427b95288e70c782ce303013cd644893dcec..a47b3dd2ad1cf00b33f3d8fd6e331d7e16f87c5b 100644
+--- a/dist/ghostty-web.js
++++ b/dist/ghostty-web.js
+@@ -1397,6 +1397,9 @@ class $ {
+   render(A, B = !1, g = 0, E, C = 1) {
+     var U;
+     this.currentBuffer = A;
++    // sito-editor patch: refresh the selection before the cursor row is redrawn
++    // below, or that row paints the previous frame's selection.
++    this.currentSelectionCoords = this.selectionManager && this.selectionManager.hasSelection() ? this.selectionManager.getSelectionCoords() : null;
+     const I = A.getCursor(), D = A.getDimensions(), i = E ? E.getScrollbackLength() : 0;
+     (U = A.needsFullRedraw) != null && U.call(A) && (B = !0), (this.canvas.width !== D.cols * this.metrics.width * this.devicePixelRatio || this.canvas.height !== D.rows * this.metrics.height * this.devicePixelRatio) && (this.resize(D.cols, D.rows), B = !0), g !== this.lastViewportY && (B = !0, this.lastViewportY = g);
+     const s = I.x !== this.lastCursorPosition.x || I.y !== this.lastCursorPosition.y;

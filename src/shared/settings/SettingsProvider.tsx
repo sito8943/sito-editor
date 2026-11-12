@@ -10,7 +10,9 @@ import {
   SETTINGS_STORAGE_KEY,
   TAB_SIZES,
   type EditorSettings,
+  TERMINAL_ENGINE,
   type FontTarget,
+  type TerminalEngine,
 } from "./constants";
 import { SettingsContext, type SettingsValue } from "./SettingsContext";
 
@@ -44,6 +46,11 @@ const loadSettings = (): EditorSettings => {
     tabSize: (TAB_SIZES as readonly number[]).includes(stored.tabSize ?? 0)
       ? (stored.tabSize as number)
       : DEFAULT_SETTINGS.tabSize,
+    terminalEngine: (
+      Object.values(TERMINAL_ENGINE) as readonly string[]
+    ).includes(stored.terminalEngine ?? "")
+      ? (stored.terminalEngine as TerminalEngine)
+      : DEFAULT_SETTINGS.terminalEngine,
   };
 };
 
@@ -119,6 +126,14 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     update((current) => ({ wordWrap: !current.wordWrap }));
   }, [track, update]);
 
+  const setTerminalEngine = useCallback(
+    (engine: TerminalEngine) => {
+      track(USAGE_EVENT.SETTINGS.TERMINAL_ENGINE);
+      update(() => ({ terminalEngine: engine }));
+    },
+    [track, update],
+  );
+
   const value = useMemo<SettingsValue>(
     () => ({
       settings,
@@ -127,8 +142,17 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       resetFontSize,
       setTabSize,
       toggleWordWrap,
+      setTerminalEngine,
     }),
-    [settings, setFontSize, changeFontSize, resetFontSize, setTabSize, toggleWordWrap],
+    [
+      settings,
+      setFontSize,
+      changeFontSize,
+      resetFontSize,
+      setTabSize,
+      toggleWordWrap,
+      setTerminalEngine,
+    ],
   );
 
   return (

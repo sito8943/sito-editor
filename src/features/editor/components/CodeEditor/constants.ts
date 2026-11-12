@@ -87,7 +87,10 @@ export const EDITOR_EXTENSIONS = [
       borderColor: "var(--color-border)",
       color: "var(--color-text-muted)",
     },
-    ".cm-activeLine, .cm-activeLineGutter": {
+    ".cm-activeLine": {
+      backgroundColor: "var(--color-editor-active-line-overlay)",
+    },
+    ".cm-activeLineGutter": {
       backgroundColor: "var(--color-editor-active-line)",
     },
     ".cm-panels": {
