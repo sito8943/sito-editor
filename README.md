@@ -14,12 +14,23 @@ documents can be edited and saved through atomic replacement with content-versio
 detection. File creation/deletion, watching and workspace-root permission scopes remain separate
 milestones.
 
-## Command line
-
-Open a folder or file from the terminal (macOS):
+## Install
 
 ```sh
-ln -s "$PWD/scripts/sito-editor" /usr/local/bin/sito-editor   # once
+brew install --cask sito8943/tap/sito-editor
+```
+
+This installs `Sito Editor.app` and puts the `sito-editor` launcher on your PATH. The `.dmg`s for
+Apple Silicon and Intel are also attached to each [GitHub release](https://github.com/sito8943/sito-editor/releases).
+The app is not signed: on first launch, right-click it in Applications and choose Open.
+
+## Command line
+
+Open a folder or file from the terminal (macOS). Homebrew installs the launcher; from a clone, link it
+once:
+
+```sh
+ln -s "$PWD/scripts/sito-editor" /usr/local/bin/sito-editor   # without Homebrew
 sito-editor .            # current folder
 sito-editor src/main.ts  # a file; its folder becomes the workspace if none is open
 ```

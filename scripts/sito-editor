@@ -18,7 +18,14 @@ else
   absolute="$(cd "$(dirname "$target")" && pwd)/$(basename "$target")"
 fi
 
-app="${SITO_EDITOR_APP:-/Applications/Sito Editor.app}"
+# Installed by Homebrew, this script lives inside the app (Contents/Resources) and is
+# symlinked onto PATH: use that app. Otherwise fall back to /Applications.
+self="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+case "$self" in
+  *.app/Contents/Resources/*) bundled_app="${self%/Contents/Resources/*}" ;;
+  *) bundled_app="" ;;
+esac
+app="${SITO_EDITOR_APP:-${bundled_app:-/Applications/Sito Editor.app}}"
 binary="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -perm -111 2>/dev/null | head -n 1)"
 if [ -z "$binary" ]; then
   echo "sito-editor: app not found at $app (set SITO_EDITOR_APP)" >&2
