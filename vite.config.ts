@@ -12,15 +12,6 @@ export default defineConfig(async () => ({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
-    // Linked sibling packages (`link:`) resolve imports from their real path, where
-    // these deps aren't installed. Force them to resolve from this app's node_modules.
-    dedupe: [
-      "@tauri-apps/api",
-      "react",
-      "react-dom",
-      "@fortawesome/fontawesome-svg-core",
-      "@fortawesome/free-solid-svg-icons",
-    ],
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

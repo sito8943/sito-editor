@@ -12,9 +12,9 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@sito/commands": "link:../../lib/sito-commands",
-    "@sito/plugin-workspace": "link:../tauri-plugin-sito-workspace",
-    "@sito/ui": "link:../../lib/ui",
+    "@sito/commands": "0.1.0-alpha.1",
+    "@sito/plugin-workspace": "0.3.0",
+    "@sito/ui": "0.12.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "@tauri-apps/api": "^2",
@@ -27,13 +27,13 @@
     "@codemirror/search": "^6.7.1",
     "@codemirror/view": "^6.43.6",
     "@use-gesture/react": "^10.3.1",
-    "@sito/feature-usage": "github:sito8943/sito-feature-usage-js#v0.1.0-alpha.4",
+    "@sito/feature-usage": "0.1.0-alpha.4",
     "@xterm/xterm": "^6.0.0",
     "@xterm/addon-fit": "^0.11.0",
     "@fortawesome/fontawesome-svg-core": "7.2.0",
     "@fortawesome/free-solid-svg-icons": "7.2.0",
     "@fortawesome/react-fontawesome": "3.3.1",
-    "@sito/file-icons": "link:../../lib/sito-file-icons"
+    "@sito/file-icons": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",
