@@ -8,6 +8,10 @@ export type OpenDocument = Omit<TextDocumentSnapshot, "content"> & {
   saving: boolean;
   conflict: boolean;
   saveError: string | null;
+  /** Changed on disk while it had unsaved edits. */
+  changedOnDisk: boolean;
+  /** Deleted or moved away on disk. */
+  missing: boolean;
 };
 
 /** A position to select and scroll to once its document is shown. */
@@ -49,6 +53,17 @@ export type DocumentsState = {
   saveDocument: (path: string) => Promise<void>;
   reloadDocument: (path: string) => Promise<void>;
   resetDocuments: () => void;
+  /**
+   * Re-reads `path` after an external change: clean documents take the new
+   * content, edited ones are flagged `changedOnDisk`, deleted ones `missing`.
+   */
+  syncFromDisk: (path: string) => Promise<void>;
+  /** Keeps the draft of a document flagged `changedOnDisk`. */
+  keepDraft: (path: string) => void;
+  /** Follows a rename/move of `from` (a file or a folder) to `to`. */
+  renameDocuments: (from: string, to: string) => void;
+  /** Closes `path` and anything under it without asking (e.g. after trashing). */
+  forgetDocuments: (path: string) => void;
 };
 
 export type EditorSurfaceProps = {

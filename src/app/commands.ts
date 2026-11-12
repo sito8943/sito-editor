@@ -13,6 +13,11 @@ export const APP_COMMAND = {
   TOGGLE_DIRECTORY: "explorer.toggle_directory",
   REFRESH_DIRECTORY: "explorer.refresh_directory",
   COLLAPSE_EXPLORER: "explorer.collapse_all",
+  CREATE_FILE: "explorer.create_file",
+  CREATE_FOLDER: "explorer.create_folder",
+  RENAME_ENTRY: "explorer.rename_entry",
+  MOVE_ENTRY: "explorer.move_entry",
+  TRASH_ENTRY: "explorer.trash_entry",
   OPEN_FOLDER: "workspace.open_folder",
   OPEN_FILE: "workspace.open_file",
   QUICK_OPEN: "navigation.quick_open",
@@ -26,6 +31,8 @@ export type AppCommandId =
 
 export type AppCommandContext = {
   path?: string;
+  /** New path for renames/moves. */
+  targetPath?: string;
 };
 
 export const APP_HOTKEY_SCOPE = {

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
   LINE_ENDING,
@@ -8,6 +8,7 @@ import {
   workspaceErrorMessage,
   type TextDocumentSnapshot,
 } from "@/shared/services/workspace";
+import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 import type {
   DocumentsState,
@@ -34,8 +35,14 @@ const toOpenDocument = (
     saving: false,
     conflict: false,
     saveError: null,
+    changedOnDisk: false,
+    missing: false,
   };
 };
+
+/** `path` itself or anything inside it, for files and folders alike. */
+const isAtOrUnder = (path: string, base: string): boolean =>
+  path === base || path.startsWith(`${base}/`) || path.startsWith(`${base}\\`);
 
 const serializeDraft = (document: OpenDocument): string =>
   document.lineEnding === LINE_ENDING.CRLF
@@ -43,6 +50,7 @@ const serializeDraft = (document: OpenDocument): string =>
     : document.draft;
 
 export const useDocuments = (): DocumentsState => {
+  const { track } = useUsage();
   const [documents, setDocuments] = useState<OpenDocument[]>([]);
   const [activePath, setActivePath] = useState<string | null>(null);
   const [loadingPath, setLoadingPath] = useState<string | null>(null);
@@ -51,10 +59,15 @@ export const useDocuments = (): DocumentsState => {
     null,
   );
 
+  // Latest documents for async callbacks that must decide outside a state updater.
+  const documentsRef = useRef<OpenDocument[]>([]);
+  documentsRef.current = documents;
+
   const openDocument = useCallback(
     async (path: string): Promise<void> => {
       if (documents.some((document) => document.path === path)) {
         setActivePath(path);
+        track(USAGE_EVENT.EDITOR.OPEN_DOCUMENT);
         return;
       }
 
@@ -64,13 +77,14 @@ export const useDocuments = (): DocumentsState => {
         const document = toOpenDocument(await readTextFile(path));
         setDocuments((current) => [...current, document]);
         setActivePath(path);
+        track(USAGE_EVENT.EDITOR.OPEN_DOCUMENT);
       } catch (reason) {
         setError(workspaceErrorMessage(reason));
       } finally {
         setLoadingPath(null);
       }
     },
-    [documents],
+    [documents, track],
   );
 
   const openDocumentAt = useCallback(
@@ -82,8 +96,9 @@ export const useDocuments = (): DocumentsState => {
     ): Promise<void> => {
       await openDocument(path);
       setRevealTarget({ path, line, column, length });
+      track(USAGE_EVENT.EDITOR.REVEAL);
     },
-    [openDocument],
+    [openDocument, track],
   );
 
   const clearReveal = useCallback(() => setRevealTarget(null), []);
@@ -101,11 +116,13 @@ export const useDocuments = (): DocumentsState => {
       const next =
         (Math.max(index, 0) + delta + documents.length) % documents.length;
       setActivePath(documents[next].path);
+      track(USAGE_EVENT.EDITOR.CYCLE_TAB);
     },
-    [activePath, documents],
+    [activePath, documents, track],
   );
 
   const moveDocument = useCallback((path: string, toIndex: number) => {
+    track(USAGE_EVENT.EDITOR.REORDER_TAB);
     setDocuments((current) => {
       const from = current.findIndex((document) => document.path === path);
       if (from < 0) return current;
@@ -116,19 +133,20 @@ export const useDocuments = (): DocumentsState => {
       next.splice(target, 0, moved);
       return next;
     });
-  }, []);
+  }, [track]);
 
   const closeDocument = useCallback(
     (path: string) => {
       const index = documents.findIndex((document) => document.path === path);
       const remaining = documents.filter((document) => document.path !== path);
       setDocuments(remaining);
+      track(USAGE_EVENT.EDITOR.CLOSE_TAB);
       if (activePath === path) {
         const next = remaining[Math.min(index, remaining.length - 1)];
         setActivePath(next?.path ?? null);
       }
     },
-    [activePath, documents],
+    [activePath, documents, track],
   );
 
   const updateDocument = useCallback((path: string, draft: string) => {
@@ -191,6 +209,7 @@ export const useDocuments = (): DocumentsState => {
             };
           }),
         );
+        track(USAGE_EVENT.EDITOR.SAVE);
       } catch (reason) {
         const message = workspaceErrorMessage(reason);
         setDocuments((current) =>
@@ -208,10 +227,11 @@ export const useDocuments = (): DocumentsState => {
         );
       }
     },
-    [documents],
+    [documents, track],
   );
 
   const reloadDocument = useCallback(async (path: string): Promise<void> => {
+    track(USAGE_EVENT.EDITOR.RELOAD_DISCARD);
     setLoadingPath(path);
     setError(null);
     try {
@@ -226,7 +246,85 @@ export const useDocuments = (): DocumentsState => {
     } finally {
       setLoadingPath(null);
     }
+  }, [track]);
+
+  const syncFromDisk = useCallback(async (path: string): Promise<void> => {
+    let snapshot: TextDocumentSnapshot;
+    try {
+      snapshot = await readTextFile(path);
+    } catch (reason) {
+      if (workspaceErrorCode(reason) !== "not_found") return;
+      const known = documentsRef.current.find((item) => item.path === path);
+      if (known && !known.missing) track(USAGE_EVENT.DISK.EXTERNAL_DELETE);
+      setDocuments((current) =>
+        current.map((document) =>
+          document.path === path ? { ...document, missing: true } : document,
+        ),
+      );
+      return;
+    }
+
+    const known = documentsRef.current.find((item) => item.path === path);
+    if (known && known.version !== snapshot.version && !known.saving) {
+      track(
+        known.dirty
+          ? USAGE_EVENT.DISK.EXTERNAL_CONFLICT
+          : USAGE_EVENT.DISK.EXTERNAL_RELOAD,
+      );
+    }
+
+    setDocuments((current) =>
+      current.map((document) => {
+        if (document.path !== path) return document;
+        // Our own saves also produce change events: same version, nothing to do.
+        if (document.version === snapshot.version) {
+          return document.missing ? { ...document, missing: false } : document;
+        }
+        if (document.saving) return document;
+        if (document.dirty) {
+          return { ...document, changedOnDisk: true, missing: false };
+        }
+        return toOpenDocument(snapshot);
+      }),
+    );
+  }, [track]);
+
+  const keepDraft = useCallback((path: string) => {
+    track(USAGE_EVENT.EDITOR.KEEP_DRAFT);
+    setDocuments((current) =>
+      current.map((document) =>
+        document.path === path
+          ? { ...document, changedOnDisk: false }
+          : document,
+      ),
+    );
+  }, [track]);
+
+  const renameDocuments = useCallback((from: string, to: string) => {
+    const move = (path: string) =>
+      isAtOrUnder(path, from) ? `${to}${path.slice(from.length)}` : path;
+    setDocuments((current) =>
+      current.map((document) =>
+        isAtOrUnder(document.path, from)
+          ? { ...document, path: move(document.path), missing: false }
+          : document,
+      ),
+    );
+    setActivePath((current) => (current ? move(current) : current));
   }, []);
+
+  const forgetDocuments = useCallback(
+    (path: string) => {
+      const remaining = documents.filter(
+        (document) => !isAtOrUnder(document.path, path),
+      );
+      setDocuments(remaining);
+      if (activePath && isAtOrUnder(activePath, path)) {
+        setActivePath(remaining[remaining.length - 1]?.path ?? null);
+      }
+    },
+    [activePath, documents],
+  );
 
   const resetDocuments = useCallback(() => {
     setDocuments([]);
@@ -262,6 +360,10 @@ export const useDocuments = (): DocumentsState => {
       saveDocument,
       reloadDocument,
       resetDocuments,
+      syncFromDisk,
+      keepDraft,
+      renameDocuments,
+      forgetDocuments,
     }),
     [
       activeDocument,
@@ -270,18 +372,22 @@ export const useDocuments = (): DocumentsState => {
       closeDocument,
       documents,
       error,
+      forgetDocuments,
       hasDirtyDocuments,
       hasSavingDocuments,
+      keepDraft,
       loadingPath,
       moveDocument,
       openDocument,
       openDocumentAt,
       reloadDocument,
+      renameDocuments,
       resetDocuments,
       revealTarget,
       saveDocument,
       selectDocument,
       selectRelative,
+      syncFromDisk,
       updateDocument,
     ],
   );

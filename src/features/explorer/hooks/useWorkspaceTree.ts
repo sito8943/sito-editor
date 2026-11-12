@@ -74,6 +74,14 @@ export const useWorkspaceTree = (): WorkspaceTreeState => {
     setExpandedPaths(rootPath ? new Set([rootPath]) : new Set());
   }, [rootPath]);
 
+  const expandDirectory = useCallback(
+    async (path: string): Promise<void> => {
+      setExpandedPaths((current) => new Set(current).add(path));
+      await loadDirectory(path);
+    },
+    [loadDirectory],
+  );
+
   const toggleDirectory = useCallback(
     async (path: string): Promise<void> => {
       if (expandedPaths.has(path)) {
@@ -105,12 +113,14 @@ export const useWorkspaceTree = (): WorkspaceTreeState => {
       refreshDirectory,
       refreshRoot,
       toggleDirectory,
+      expandDirectory,
     }),
     [
       childrenByPath,
       chooseWorkspace,
       collapseAll,
       error,
+      expandDirectory,
       expandedPaths,
       loadingPaths,
       openWorkspace,

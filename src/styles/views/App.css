@@ -55,3 +55,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.App_statusButton {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.App_statusButton:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}

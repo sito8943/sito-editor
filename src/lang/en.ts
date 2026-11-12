@@ -20,6 +20,16 @@ export const en = {
     refreshFolder: "Refresh folder",
     collapseAll: "Collapse all folders",
     contextMenu: "Explorer actions",
+    newFile: "New File…",
+    newFolder: "New Folder…",
+    rename: "Rename…",
+    move: "Move",
+    moveToTrash: "Move to Trash",
+    nameLabel: "Name",
+    invalidName: "Names can't be empty, \".\", \"..\" or contain / or \\.",
+    trashConfirm: (name: string) => `Move "${name}" to the Trash?`,
+    trashUnsavedConfirm: (name: string) =>
+      `Move "${name}" to the Trash? Unsaved changes in its open tabs will be lost.`,
   },
   workbench: {
     resizeExplorer: "Resize Explorer",
@@ -48,6 +58,9 @@ export const en = {
     mixedLineEndings:
       "Files with mixed line endings are read-only until preservation is supported.",
     reloadDiscard: "Reload and discard draft",
+    changedOnDisk: "This file changed on disk while you were editing it.",
+    keepDraft: "Keep my changes",
+    missingOnDisk: "This file was deleted or moved on disk.",
   },
   navigation: {
     label: "File path",
@@ -77,6 +90,16 @@ export const en = {
       `${results} ${results === 1 ? "result" : "results"} in ${files} ${
         files === 1 ? "file" : "files"
       }`,
+  },
+  privacy: {
+    notice: {
+      title: "Help improve Sito Editor",
+      body: "Share anonymous daily counts of which features get used? No files, paths, names or code are sent. You can change this anytime from the status bar.",
+      accept: "Share",
+      decline: "Don't share",
+    },
+    status: (shared: boolean | null) =>
+      shared ? "Usage counts: shared" : "Usage counts: off",
   },
   agents: {
     title: "Agents",

@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useCommand, useHotkey } from "@sito/commands/react";
+import { useCommand } from "@sito/commands/react";
 
 import { APP_COMMAND, type AppCommandContext } from "@/app/commands";
 import { t } from "@/lang";
+import {
+  USAGE_EVENT,
+  useTrackBurst,
+  useTrackedHotkey,
+  useUsage,
+} from "@/shared/usage";
 import {
   searchText,
   workspaceErrorMessage,
@@ -46,6 +52,8 @@ export const useProjectSearch = ({
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const requestRef = useRef(0);
+  const { track } = useUsage();
+  const trackQuery = useTrackBurst(USAGE_EVENT.SEARCH.PROJECT);
 
   useEffect(() => {
     setQueryState("");
@@ -89,10 +97,14 @@ export const useProjectSearch = ({
   const groups = useMemo(() => groupByFile(result), [result]);
   const resultCount = result?.matches.length ?? 0;
 
-  const setQuery = useCallback((value: string) => {
-    setQueryState(value);
-    setOpen(true);
-  }, []);
+  const setQuery = useCallback(
+    (value: string) => {
+      setQueryState(value);
+      setOpen(true);
+      if (value) trackQuery();
+    },
+    [trackQuery],
+  );
 
   const moveSelection = useCallback(
     (delta: number) => {
@@ -110,6 +122,7 @@ export const useProjectSearch = ({
       if (!result || !match) return;
       const [start, end] = match.ranges[0] ?? [0, 0];
       setOpen(false);
+      track(USAGE_EVENT.SEARCH.OPEN_MATCH);
       void onOpenMatch(
         joinPath(result.root, match.path),
         match.line,
@@ -117,7 +130,7 @@ export const useProjectSearch = ({
         end - start,
       );
     },
-    [onOpenMatch, result, selectedIndex],
+    [onOpenMatch, result, selectedIndex, track],
   );
 
   const focusInput = useCallback(() => {
@@ -135,7 +148,7 @@ export const useProjectSearch = ({
     execute: focusInput,
   });
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.PROJECT_SEARCH,
     () => {
       if (!rootPath) return false;
@@ -161,8 +174,14 @@ export const useProjectSearch = ({
       inputRef,
       setOpen,
       setQuery,
-      toggleRegex: () => setIsRegex((value) => !value),
-      toggleCaseSensitive: () => setCaseSensitive((value) => !value),
+      toggleRegex: () => {
+        track(USAGE_EVENT.SEARCH.REGEX);
+        setIsRegex((value) => !value);
+      },
+      toggleCaseSensitive: () => {
+        track(USAGE_EVENT.SEARCH.MATCH_CASE);
+        setCaseSensitive((value) => !value);
+      },
       setSelectedIndex,
       moveSelection,
       openSelected,
@@ -182,6 +201,7 @@ export const useProjectSearch = ({
       rootPath,
       selectedIndex,
       setQuery,
+      track,
     ],
   );
 };

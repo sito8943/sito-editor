@@ -18,6 +18,21 @@ body {
   background: var(--color-app);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  /* App chrome (Explorer, tabs, bars) is not text: a drag or Cmd+A must not
+     paint it as a selection. Text you work with opts back in below. */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.cm-editor,
+input,
+textarea,
+.EditorSurface_error,
+.EditorSurface_notice,
+.Explorer_error,
+.ProjectSearch_preview {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 button,

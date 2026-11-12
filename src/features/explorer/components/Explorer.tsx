@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import {
   Button,
   ContextMenu,
@@ -24,11 +24,29 @@ import {
 
 import type { ExplorerProps, WorkspaceTreeState } from "../types";
 
+import {
+  USAGE_EVENT,
+  USAGE_PREFIX,
+  usageFeature,
+  useUsage,
+} from "@/shared/usage";
+import { joinPath, parentPath as parentOf, pathName } from "@/shared/utils";
+
+import { EXPLORER_MENU_ACTION } from "../constants";
+import { useEntryDragMove } from "../hooks/useEntryDragMove";
+
+import { NameInput } from "./NameInput";
+import type { NameEdit } from "../types";
+
 import "@/styles/components/Explorer.css";
 
 type TreeLevelProps = {
   parentPath: string;
   tree: WorkspaceTreeState;
+  edit: NameEdit | null;
+  bindDrag: ReturnType<typeof useEntryDragMove>["bind"];
+  onCommitName: (name: string) => void;
+  onCancelName: () => void;
   activePath: string | null;
   onActivate: (entry: WorkspaceEntry) => void;
   onOpenContextMenu: (
@@ -40,20 +58,36 @@ type TreeLevelProps = {
 const TreeLevel = ({
   parentPath,
   tree,
+  edit,
+  bindDrag,
+  onCommitName,
+  onCancelName,
   activePath,
   onActivate,
   onOpenContextMenu,
 }: TreeLevelProps) => {
   const entries = tree.childrenByPath[parentPath] ?? [];
+  const creatingHere =
+    edit && edit.mode !== "rename" && edit.parentPath === parentPath;
 
-  return entries.map((entry: WorkspaceEntry) => {
+  const rows = entries.map((entry: WorkspaceEntry) => {
     const directory =
       entry.kind === WORKSPACE_ENTRY_KIND.DIRECTORY && !entry.isSymlink;
     const expanded = directory && tree.expandedPaths.has(entry.path);
     const loading = tree.loadingPaths.has(entry.path);
 
+    const renaming = edit?.mode === "rename" && edit.entry?.path === entry.path;
+
     return (
       <div className="Explorer_node" key={entry.path}>
+        {renaming ? (
+          <NameInput
+            mode="rename"
+            initialName={entry.name}
+            onCommit={onCommitName}
+            onCancel={onCancelName}
+          />
+        ) : (
         <button
           className={
             entry.path === activePath
@@ -61,6 +95,9 @@ const TreeLevel = ({
               : "Explorer_row"
           }
           type="button"
+          data-path={entry.path}
+          data-directory={directory}
+          {...bindDrag(entry.path)}
           aria-expanded={directory ? expanded : undefined}
           aria-current={entry.path === activePath ? "page" : undefined}
           title={entry.path}
@@ -73,11 +110,16 @@ const TreeLevel = ({
           <span className="Explorer_name">{entry.name}</span>
           {loading && <span className="Explorer_loading">…</span>}
         </button>
+        )}
         {expanded && (
           <div className="Explorer_children">
             <TreeLevel
               parentPath={entry.path}
               tree={tree}
+              edit={edit}
+              bindDrag={bindDrag}
+              onCommitName={onCommitName}
+              onCancelName={onCancelName}
               activePath={activePath}
               onActivate={onActivate}
               onOpenContextMenu={onOpenContextMenu}
@@ -87,6 +129,19 @@ const TreeLevel = ({
       </div>
     );
   });
+
+  return (
+    <>
+      {creatingHere && edit && (
+        <NameInput
+          mode={edit.mode}
+          onCommit={onCommitName}
+          onCancel={onCancelName}
+        />
+      )}
+      {rows}
+    </>
+  );
 };
 
 export const Explorer = ({
@@ -95,6 +150,20 @@ export const Explorer = ({
 }: ExplorerProps) => {
   const commands = useCommandRegistry<AppCommandContext>();
   const menu = useContextMenu<WorkspaceEntry | null>();
+  const [edit, setEdit] = useState<NameEdit | null>(null);
+  const { track } = useUsage();
+  const drag = useEntryDragMove({
+    rootPath: tree.rootPath,
+    onMove: (source, destination) =>
+      execute(APP_COMMAND.MOVE_ENTRY, {
+        path: source,
+        targetPath: joinPath(destination, pathName(source)),
+      }),
+  });
+  type MenuAction =
+    (typeof EXPLORER_MENU_ACTION)[keyof typeof EXPLORER_MENU_ACTION];
+  const trackMenu = (action: MenuAction) =>
+    track(usageFeature(USAGE_PREFIX.EXPLORER_MENU, action));
   const rootEntries = tree.rootPath
     ? (tree.childrenByPath[tree.rootPath] ?? [])
     : [];
@@ -125,11 +194,59 @@ export const Explorer = ({
   };
 
   const executeFromMenu = (
+    action: MenuAction,
     command: AppCommandId,
     context: AppCommandContext,
   ) => {
+    trackMenu(action);
     menu.close();
     execute(command, context);
+  };
+
+  /** Starts typing a new entry's name in the folder `target` belongs to. */
+  const startCreate = (
+    mode: "file" | "folder",
+    target: WorkspaceEntry | null,
+  ) => {
+    menu.close();
+    if (!tree.rootPath) return;
+    const parent = !target
+      ? tree.rootPath
+      : target.kind === WORKSPACE_ENTRY_KIND.DIRECTORY && !target.isSymlink
+        ? target.path
+        : parentOf(target.path);
+    if (parent !== tree.rootPath) void tree.expandDirectory(parent);
+    // After the menu returns focus to its trigger, or the field would blur
+    // (and cancel) right away.
+    window.setTimeout(() => setEdit({ mode, parentPath: parent }), 0);
+  };
+
+  const startRename = (entry: WorkspaceEntry) => {
+    menu.close();
+    window.setTimeout(
+      () => setEdit({ mode: "rename", parentPath: parentOf(entry.path), entry }),
+      0,
+    );
+  };
+
+  const commitName = (name: string) => {
+    const current = edit;
+    setEdit(null);
+    if (!current) return;
+    const path = joinPath(current.parentPath, name);
+    if (current.mode === "rename" && current.entry) {
+      execute(APP_COMMAND.RENAME_ENTRY, {
+        path: current.entry.path,
+        targetPath: path,
+      });
+    } else {
+      execute(
+        current.mode === "folder"
+          ? APP_COMMAND.CREATE_FOLDER
+          : APP_COMMAND.CREATE_FILE,
+        { path },
+      );
+    }
   };
 
   const activate = (entry: WorkspaceEntry) => {
@@ -143,6 +260,7 @@ export const Explorer = ({
       entry.kind === WORKSPACE_ENTRY_KIND.FILE &&
       !entry.isSymlink
     ) {
+      track(USAGE_EVENT.EXPLORER.OPEN_FILE);
       execute(APP_COMMAND.OPEN_DOCUMENT, context);
     }
   };
@@ -169,6 +287,7 @@ export const Explorer = ({
 
       <div
         className="Explorer_tree"
+        ref={drag.treeRef}
         onContextMenu={(event) => {
           if (
             event.target instanceof Element &&
@@ -189,6 +308,10 @@ export const Explorer = ({
           <TreeLevel
             parentPath={tree.rootPath}
             tree={tree}
+            edit={edit}
+            bindDrag={drag.bind}
+            onCommitName={commitName}
+            onCancelName={() => setEdit(null)}
             activePath={activePath}
             onActivate={activate}
             onOpenContextMenu={(event, entry) => {
@@ -202,6 +325,8 @@ export const Explorer = ({
 
       {tree.error && <p className="Explorer_error">{tree.error}</p>}
 
+      <div className="Explorer_dragGhost" ref={drag.ghostRef} aria-hidden="true" />
+
       <ContextMenu
         open={menu.open}
         position={menu.position}
@@ -211,7 +336,7 @@ export const Explorer = ({
         {targetFile && target ? (
           <ContextMenuItem
             onClick={() =>
-              executeFromMenu(APP_COMMAND.OPEN_DOCUMENT, {
+              executeFromMenu(EXPLORER_MENU_ACTION.OPEN, APP_COMMAND.OPEN_DOCUMENT, {
                 path: target.path,
               })
             }
@@ -223,7 +348,7 @@ export const Explorer = ({
           <>
             <ContextMenuItem
               onClick={() =>
-                executeFromMenu(APP_COMMAND.TOGGLE_DIRECTORY, {
+                executeFromMenu(EXPLORER_MENU_ACTION.TOGGLE_FOLDER, APP_COMMAND.TOGGLE_DIRECTORY, {
                   path: target.path,
                 })
               }
@@ -234,7 +359,7 @@ export const Explorer = ({
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() =>
-                executeFromMenu(APP_COMMAND.REFRESH_DIRECTORY, {
+                executeFromMenu(EXPLORER_MENU_ACTION.REFRESH_FOLDER, APP_COMMAND.REFRESH_DIRECTORY, {
                   path: target.path,
                 })
               }
@@ -248,8 +373,48 @@ export const Explorer = ({
         ) : null}
         <ContextMenuItem
           disabled={!tree.rootPath}
+          onClick={() => {
+            trackMenu(EXPLORER_MENU_ACTION.NEW_FILE);
+            startCreate("file", target);
+          }}
+        >
+          {t.explorer.newFile}
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!tree.rootPath}
+          onClick={() => {
+            trackMenu(EXPLORER_MENU_ACTION.NEW_FOLDER);
+            startCreate("folder", target);
+          }}
+        >
+          {t.explorer.newFolder}
+        </ContextMenuItem>
+        {target ? (
+          <>
+            <ContextMenuItem
+              onClick={() => {
+                trackMenu(EXPLORER_MENU_ACTION.RENAME);
+                startRename(target);
+              }}
+            >
+              {t.explorer.rename}
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() =>
+                executeFromMenu(EXPLORER_MENU_ACTION.MOVE_TO_TRASH, APP_COMMAND.TRASH_ENTRY, {
+                  path: target.path,
+                })
+              }
+            >
+              {t.explorer.moveToTrash}
+            </ContextMenuItem>
+          </>
+        ) : null}
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          disabled={!tree.rootPath}
           onClick={() =>
-            executeFromMenu(APP_COMMAND.REFRESH_DIRECTORY, {})
+            executeFromMenu(EXPLORER_MENU_ACTION.REFRESH, APP_COMMAND.REFRESH_DIRECTORY, {})
           }
         >
           {t.explorer.refresh}
@@ -257,7 +422,7 @@ export const Explorer = ({
         <ContextMenuItem
           disabled={!collapseAllState.enabled}
           onClick={() =>
-            executeFromMenu(APP_COMMAND.COLLAPSE_EXPLORER, {})
+            executeFromMenu(EXPLORER_MENU_ACTION.COLLAPSE_ALL, APP_COMMAND.COLLAPSE_EXPLORER, {})
           }
         >
           {t.explorer.collapseAll}
