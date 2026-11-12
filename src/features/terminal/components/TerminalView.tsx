@@ -51,12 +51,14 @@ const appTheme = (): ITheme => ({
  */
 export const TerminalView = ({
   cwd,
-  focusRef,
+  onFocusReady,
   onSpawn,
   onExit,
 }: TerminalViewProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const onSpawnRef = useRef(onSpawn);
+  const onFocusReadyRef = useRef(onFocusReady);
+  onFocusReadyRef.current = onFocusReady;
   const onExitRef = useRef(onExit);
   onSpawnRef.current = onSpawn;
   onExitRef.current = onExit;
@@ -79,7 +81,8 @@ export const TerminalView = ({
     terminal.loadAddon(fit);
     terminal.open(host);
     fit.fit();
-    if (focusRef) focusRef.current = () => terminal.focus();
+    onFocusReadyRef.current?.(() => terminal.focus());
+    terminal.focus();
 
     let disposed = false;
     let sessionId: number | null = null;
@@ -87,6 +90,9 @@ export const TerminalView = ({
     void spawnTerminal(
       { cwd, cols: terminal.cols, rows: terminal.rows },
       (event) => {
+        // A shell from an unmounted run (StrictMode, closed tab) must not
+        // write into, or mark as exited, the view that replaced it.
+        if (disposed) return;
         if (event.type === "output") {
           terminal.write(event.data);
         } else {
@@ -140,7 +146,7 @@ export const TerminalView = ({
       observer.disconnect();
       input.dispose();
       if (sessionId !== null) void killTerminal(sessionId);
-      if (focusRef) focusRef.current = null;
+      onFocusReadyRef.current?.(null);
       terminal.dispose();
     };
     // A new cwd means a new session: the parent remounts with a new key.

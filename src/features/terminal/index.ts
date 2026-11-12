@@ -1,2 +1,2 @@
 export { TerminalPanel } from "./components/TerminalPanel";
-export type { TerminalPanelProps } from "./types";
+export type { TerminalPanelProps, TerminalSession } from "./types";
