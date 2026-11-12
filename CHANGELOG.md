@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.7.1]
+
+### Fixed
+
+- The macOS build of 0.7.0 failed with the newest Rust, so 0.7.0 shipped no DMG; 0.7.1 is the first downloadable build with the 0.7.0 features (`dcf4d5a`)
+
 ## [0.7.0]
 
 ### Added
