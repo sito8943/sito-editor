@@ -84,6 +84,11 @@ export const USAGE_EVENT = {
     EXTERNAL_CONFLICT: "disk.external_conflict",
     EXTERNAL_DELETE: "disk.external_delete",
   },
+  TERMINAL: {
+    // A shell session started (first open, new workspace, New session, Restart).
+    OPEN: "terminal.open",
+    RESTART: "terminal.restart",
+  },
   PRIVACY: {
     OPEN_CHOICES: "privacy.open_choices",
   },

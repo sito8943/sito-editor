@@ -24,6 +24,7 @@ export const APP_COMMAND = {
   GO_BACK: "navigation.back",
   GO_FORWARD: "navigation.forward",
   PROJECT_SEARCH: "search.project",
+  FOCUS_TERMINAL: "terminal.focus",
 } as const;
 
 export type AppCommandId =
@@ -72,6 +73,11 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
   [APP_COMMAND.QUICK_OPEN]: {
     keys: ["p"],
     mod: true,
+  },
+  // Ctrl+` like VS Code.
+  [APP_COMMAND.FOCUS_TERMINAL]: {
+    keys: ["`"],
+    ctrl: true,
   },
   [APP_COMMAND.PROJECT_SEARCH]: {
     keys: ["f"],

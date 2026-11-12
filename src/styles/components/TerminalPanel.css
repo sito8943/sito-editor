@@ -9,27 +9,44 @@
 .TerminalPanel > header {
   display: flex;
   align-items: center;
-  padding: var(--space-0) var(--space-3);
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-0) var(--space-1) var(--space-0) var(--space-3);
   border-bottom: var(--size-border) solid var(--color-border);
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
+}
+
+.TerminalPanel_title {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.TerminalPanel_pending {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  padding: var(--space-4);
-}
-
-.TerminalPanel_pending strong {
+.TerminalPanel_cwd {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
   font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.TerminalPanel_pending span {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+.TerminalPanel_restart {
+  flex: 0 0 auto;
+}
+
+/* xterm.js host: fills the pane; xterm draws its own padding-free grid. */
+.TerminalView {
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-1) var(--space-2);
+  overflow: hidden;
+}
+
+.TerminalView .xterm {
+  height: 100%;
+}
+
+.TerminalView .xterm-viewport {
+  background-color: transparent !important;
 }

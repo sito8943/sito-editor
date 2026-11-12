@@ -109,8 +109,12 @@ export const en = {
   },
   terminal: {
     title: "Terminal",
-    pendingTitle: "Native terminal host",
-    pendingBody:
-      "This pane is reserved for the libghostty surface and PTY lifecycle.",
+    focus: "Focus terminal",
+    newSession: "New session",
+    restart: "Restart",
+    exited: (code: number | null) =>
+      code === null
+        ? "[Process ended]"
+        : `[Process exited with code ${code}]`,
   },
 } as const;

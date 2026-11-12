@@ -30,7 +30,8 @@ textarea,
 .EditorSurface_error,
 .EditorSurface_notice,
 .Explorer_error,
-.ProjectSearch_preview {
+.ProjectSearch_preview,
+.xterm {
   -webkit-user-select: text;
   user-select: text;
 }

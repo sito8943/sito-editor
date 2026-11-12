@@ -81,7 +81,7 @@ const App = () => {
         }
         editor={<EditorSurface state={documents} />}
         agents={<AgentDashboard />}
-        terminal={<TerminalPanel />}
+        terminal={<TerminalPanel cwd={workspaceTree.rootPath} />}
       />
 
       <footer className="App_status">
