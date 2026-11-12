@@ -72,7 +72,6 @@ export const EDITOR_EXTENSIONS = [
   search({ top: true }),
   highlightSelectionMatches(),
   keymap.of(searchKeymap),
-  EditorView.lineWrapping,
   EditorView.theme({
     "&": {
       height: "100%",

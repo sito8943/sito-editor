@@ -93,6 +93,20 @@ export const USAGE_EVENT = {
     SWITCH_SESSION: "terminal.switch_session",
     REORDER_SESSION: "terminal.reorder_session",
   },
+  SETTINGS: {
+    OPEN_MENU: "settings.open_menu",
+    FONT_BIGGER: "settings.font_bigger",
+    FONT_SMALLER: "settings.font_smaller",
+    FONT_RESET: "settings.font_reset",
+    // A size picked from the Font size submenu.
+    FONT_SIZE: "settings.font_size",
+    TAB_SIZE: "settings.tab_size",
+    WORD_WRAP: "settings.word_wrap",
+    TERMINAL_FONT_BIGGER: "settings.terminal_font_bigger",
+    TERMINAL_FONT_SMALLER: "settings.terminal_font_smaller",
+    TERMINAL_FONT_RESET: "settings.terminal_font_reset",
+    TERMINAL_FONT_SIZE: "settings.terminal_font_size",
+  },
   PRIVACY: {
     OPEN_CHOICES: "privacy.open_choices",
   },

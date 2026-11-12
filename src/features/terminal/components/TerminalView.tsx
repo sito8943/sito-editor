@@ -9,6 +9,7 @@ import {
   writeTerminal,
 } from "@/shared/services/terminal";
 import { t } from "@/lang";
+import { useSettings } from "@/shared/settings";
 
 import type { TerminalViewProps } from "../types";
 
@@ -56,6 +57,10 @@ export const TerminalView = ({
   onExit,
 }: TerminalViewProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
+  const fontSize = useSettings().settings.fontSize.terminal;
+  const fontSizeRef = useRef(fontSize);
+  /** Applies a new font size and refits; set while the terminal is mounted. */
+  const setFontSizeRef = useRef<((size: number) => void) | null>(null);
   const onSpawnRef = useRef(onSpawn);
   const onFocusReadyRef = useRef(onFocusReady);
   onFocusReadyRef.current = onFocusReady;
@@ -70,7 +75,7 @@ export const TerminalView = ({
     const terminal = new Terminal({
       theme: appTheme(),
       fontFamily: token("--font-mono", "Menlo, monospace"),
-      fontSize: 13,
+      fontSize: fontSizeRef.current,
       lineHeight: 1.2,
       cursorBlink: true,
       allowProposedApi: false,
@@ -140,8 +145,17 @@ export const TerminalView = ({
     });
     observer.observe(host);
 
+    setFontSizeRef.current = (size: number) => {
+      terminal.options.fontSize = size;
+      fit.fit();
+      if (sessionId !== null) {
+        void resizeTerminal(sessionId, terminal.cols, terminal.rows);
+      }
+    };
+
     return () => {
       disposed = true;
+      setFontSizeRef.current = null;
       cancelAnimationFrame(frame);
       observer.disconnect();
       input.dispose();
@@ -152,6 +166,12 @@ export const TerminalView = ({
     // A new cwd means a new session: the parent remounts with a new key.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (fontSizeRef.current === fontSize) return;
+    fontSizeRef.current = fontSize;
+    setFontSizeRef.current?.(fontSize);
+  }, [fontSize]);
 
   return <div className="TerminalView" ref={hostRef} />;
 };

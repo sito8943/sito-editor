@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
 import { EditorView, minimalSetup } from "codemirror";
-import { Compartment, Prec } from "@codemirror/state";
+import { Compartment, EditorState, Prec } from "@codemirror/state";
+import { indentUnit } from "@codemirror/language";
 import { keymap } from "@codemirror/view";
 import { gotoLine, searchPanelOpen } from "@codemirror/search";
 
+import { useSettings, type EditorSettings } from "@/shared/settings";
 import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 import { EDITOR_EXTENSIONS } from "./constants";
@@ -12,6 +14,14 @@ import { describeLanguage, loadLanguage } from "./language";
 import type { CodeEditorProps } from "../../types";
 
 import "@/styles/components/CodeEditor.css";
+
+const wrapExtension = (settings: EditorSettings) =>
+  settings.wordWrap ? EditorView.lineWrapping : [];
+
+const indentExtension = (settings: EditorSettings) => [
+  EditorState.tabSize.of(settings.tabSize),
+  indentUnit.of(" ".repeat(settings.tabSize)),
+];
 
 export const CodeEditor = ({
   path,
@@ -26,6 +36,11 @@ export const CodeEditor = ({
 }: CodeEditorProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
+  const { settings } = useSettings();
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+  const wrapCompartment = useRef(new Compartment()).current;
+  const indentCompartment = useRef(new Compartment()).current;
   const onChangeRef = useRef(onChange);
   const onRevealedRef = useRef(onRevealed);
   const { track } = useUsage();
@@ -60,6 +75,8 @@ export const CodeEditor = ({
         ...EDITOR_EXTENSIONS,
         gitGutter(),
         languageCompartment.of([]),
+        wrapCompartment.of(wrapExtension(settingsRef.current)),
+        indentCompartment.of(indentExtension(settingsRef.current)),
         // Counts Go to line (same binding as searchKeymap, which it precedes).
         Prec.high(
           keymap.of([
@@ -119,6 +136,20 @@ export const CodeEditor = ({
     });
   }, [value]);
 
+  useEffect(() => {
+    viewRef.current?.dispatch({
+      effects: [
+        wrapCompartment.reconfigure(wrapExtension(settings)),
+        indentCompartment.reconfigure(indentExtension(settings)),
+      ],
+    });
+  }, [settings.wordWrap, settings.tabSize]);
+
+  // Line heights change with the font: let CodeMirror measure again.
+  useEffect(() => {
+    viewRef.current?.requestMeasure();
+  }, [settings.fontSize.editor]);
+
   // Declared after the view is created, so both also run on mount.
   useEffect(() => {
     const view = viewRef.current;
@@ -141,5 +172,11 @@ export const CodeEditor = ({
     onRevealedRef.current?.();
   }, [reveal]);
 
-  return <div className="CodeEditor" ref={hostRef} />;
+  return (
+    <div
+      className="CodeEditor"
+      ref={hostRef}
+      style={{ fontSize: `${settings.fontSize.editor}px` }}
+    />
+  );
 };
