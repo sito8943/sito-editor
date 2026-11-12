@@ -24,7 +24,8 @@
     "@lezer/highlight": "^1.2.3",
     "@codemirror/state": "^6.7.1",
     "@codemirror/search": "^6.7.1",
-    "@codemirror/view": "^6.43.6"
+    "@codemirror/view": "^6.43.6",
+    "@use-gesture/react": "^10.3.1"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",

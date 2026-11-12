@@ -8,6 +8,8 @@ export const APP_COMMAND = {
   OPEN_DOCUMENT: "editor.open_document",
   CLOSE_DOCUMENT: "editor.close_document",
   SAVE_DOCUMENT: "editor.save_document",
+  NEXT_DOCUMENT: "editor.next_document",
+  PREVIOUS_DOCUMENT: "editor.previous_document",
   TOGGLE_DIRECTORY: "explorer.toggle_directory",
   REFRESH_DIRECTORY: "explorer.refresh_directory",
   COLLAPSE_EXPLORER: "explorer.collapse_all",
@@ -41,6 +43,15 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
   [APP_COMMAND.SAVE_DOCUMENT]: {
     keys: ["s"],
     mod: true,
+  },
+  [APP_COMMAND.NEXT_DOCUMENT]: {
+    keys: ["Tab"],
+    ctrl: true,
+  },
+  [APP_COMMAND.PREVIOUS_DOCUMENT]: {
+    keys: ["Tab"],
+    ctrl: true,
+    shift: true,
   },
   [APP_COMMAND.OPEN_FOLDER]: {
     keys: ["o"],

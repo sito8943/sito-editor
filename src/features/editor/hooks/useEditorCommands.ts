@@ -73,6 +73,38 @@ export const useEditorCommands = (state: DocumentsState): void => {
     },
   });
 
+  useCommand<AppCommandContext>({
+    id: APP_COMMAND.NEXT_DOCUMENT,
+    title: () => t.editor.nextDocument,
+    isEnabled: () => state.documents.length > 1,
+    execute: () => state.selectRelative(1),
+  });
+
+  useCommand<AppCommandContext>({
+    id: APP_COMMAND.PREVIOUS_DOCUMENT,
+    title: () => t.editor.previousDocument,
+    isEnabled: () => state.documents.length > 1,
+    execute: () => state.selectRelative(-1),
+  });
+
+  useHotkey(
+    APP_COMMAND.NEXT_DOCUMENT,
+    () => {
+      if (state.documents.length < 2) return false;
+      state.selectRelative(1);
+    },
+    { allowInInput: true },
+  );
+
+  useHotkey(
+    APP_COMMAND.PREVIOUS_DOCUMENT,
+    () => {
+      if (state.documents.length < 2) return false;
+      state.selectRelative(-1);
+    },
+    { allowInInput: true },
+  );
+
   useHotkey(
     APP_COMMAND.SAVE_DOCUMENT,
     () => {

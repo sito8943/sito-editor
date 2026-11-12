@@ -40,6 +40,10 @@ export type DocumentsState = {
   ) => Promise<void>;
   clearReveal: () => void;
   selectDocument: (path: string) => void;
+  /** Activates the tab `delta` positions away, wrapping around. */
+  selectRelative: (delta: number) => void;
+  /** Moves the tab for `path` to `toIndex`. */
+  moveDocument: (path: string, toIndex: number) => void;
   closeDocument: (path: string) => void;
   updateDocument: (path: string, draft: string) => void;
   saveDocument: (path: string) => Promise<void>;

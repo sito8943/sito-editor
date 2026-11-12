@@ -92,6 +92,32 @@ export const useDocuments = (): DocumentsState => {
     setActivePath(path);
   }, []);
 
+  const selectRelative = useCallback(
+    (delta: number) => {
+      if (documents.length === 0) return;
+      const index = documents.findIndex(
+        (document) => document.path === activePath,
+      );
+      const next =
+        (Math.max(index, 0) + delta + documents.length) % documents.length;
+      setActivePath(documents[next].path);
+    },
+    [activePath, documents],
+  );
+
+  const moveDocument = useCallback((path: string, toIndex: number) => {
+    setDocuments((current) => {
+      const from = current.findIndex((document) => document.path === path);
+      if (from < 0) return current;
+      const target = Math.min(Math.max(toIndex, 0), current.length - 1);
+      if (from === target) return current;
+      const next = [...current];
+      const [moved] = next.splice(from, 1);
+      next.splice(target, 0, moved);
+      return next;
+    });
+  }, []);
+
   const closeDocument = useCallback(
     (path: string) => {
       const index = documents.findIndex((document) => document.path === path);
@@ -229,6 +255,8 @@ export const useDocuments = (): DocumentsState => {
       openDocumentAt,
       clearReveal,
       selectDocument,
+      selectRelative,
+      moveDocument,
       closeDocument,
       updateDocument,
       saveDocument,
@@ -245,6 +273,7 @@ export const useDocuments = (): DocumentsState => {
       hasDirtyDocuments,
       hasSavingDocuments,
       loadingPath,
+      moveDocument,
       openDocument,
       openDocumentAt,
       reloadDocument,
@@ -252,6 +281,7 @@ export const useDocuments = (): DocumentsState => {
       revealTarget,
       saveDocument,
       selectDocument,
+      selectRelative,
       updateDocument,
     ],
   );

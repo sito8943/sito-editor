@@ -33,6 +33,8 @@ export const en = {
     emptyBody: "Choose a text file from the Explorer.",
     loading: "Opening document…",
     close: "Close document",
+    nextDocument: "Next tab",
+    previousDocument: "Previous tab",
     editorLabel: "Text editor",
     save: "Save",
     saving: "Saving…",
