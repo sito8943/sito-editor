@@ -25,6 +25,10 @@ export const APP_COMMAND = {
   GO_FORWARD: "navigation.forward",
   PROJECT_SEARCH: "search.project",
   FOCUS_TERMINAL: "terminal.focus",
+  FONT_BIGGER: "settings.font_bigger",
+  FONT_SMALLER: "settings.font_smaller",
+  FONT_RESET: "settings.font_reset",
+  TOGGLE_WORD_WRAP: "settings.toggle_word_wrap",
 } as const;
 
 export type AppCommandId =
@@ -96,6 +100,24 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
   [APP_COMMAND.FOCUS_TERMINAL]: {
     keys: ["`"],
     ctrl: true,
+  },
+  // Text size and wrap (VS Code: Cmd+= / Cmd+- / Cmd+0, Alt+Z). macOS types
+  // "Ω" for Option+Z, so both keys match.
+  [APP_COMMAND.FONT_BIGGER]: {
+    keys: ["=", "+"],
+    mod: true,
+  },
+  [APP_COMMAND.FONT_SMALLER]: {
+    keys: ["-"],
+    mod: true,
+  },
+  [APP_COMMAND.FONT_RESET]: {
+    keys: ["0"],
+    mod: true,
+  },
+  [APP_COMMAND.TOGGLE_WORD_WRAP]: {
+    keys: ["z", "Ω"],
+    alt: true,
   },
   [APP_COMMAND.PROJECT_SEARCH]: {
     keys: ["f"],
