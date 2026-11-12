@@ -18,6 +18,7 @@ import { DataChoices } from "@/shared/usage";
 import { StatusBar } from "./components/StatusBar";
 import { useFileOperations } from "./hooks/useFileOperations";
 import { useGitBranch } from "./hooks/useGitBranch";
+import { useGitBaseline, useGitStatus } from "./hooks/useGitStatus";
 import { useLaunchPath } from "./hooks/useLaunchPath";
 import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
 import { useWorkspaceSession } from "./hooks/useWorkspaceSession";
@@ -33,6 +34,8 @@ const App = () => {
   useFileOperations(workspaceTree, documents);
   useWorkspaceWatcher(workspaceTree, documents);
   const gitBranch = useGitBranch(workspaceTree.rootPath);
+  const gitStatus = useGitStatus(workspaceTree.rootPath);
+  const gitBaseline = useGitBaseline(documents.activePath, gitStatus);
   const workspaceActions = useWorkspaceActions(workspaceTree, documents);
   const launch = useLaunchPath(workspaceActions.openPath);
   const session = useWorkspaceSession({
@@ -78,9 +81,10 @@ const App = () => {
           <Explorer
             tree={workspaceTree}
             activePath={documents.activePath}
+            gitFiles={gitStatus?.files ?? null}
           />
         }
-        editor={<EditorSurface state={documents} />}
+        editor={<EditorSurface state={documents} gitBaseline={gitBaseline} />}
         terminal={<TerminalPanel cwd={workspaceTree.rootPath} />}
       />
 

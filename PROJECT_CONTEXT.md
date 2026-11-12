@@ -69,6 +69,13 @@ and `terminal_kill` drive the session. The webview renders it with xterm.js
 (`src/features/terminal`). That renderer is interim: `libghostty` can replace it behind the same
 contract, and the host can move to a dedicated terminal plugin.
 
+Git is read-only and lives in `src-tauri/src/git.rs`: `git_branch` reads `.git/HEAD` directly;
+`git_status` (changed files + HEAD commit) and `git_head_file` (a file at HEAD) run the system
+`git` with `GIT_OPTIONAL_LOCKS=0`, only inside a repository. The app polls them
+(`src/app/hooks/useGitStatus.ts`) for the Explorer colors and the editor change marks
+(`CodeEditor/gitGutter.ts`, diffed with `@codemirror/merge`). No staging or commits: that stays a
+non-goal.
+
 Agent state must use a structured adapter API for status, permissions, file changes and lifecycle.
 A visible terminal can be attached to the same run, but the dashboard must not infer state by
 scraping terminal output.
@@ -100,7 +107,7 @@ scraping terminal output.
 ## Explicit non-goals for the scaffold
 
 - Markdown rendering or preview.
-- LSP, debugger, extension marketplace or Git workbench.
+- LSP, debugger, extension marketplace or Git workbench (status colors and change marks only).
 - Hand-rolled terminal emulation (use xterm.js now, `libghostty` later).
 - Parsing agent status from terminal presentation.
 - Writing files before version conflicts and atomic replacement are implemented.

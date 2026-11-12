@@ -1,6 +1,6 @@
 [package]
 name = "sito-editor"
-version = "0.4.2"
+version = "0.5.0"
 description = "Lightweight code editor for reading code and making focused edits"
 authors = ["Sito"]
 license = "MIT"

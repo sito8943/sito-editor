@@ -1,3 +1,4 @@
+import type { GitFileStatus } from "@/shared/services/git";
 import type { WorkspaceEntry } from "@/shared/services/workspace";
 
 export type WorkspaceTreeState = {
@@ -31,4 +32,6 @@ export type NameEdit = {
 export type ExplorerProps = {
   tree: WorkspaceTreeState;
   activePath: string | null;
+  /** Changed files of the repository, for the Git colors and letters. */
+  gitFiles?: Record<string, GitFileStatus> | null;
 };

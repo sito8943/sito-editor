@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react";
+import { useMemo, useState, type MouseEvent } from "react";
 import {
   ContextMenu,
   ContextMenuItem,
@@ -46,6 +46,11 @@ import {
   EXPLORER_TOOLBAR_ACTION,
 } from "../constants";
 import { useEntryDragMove } from "../hooks/useEntryDragMove";
+import {
+  GIT_STATUS_LETTER,
+  gitDecorationsFor,
+  type GitDecorations,
+} from "../gitDecorations";
 
 import { NameInput } from "./NameInput";
 import type { NameEdit } from "../types";
@@ -56,6 +61,7 @@ type TreeLevelProps = {
   parentPath: string;
   tree: WorkspaceTreeState;
   edit: NameEdit | null;
+  git: GitDecorations | null;
   bindDrag: ReturnType<typeof useEntryDragMove>["bind"];
   onCommitName: (name: string) => void;
   onCancelName: () => void;
@@ -71,6 +77,7 @@ const TreeLevel = ({
   parentPath,
   tree,
   edit,
+  git,
   bindDrag,
   onCommitName,
   onCancelName,
@@ -89,6 +96,16 @@ const TreeLevel = ({
     const loading = tree.loadingPaths.has(entry.path);
 
     const renaming = edit?.mode === "rename" && edit.entry?.path === entry.path;
+    const gitStatus = directory
+      ? git?.folders.get(entry.path)
+      : git?.files[entry.path];
+    const rowClass = [
+      "Explorer_row",
+      entry.path === activePath && "active",
+      gitStatus && `git-${gitStatus}`,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return (
       <div className="Explorer_node" key={entry.path}>
@@ -101,11 +118,7 @@ const TreeLevel = ({
           />
         ) : (
         <button
-          className={
-            entry.path === activePath
-              ? "Explorer_row active"
-              : "Explorer_row"
-          }
+          className={rowClass}
           type="button"
           data-path={entry.path}
           data-directory={directory}
@@ -115,8 +128,13 @@ const TreeLevel = ({
           onClick={() => onActivate(entry)}
           onContextMenu={(event) => onOpenContextMenu(event, entry)}
         >
-          <span className="Explorer_chevron" aria-hidden="true">
-            {directory ? (expanded ? "▾" : "▸") : ""}
+          <span
+            className={
+              expanded ? "Explorer_chevron expanded" : "Explorer_chevron"
+            }
+            aria-hidden="true"
+          >
+            {directory ? "▸" : ""}
           </span>
           <FileIcon
             name={entry.name}
@@ -125,6 +143,11 @@ const TreeLevel = ({
           />
           <span className="Explorer_name">{entry.name}</span>
           {loading && <span className="Explorer_loading">…</span>}
+          {gitStatus && (
+            <span className="Explorer_git" aria-hidden="true">
+              {directory ? "•" : GIT_STATUS_LETTER[gitStatus]}
+            </span>
+          )}
         </button>
         )}
         {expanded && (
@@ -133,6 +156,7 @@ const TreeLevel = ({
               parentPath={entry.path}
               tree={tree}
               edit={edit}
+              git={git}
               bindDrag={bindDrag}
               onCommitName={onCommitName}
               onCancelName={onCancelName}
@@ -163,7 +187,15 @@ const TreeLevel = ({
 export const Explorer = ({
   tree,
   activePath,
+  gitFiles,
 }: ExplorerProps) => {
+  const git = useMemo(
+    () =>
+      gitFiles && tree.rootPath
+        ? gitDecorationsFor(gitFiles, tree.rootPath)
+        : null,
+    [gitFiles, tree.rootPath],
+  );
   const commands = useCommandRegistry<AppCommandContext>();
   const menu = useContextMenu<WorkspaceEntry | null>();
   const [edit, setEdit] = useState<NameEdit | null>(null);
@@ -419,6 +451,7 @@ export const Explorer = ({
             parentPath={tree.rootPath}
             tree={tree}
             edit={edit}
+            git={git}
             bindDrag={drag.bind}
             onCommitName={commitName}
             onCancelName={() => setEdit(null)}

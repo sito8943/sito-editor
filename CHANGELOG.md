@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.0]
+
+### Added
+
+- Git change marks next to the line numbers: green for added lines, blue for modified ones and a red triangle where lines were removed, compared with the last commit and updated as you type (`d495e71`, `9073cc5`)
+- Git colors in the Explorer: changed files show their status color and a letter (M modified, A added, U untracked, D deleted, R renamed, C conflict); folders with changes inside take the color and a dot. They update on save, on changes from the terminal and when you come back to the window (`d495e71`, `9073cc5`)
+
+### Changed
+
+- Smoother interface: Git colors and letters fade in, folder arrows rotate, expanding a folder eases in, tab close buttons fade, and the Go to file and project search lists slide in. "Reduce motion" in macOS turns this off (`9073cc5`, `b07b90b`)
+
 ## [0.4.2]
 
 ### Changed

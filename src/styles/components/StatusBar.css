@@ -38,6 +38,7 @@
   color: inherit;
   font: inherit;
   cursor: pointer;
+  transition: color var(--motion-fast) var(--motion-ease);
 }
 
 .StatusBar_button:hover {

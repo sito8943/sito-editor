@@ -7,6 +7,7 @@ import { gotoLine, searchPanelOpen } from "@codemirror/search";
 import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 import { EDITOR_EXTENSIONS } from "./constants";
+import { gitGutter, setGitBaseline } from "./gitGutter";
 import { describeLanguage, loadLanguage } from "./language";
 import type { CodeEditorProps } from "../../types";
 
@@ -17,6 +18,7 @@ export const CodeEditor = ({
   label,
   value,
   readonly,
+  baseline,
   reveal,
   onRevealed,
   onStatus,
@@ -56,6 +58,7 @@ export const CodeEditor = ({
       extensions: [
         minimalSetup,
         ...EDITOR_EXTENSIONS,
+        gitGutter(),
         languageCompartment.of([]),
         // Counts Go to line (same binding as searchKeymap, which it precedes).
         Prec.high(
@@ -116,7 +119,12 @@ export const CodeEditor = ({
     });
   }, [value]);
 
-  // Declared after the view is created, so it also runs on mount.
+  // Declared after the view is created, so both also run on mount.
+  useEffect(() => {
+    const view = viewRef.current;
+    if (view) setGitBaseline(view, baseline ?? null);
+  }, [baseline, path, readonly]);
+
   useEffect(() => {
     const view = viewRef.current;
     if (!view || !reveal) return;

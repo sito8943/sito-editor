@@ -58,6 +58,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_launch_path,
             git::git_branch,
+            git::git_status,
+            git::git_head_file,
             terminal::terminal_spawn,
             terminal::terminal_write,
             terminal::terminal_resize,

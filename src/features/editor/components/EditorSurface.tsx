@@ -19,7 +19,7 @@ import type { EditorSurfaceProps } from "../types";
 
 import "@/styles/components/EditorSurface.css";
 
-export const EditorSurface = ({ state }: EditorSurfaceProps) => {
+export const EditorSurface = ({ state, gitBaseline }: EditorSurfaceProps) => {
   const activeDocument = state.activeDocument;
   const commands = useCommandRegistry<AppCommandContext>();
   const { track } = useUsage();
@@ -105,6 +105,11 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
             )}`}
             value={activeDocument.draft}
             readonly={!activeDocument.editable}
+            baseline={
+              gitBaseline?.path === activeDocument.path
+                ? gitBaseline.content
+                : null
+            }
             reveal={
               state.revealTarget?.path === activeDocument.path
                 ? state.revealTarget
