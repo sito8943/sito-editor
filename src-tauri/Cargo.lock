@@ -3214,7 +3214,7 @@ checksum = "8ee5873ec9cce0195efcb7a4e9507a04cd49aec9c83d0389df45b1ef7ba2e649"
 
 [[package]]
 name = "sito-editor"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -3653,7 +3653,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-sito-workspace"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "blake3",
  "ignore",

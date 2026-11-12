@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.0]
+
+### Added
+
+- Create, rename and delete from the Explorer: right-click for New File, New Folder, Rename and Move to Trash. Names are typed right in the tree (Enter confirms, Esc cancels). Deleting moves to the system Trash, after asking, and closes the open tabs (`209ff2e`)
+- Drag files and folders onto another folder to move them; dropping on a file moves into that file's folder, on empty space into the workspace root. Nothing is ever overwritten. Open tabs follow renamed and moved files (`209ff2e`)
+- Changes made outside the editor show up on their own: the Explorer refreshes, unedited open files reload, files you are editing offer "Reload and discard draft" or "Keep my changes", and deleted files show a struck-through tab (`209ff2e`)
+- Optional anonymous usage counts: a notice asks once whether to share daily totals of which features get used, so unused ones can be improved or removed. Nothing is sent unless you accept; no files, paths, names or code are ever included. Change it anytime from the status bar (`9c62f37`)
+
+### Changed
+
+- The Explorer, tabs and bars can no longer be selected as text by a drag or Cmd+A (`dac7cd4`)
+
 ## [0.2.0]
 
 ### Added
