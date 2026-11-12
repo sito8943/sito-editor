@@ -50,3 +50,20 @@ button {
 .sito-ui-tooltip__content {
   border: var(--size-border) solid var(--color-border-strong);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Shared by the Go to file and project search dropdowns. */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

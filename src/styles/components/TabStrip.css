@@ -18,7 +18,10 @@
   border-right: var(--size-border) solid var(--color-border);
   color: var(--color-text-muted);
   touch-action: none;
-  transition: transform 0.16s ease;
+  transition:
+    transform 0.16s ease,
+    color var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
 }
 
 .TabStrip.snapping .TabStrip_tab {
@@ -56,6 +59,7 @@
   color: inherit;
   white-space: nowrap;
   cursor: grab;
+  transition: color var(--motion-fast) var(--motion-ease);
 }
 
 .TabStrip_select:hover {
@@ -75,6 +79,7 @@
 .TabStrip_tab .TabStrip_close {
   flex: 0 0 auto;
   margin-right: var(--space-2);
+  transition: opacity var(--motion-fast) var(--motion-ease);
 }
 
 /* Like VS Code: the close button only shows on the active tab, on hover or
