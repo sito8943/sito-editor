@@ -22,3 +22,38 @@
 .CodeEditor .cm-editor .cm-dropCursor {
   border-left: 2px solid var(--color-editor-caret);
 }
+
+/* Git change marks: a bar per added/modified line, a triangle where lines
+   were removed (see CodeEditor/gitGutter.ts). */
+.cm-gitGutter .cm-gutterElement {
+  position: relative;
+  width: 3px;
+  margin-right: var(--space-1);
+  padding: 0;
+  transition: background-color var(--motion-medium) var(--motion-ease);
+}
+
+.cm-gitGutter .cm-git-added {
+  background: var(--color-git-added);
+}
+
+.cm-gitGutter .cm-git-modified {
+  background: var(--color-git-gutter-modified);
+}
+
+.cm-gitGutter .cm-git-deleted::before {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 5px solid var(--color-git-deleted);
+  content: "";
+  animation: git-mark-in var(--motion-medium) var(--motion-ease);
+}
+
+@keyframes git-mark-in {
+  from {
+    opacity: 0;
+  }
+}

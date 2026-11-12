@@ -80,6 +80,8 @@ export type DocumentsState = {
 
 export type EditorSurfaceProps = {
   state: DocumentsState;
+  /** HEAD contents of the active file, for the Git change marks. */
+  gitBaseline?: { path: string; content: string | null } | null;
 };
 
 export type CodeEditorProps = {
@@ -87,6 +89,8 @@ export type CodeEditorProps = {
   label: string;
   value: string;
   readonly: boolean;
+  /** The file at HEAD, for the Git change marks; null hides them. */
+  baseline?: string | null;
   /** Selected and scrolled into view once, then `onRevealed` is called. */
   reveal?: Omit<RevealTarget, "path"> | null;
   onRevealed?: () => void;

@@ -44,7 +44,7 @@
 
 .Explorer_row {
   display: grid;
-  grid-template-columns: var(--size-tree-indent) auto minmax(0, 1fr) auto;
+  grid-template-columns: var(--size-tree-indent) auto minmax(0, 1fr) auto auto;
   column-gap: var(--space-1);
   align-items: center;
   width: 100%;
@@ -58,10 +58,22 @@
   background: transparent;
   text-align: left;
   cursor: default;
+  transition:
+    color var(--motion-medium) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
 }
 
 .Explorer_children {
   padding-left: var(--size-tree-indent);
+  animation: explorer-children-in var(--motion-medium) var(--motion-ease);
+}
+
+@keyframes explorer-children-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
 }
 
 .Explorer_row:hover,
@@ -79,6 +91,11 @@
 .Explorer_chevron {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+
+.Explorer_chevron.expanded {
+  transform: rotate(90deg);
 }
 
 .Explorer_name {
@@ -90,6 +107,30 @@
 .Explorer_loading {
   color: var(--color-text-muted);
 }
+
+/* Git status: the name takes the color, a letter (files) or dot (folders)
+   closes the row, like VS Code. Declared after .active so it keeps its color. */
+.Explorer_git {
+  min-width: 1ch;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: center;
+  animation: explorer-git-in var(--motion-medium) var(--motion-ease);
+}
+
+@keyframes explorer-git-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+.Explorer_row.git-added { color: var(--color-git-added); }
+.Explorer_row.git-untracked { color: var(--color-git-untracked); }
+.Explorer_row.git-modified { color: var(--color-git-modified); }
+.Explorer_row.git-deleted { color: var(--color-git-deleted); }
+.Explorer_row.git-renamed { color: var(--color-git-renamed); }
+.Explorer_row.git-conflicted { color: var(--color-git-conflicted); }
 
 .Explorer_error {
   margin: var(--space-0);
