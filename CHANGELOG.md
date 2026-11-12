@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.1]
+
+### Fixed
+
+- The macOS build of 0.4.0 failed type-checking the shared file icons, so 0.4.0 shipped no DMG; 0.4.1 is the first downloadable build with the 0.4.0 features (`6637b4e`)
+
 ## [0.4.0]
 
 ### Added
