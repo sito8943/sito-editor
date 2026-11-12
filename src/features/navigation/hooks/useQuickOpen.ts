@@ -6,10 +6,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { useCommand, useHotkey } from "@sito/commands/react";
+import { useCommand } from "@sito/commands/react";
 
 import { APP_COMMAND, type AppCommandContext } from "@/app/commands";
 import { t } from "@/lang";
+import { USAGE_EVENT, useTrackedHotkey, useUsage } from "@/shared/usage";
 import {
   listWorkspaceFiles,
   workspaceErrorMessage,
@@ -47,6 +48,7 @@ export const useQuickOpen = ({
   const [truncated, setTruncated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestRef = useRef(0);
+  const { track } = useUsage();
 
   const deferredQuery = useDeferredValue(query);
   // With an empty query, recent files come first.
@@ -102,13 +104,18 @@ export const useQuickOpen = ({
   const show = useCallback(
     (initialQuery = ""): void => {
       if (!rootPath) return;
+      track(
+        initialQuery
+          ? USAGE_EVENT.NAVIGATION.BREADCRUMB_FOLDER
+          : USAGE_EVENT.NAVIGATION.QUICK_OPEN,
+      );
       setQueryState(initialQuery);
       setSelectedIndex(0);
       setOpen(true);
       // Show the cached list immediately and refresh it in the background.
       void refreshFiles(rootPath);
     },
-    [refreshFiles, rootPath],
+    [refreshFiles, rootPath, track],
   );
 
   const close = useCallback((): void => setOpen(false), []);
@@ -133,9 +140,22 @@ export const useQuickOpen = ({
       const match = results[index ?? selectedIndex];
       if (!match || !filesRoot) return;
       setOpen(false);
-      void onOpenFile(joinPath(filesRoot, match.path));
+      track(USAGE_EVENT.NAVIGATION.QUICK_OPEN_FILE);
+      const path = joinPath(filesRoot, match.path);
+      if (!deferredQuery.trim() && recentPaths.includes(path)) {
+        track(USAGE_EVENT.NAVIGATION.QUICK_OPEN_RECENT);
+      }
+      void onOpenFile(path);
     },
-    [filesRoot, onOpenFile, results, selectedIndex],
+    [
+      deferredQuery,
+      filesRoot,
+      onOpenFile,
+      recentPaths,
+      results,
+      selectedIndex,
+      track,
+    ],
   );
 
   useCommand<AppCommandContext>({
@@ -145,7 +165,7 @@ export const useQuickOpen = ({
     execute: () => show(),
   });
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.QUICK_OPEN,
     () => {
       if (!rootPath) return false;

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useCommand, useHotkey } from "@sito/commands/react";
+import { useCommand } from "@sito/commands/react";
 
 import { APP_COMMAND, type AppCommandContext } from "@/app/commands";
 import { t } from "@/lang";
+import { USAGE_EVENT, useTrackedHotkey, useUsage } from "@/shared/usage";
 
 import type { FileHistoryState, UseFileHistoryOptions } from "../types";
 
@@ -26,6 +27,7 @@ export const useFileHistory = ({
 }: UseFileHistoryOptions): FileHistoryState => {
   const [history, setHistory] = useState<History>(EMPTY_HISTORY);
   const pendingPathRef = useRef<string | null>(null);
+  const { track } = useUsage();
 
   useEffect(() => {
     setHistory(EMPTY_HISTORY);
@@ -57,13 +59,16 @@ export const useFileHistory = ({
       const target = history.index + delta;
       const path = history.entries[target];
       if (!path) return;
+      track(
+        delta < 0 ? USAGE_EVENT.NAVIGATION.BACK : USAGE_EVENT.NAVIGATION.FORWARD,
+      );
 
       setHistory((current) => ({ ...current, index: target }));
       if (path === activePath) return;
       pendingPathRef.current = path;
       void onOpenFile(path);
     },
-    [activePath, history, onOpenFile],
+    [activePath, history, onOpenFile, track],
   );
 
   const back = useCallback(() => go(-1), [go]);
@@ -83,7 +88,7 @@ export const useFileHistory = ({
     execute: forward,
   });
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.GO_BACK,
     () => {
       if (!canGoBack) return false;
@@ -92,7 +97,7 @@ export const useFileHistory = ({
     { allowInInput: true },
   );
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.GO_FORWARD,
     () => {
       if (!canGoForward) return false;

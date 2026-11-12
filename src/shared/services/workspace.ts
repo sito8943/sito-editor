@@ -2,12 +2,20 @@ import type { WorkspaceErrorCode } from "@sito/plugin-workspace";
 
 export {
   LINE_ENDING,
+  WORKSPACE_CHANGED_EVENT,
+  createDirectory,
+  createFile,
   WORKSPACE_ENTRY_KIND,
   listDirectory,
   listWorkspaceFiles,
+  onWorkspaceChange,
   searchText,
   readTextFile,
+  renameEntry,
   statEntry,
+  trashEntry,
+  unwatchWorkspace,
+  watchWorkspace,
   writeTextFile,
 } from "@sito/plugin-workspace";
 
@@ -16,6 +24,7 @@ export type {
   TextDocumentSnapshot,
   WorkspaceEntry,
   WorkspaceEntryKind,
+  WorkspaceChangeEvent,
   WorkspaceError,
   SearchTextOptions,
   TextSearchMatch,

@@ -10,6 +10,7 @@ import {
   type AppCommandContext,
 } from "@/app/commands";
 import { t } from "@/lang";
+import { USAGE_EVENT, useUsage } from "@/shared/usage";
 import { pathName } from "@/shared/utils";
 
 import { CodeEditor } from "./CodeEditor/CodeEditor";
@@ -21,6 +22,7 @@ import "@/styles/components/EditorSurface.css";
 export const EditorSurface = ({ state }: EditorSurfaceProps) => {
   const activeDocument = state.activeDocument;
   const commands = useCommandRegistry<AppCommandContext>();
+  const { track } = useUsage();
   const saveContext: AppCommandContext = {
     path: activeDocument?.path,
   };
@@ -62,6 +64,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 "EditorSurface_tab",
                 document.path === state.activePath && "active",
                 tabDrag.draggingIndex === index && "dragging",
+                document.missing && "missing",
               ]
                 .filter(Boolean)
                 .join(" ")}
@@ -81,6 +84,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
               }}
               onAuxClick={(event) => {
                 if (event.button === 1 && !document.saving) {
+                  track(USAGE_EVENT.EDITOR.CLOSE_TAB_MIDDLE_CLICK);
                   closeTab(document.path);
                 }
               }}
@@ -91,7 +95,12 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 // see start as a tap, which would break the close button.
                 {...tabDrag.bind(index)}
                 type="button"
-                onClick={() => state.selectDocument(document.path)}
+                onClick={() => {
+                  if (document.path !== state.activePath) {
+                    track(USAGE_EVENT.EDITOR.SWITCH_TAB);
+                  }
+                  state.selectDocument(document.path);
+                }}
               >
                 {pathName(document.path)}
                 {document.dirty && (
@@ -162,6 +171,29 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
               state.updateDocument(activeDocument.path, draft)
             }
           />
+        )}
+        {activeDocument?.changedOnDisk && (
+          <div className="EditorSurface_error" role="alert">
+            <span>{t.editor.changedOnDisk}</span>
+            <span className="EditorSurface_errorActions">
+              <Button
+                size="sm"
+                onClick={() => void state.reloadDocument(activeDocument.path)}
+              >
+                {t.editor.reloadDiscard}
+              </Button>
+              <Button
+                size="sm"
+                variant="outlined"
+                onClick={() => state.keepDraft(activeDocument.path)}
+              >
+                {t.editor.keepDraft}
+              </Button>
+            </span>
+          </div>
+        )}
+        {activeDocument?.missing && !activeDocument.changedOnDisk && (
+          <p className="EditorSurface_notice">{t.editor.missingOnDisk}</p>
         )}
         {activeDocument && !activeDocument.editable && (
           <p className="EditorSurface_notice">

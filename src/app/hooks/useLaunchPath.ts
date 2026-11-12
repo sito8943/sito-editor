@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { getLaunchPath, onOpenPathRequest } from "@/shared/services/launch";
+import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 export type LaunchPathState = {
   /** False until the startup path has been checked. */
@@ -20,8 +21,13 @@ export const useLaunchPath = (
     ready: false,
     hasLaunchPath: false,
   });
+  const { track } = useUsage();
+  // Read through a ref: the startup effect and the listener run once.
   const openPathRef = useRef(openPath);
-  openPathRef.current = openPath;
+  openPathRef.current = (path: string) => {
+    track(USAGE_EVENT.WORKSPACE.LAUNCH_PATH);
+    return openPath(path);
+  };
 
   useEffect(() => {
     let active = true;

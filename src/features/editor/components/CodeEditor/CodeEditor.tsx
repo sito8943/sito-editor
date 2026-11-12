@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 import { EditorView, minimalSetup } from "codemirror";
-import { Compartment } from "@codemirror/state";
+import { Compartment, Prec } from "@codemirror/state";
+import { keymap } from "@codemirror/view";
+import { gotoLine, searchPanelOpen } from "@codemirror/search";
+
+import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 import { EDITOR_EXTENSIONS } from "./constants";
 import { loadLanguage } from "./language";
@@ -21,6 +25,9 @@ export const CodeEditor = ({
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const onRevealedRef = useRef(onRevealed);
+  const { track } = useUsage();
+  const trackRef = useRef(track);
+  trackRef.current = track;
 
   onChangeRef.current = onChange;
   onRevealedRef.current = onRevealed;
@@ -37,8 +44,26 @@ export const CodeEditor = ({
         minimalSetup,
         ...EDITOR_EXTENSIONS,
         languageCompartment.of([]),
+        // Counts Go to line (same binding as searchKeymap, which it precedes).
+        Prec.high(
+          keymap.of([
+            {
+              key: "Mod-Alt-g",
+              run: (view) => {
+                trackRef.current(USAGE_EVENT.EDITOR.GO_TO_LINE);
+                return gotoLine(view);
+              },
+            },
+          ]),
+        ),
         EditorView.editable.of(!readonly),
         EditorView.updateListener.of((update) => {
+          if (
+            searchPanelOpen(update.state) &&
+            !searchPanelOpen(update.startState)
+          ) {
+            trackRef.current(USAGE_EVENT.EDITOR.FIND);
+          }
           if (update.docChanged) {
             onChangeRef.current(update.state.doc.toString());
           }

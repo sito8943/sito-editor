@@ -9,6 +9,7 @@ import {
   writeJson,
 } from "@/shared/services/storage";
 import { WORKSPACE_ENTRY_KIND, statEntry } from "@/shared/services/workspace";
+import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 const RECENT_LIMIT = 30;
 
@@ -53,6 +54,9 @@ export const useWorkspaceSession = ({
   const { rootPath } = tree;
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
   const restoringRef = useRef(false);
+  const { track } = useUsage();
+  const trackRef = useRef(track);
+  trackRef.current = track;
   const activePathRef = useRef(documents.activePath);
   activePathRef.current = documents.activePath;
 
@@ -68,6 +72,7 @@ export const useWorkspaceSession = ({
     statEntry(last)
       .then((entry) => {
         if (entry.kind === WORKSPACE_ENTRY_KIND.DIRECTORY) {
+          trackRef.current(USAGE_EVENT.WORKSPACE.RESTORE_LAST);
           void tree.openWorkspace(last);
         }
       })
@@ -88,6 +93,9 @@ export const useWorkspaceSession = ({
     documents.resetDocuments();
 
     let cancelled = false;
+    if (session.open.length > 0) {
+      trackRef.current(USAGE_EVENT.WORKSPACE.RESTORE_TABS);
+    }
     void (async () => {
       for (const path of session.open) {
         if (cancelled) return;

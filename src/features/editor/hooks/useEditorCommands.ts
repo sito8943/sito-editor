@@ -2,7 +2,6 @@ import { confirm } from "@tauri-apps/plugin-dialog";
 import {
   useCommand,
   useCommandRegistry,
-  useHotkey,
 } from "@sito/commands/react";
 
 import {
@@ -10,6 +9,7 @@ import {
   type AppCommandContext,
 } from "@/app/commands";
 import { t } from "@/lang";
+import { useTrackedHotkey } from "@/shared/usage";
 
 import type { DocumentsState } from "../types";
 
@@ -87,7 +87,7 @@ export const useEditorCommands = (state: DocumentsState): void => {
     execute: () => state.selectRelative(-1),
   });
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.NEXT_DOCUMENT,
     () => {
       if (state.documents.length < 2) return false;
@@ -96,7 +96,7 @@ export const useEditorCommands = (state: DocumentsState): void => {
     { allowInInput: true },
   );
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.PREVIOUS_DOCUMENT,
     () => {
       if (state.documents.length < 2) return false;
@@ -105,7 +105,7 @@ export const useEditorCommands = (state: DocumentsState): void => {
     { allowInInput: true },
   );
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.SAVE_DOCUMENT,
     () => {
       void registry.execute(APP_COMMAND.SAVE_DOCUMENT, {});
@@ -113,7 +113,7 @@ export const useEditorCommands = (state: DocumentsState): void => {
     { allowInInput: true },
   );
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.CLOSE_DOCUMENT,
     () => {
       const context: AppCommandContext = {};

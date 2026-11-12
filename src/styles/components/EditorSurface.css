@@ -198,3 +198,15 @@
   justify-content: space-between;
   gap: var(--space-3);
 }
+
+.EditorSurface_errorActions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-2);
+}
+
+/* Deleted or moved on disk, like VS Code's struck-through tab. */
+.EditorSurface_tab.missing .EditorSurface_tabSelect {
+  text-decoration: line-through;
+  font-style: italic;
+}

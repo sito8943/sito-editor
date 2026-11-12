@@ -9,6 +9,10 @@
     "dialog:allow-message",
     "dialog:allow-open",
     "sito-workspace:default",
-    "sito-workspace:allow-write-text-file"
+    "sito-workspace:allow-write-text-file",
+    "sito-workspace:allow-create-file",
+    "sito-workspace:allow-create-directory",
+    "sito-workspace:allow-rename-entry",
+    "sito-workspace:allow-trash-entry"
   ]
 }

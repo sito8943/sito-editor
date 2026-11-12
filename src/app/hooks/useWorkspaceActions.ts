@@ -1,16 +1,18 @@
 import { useCallback } from "react";
 import { confirm, message, open } from "@tauri-apps/plugin-dialog";
-import { useCommand, useHotkey } from "@sito/commands/react";
+import { useCommand } from "@sito/commands/react";
 
 import { APP_COMMAND, type AppCommandContext } from "@/app/commands";
 import type { DocumentsState } from "@/features/editor";
 import type { WorkspaceTreeState } from "@/features/explorer";
 import { t } from "@/lang";
+import { useTrackedHotkey } from "@/shared/usage";
 import {
   WORKSPACE_ENTRY_KIND,
   statEntry,
   workspaceErrorMessage,
 } from "@/shared/services/workspace";
+import { USAGE_EVENT, useUsage } from "@/shared/usage";
 import { parentPath } from "@/shared/utils";
 
 export type WorkspaceActions = {
@@ -28,6 +30,7 @@ export const useWorkspaceActions = (
   tree: WorkspaceTreeState,
   documents: DocumentsState,
 ): WorkspaceActions => {
+  const { track } = useUsage();
   const canLeaveWorkspace = useCallback(async (): Promise<boolean> => {
     if (documents.hasSavingDocuments) {
       await message(t.editor.waitForSave, {
@@ -46,8 +49,8 @@ export const useWorkspaceActions = (
   const openFolder = useCallback(async (): Promise<void> => {
     if (!(await canLeaveWorkspace())) return;
     // Swapping the open tabs is handled by the workspace session.
-    await tree.chooseWorkspace();
-  }, [canLeaveWorkspace, tree]);
+    if (await tree.chooseWorkspace()) track(USAGE_EVENT.WORKSPACE.OPEN_FOLDER);
+  }, [canLeaveWorkspace, track, tree]);
 
   const openFile = useCallback(async (): Promise<void> => {
     const selected = await open({
@@ -56,11 +59,12 @@ export const useWorkspaceActions = (
       title: t.app.openFileTitle,
     });
     if (typeof selected !== "string") return;
+    track(USAGE_EVENT.WORKSPACE.OPEN_FILE);
 
     // Without a workspace, the file's folder becomes the workspace.
     if (!tree.rootPath) await tree.openWorkspace(parentPath(selected));
     await documents.openDocument(selected);
-  }, [documents, tree]);
+  }, [documents, track, tree]);
 
   const openPath = useCallback(
     async (path: string): Promise<void> => {
@@ -102,7 +106,7 @@ export const useWorkspaceActions = (
     execute: openFile,
   });
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.OPEN_FOLDER,
     () => {
       void openFolder();
@@ -110,7 +114,7 @@ export const useWorkspaceActions = (
     { allowInInput: true },
   );
 
-  useHotkey(
+  useTrackedHotkey(
     APP_COMMAND.OPEN_FILE,
     () => {
       void openFile();
