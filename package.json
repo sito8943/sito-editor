@@ -29,7 +29,11 @@
     "@use-gesture/react": "^10.3.1",
     "@sito/feature-usage": "github:sito8943/sito-feature-usage-js#v0.1.0-alpha.4",
     "@xterm/xterm": "^6.0.0",
-    "@xterm/addon-fit": "^0.11.0"
+    "@xterm/addon-fit": "^0.11.0",
+    "@fortawesome/fontawesome-svg-core": "7.2.0",
+    "@fortawesome/free-solid-svg-icons": "7.2.0",
+    "@fortawesome/react-fontawesome": "3.3.1",
+    "@sito/file-icons": "link:../../lib/sito-file-icons"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",

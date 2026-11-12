@@ -1,0 +1,9 @@
+.FileIcon {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-size: 0.8em;
+}
+
+.FileIcon--folder {
+  color: var(--color-accent);
+}

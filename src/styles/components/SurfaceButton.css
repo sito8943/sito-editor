@@ -1,0 +1,46 @@
+/* One look for every icon/toggle button (see SurfaceButton). Overrides @sito/ui
+   IconButton sizing through its custom properties. */
+.SurfaceButton.sito-ui-icon-button {
+  --sito-ui-icon-button-icon-size: 0.75rem;
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-panel-raised);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.SurfaceButton--xs.sito-ui-icon-button {
+  --sito-ui-icon-button-container-size: 1.25rem;
+  --sito-ui-icon-button-icon-size: 0.625rem;
+}
+
+.SurfaceButton--sm.sito-ui-icon-button {
+  --sito-ui-icon-button-container-size: 1.5rem;
+}
+
+/* Same height and surface as the path bar breadcrumb. */
+.SurfaceButton--md.sito-ui-icon-button {
+  --sito-ui-icon-button-container-size: 1.875rem;
+  --sito-ui-icon-button-icon-size: 0.8125rem;
+  border-radius: var(--radius-md);
+  background: var(--color-editor);
+}
+
+.SurfaceButton.sito-ui-icon-button:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.SurfaceButton.sito-ui-icon-button[aria-pressed="true"] {
+  border-color: var(--color-accent);
+  background: rgb(122 162 247 / 0.15);
+  color: var(--color-accent);
+}
+
+/* Disabled stays flat: no surface, just a faint glyph. */
+.SurfaceButton.sito-ui-icon-button:disabled {
+  border-color: transparent;
+  background: none;
+  opacity: 0.4;
+}

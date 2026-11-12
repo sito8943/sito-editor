@@ -45,3 +45,8 @@ textarea {
 button {
   color: inherit;
 }
+
+/* Dark tooltips need an edge to stand out from the dark chrome. */
+.sito-ui-tooltip__content {
+  border: var(--size-border) solid var(--color-border-strong);
+}

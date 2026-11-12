@@ -1,0 +1,92 @@
+/* Shared tab strip (editor documents, terminal sessions). */
+.TabStrip {
+  display: flex;
+  align-self: stretch;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* Draggable tabs (see useTabDrag): the others ease into the gap, the dragged
+   one follows the pointer 1:1. */
+.TabStrip_tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: var(--size-explorer);
+  border-right: var(--size-border) solid var(--color-border);
+  color: var(--color-text-muted);
+  touch-action: none;
+  transition: transform 0.16s ease;
+}
+
+.TabStrip.snapping .TabStrip_tab {
+  transition: none;
+}
+
+.TabStrip_tab.active {
+  color: var(--color-text);
+  background: var(--color-editor);
+}
+
+.TabStrip_tab.dragging {
+  z-index: 2;
+  background: var(--color-panel-raised);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.35);
+  transition: none;
+}
+
+.TabStrip_tooltip {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+}
+
+.TabStrip_select {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  padding: var(--space-0) var(--space-2);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  white-space: nowrap;
+  cursor: grab;
+}
+
+.TabStrip_select:hover {
+  color: var(--color-text);
+}
+
+.TabStrip_label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.TabStrip_tab.struck .TabStrip_label {
+  font-style: italic;
+  text-decoration: line-through;
+}
+
+.TabStrip_tab .TabStrip_close {
+  flex: 0 0 auto;
+  margin-right: var(--space-2);
+}
+
+/* Like VS Code: the close button only shows on the active tab, on hover or
+   when focused. It keeps its space so tabs don't shift. */
+.TabStrip_tab:not(.active):not(:hover) .TabStrip_close:not(:focus-visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* `grabbing` app-wide while a tab is lifted (class set by useTabDrag). */
+.is-dragging-tab,
+.is-dragging-tab * {
+  cursor: grabbing !important;
+  user-select: none;
+}
