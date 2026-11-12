@@ -25,6 +25,8 @@ export type QuickOpenState = {
 
 export type UseQuickOpenOptions = {
   rootPath: string | null;
+  /** Absolute paths, newest first; listed first while the query is empty. */
+  recentPaths?: readonly string[];
   /** Receives the absolute path of the chosen file. */
   onOpenFile: (path: string) => void | Promise<void>;
 };

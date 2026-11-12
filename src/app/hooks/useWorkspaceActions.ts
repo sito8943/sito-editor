@@ -38,9 +38,9 @@ export const useWorkspaceActions = (
 
   const openFolder = useCallback(async (): Promise<void> => {
     if (!(await canLeaveWorkspace())) return;
-    const selected = await tree.chooseWorkspace();
-    if (selected) documents.resetDocuments();
-  }, [canLeaveWorkspace, documents, tree]);
+    // Swapping the open tabs is handled by the workspace session.
+    await tree.chooseWorkspace();
+  }, [canLeaveWorkspace, tree]);
 
   const openFile = useCallback(async (): Promise<void> => {
     const selected = await open({

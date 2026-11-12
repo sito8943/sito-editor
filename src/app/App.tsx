@@ -16,6 +16,7 @@ import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
 
 import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
+import { useWorkspaceSession } from "./hooks/useWorkspaceSession";
 
 import "@/styles/views/App.css";
 
@@ -24,8 +25,14 @@ const App = () => {
   const documents = useDocuments();
   useEditorCommands(documents);
   useExplorerCommands(workspaceTree);
+  const session = useWorkspaceSession({
+    tree: workspaceTree,
+    documents,
+    restoreLastWorkspace: true,
+  });
   const quickOpen = useQuickOpen({
     rootPath: workspaceTree.rootPath,
+    recentPaths: session.recentPaths,
     onOpenFile: documents.openDocument,
   });
   const fileHistory = useFileHistory({

@@ -21,8 +21,21 @@ import { rankPaths } from "../utils/fuzzy";
 
 const RESULT_LIMIT = 50;
 
+const toRelative = (rootPath: string, path: string): string | null => {
+  const base = rootPath.replace(/[\\/]+$/, "");
+  if (!path.startsWith(base) || !/^[\\/]/.test(path.slice(base.length))) {
+    return null;
+  }
+  return path
+    .slice(base.length)
+    .split(/[\\/]/)
+    .filter(Boolean)
+    .join("/");
+};
+
 export const useQuickOpen = ({
   rootPath,
+  recentPaths = [],
   onOpenFile,
 }: UseQuickOpenOptions): QuickOpenState => {
   const [open, setOpen] = useState(false);
@@ -36,9 +49,26 @@ export const useQuickOpen = ({
   const requestRef = useRef(0);
 
   const deferredQuery = useDeferredValue(query);
+  // With an empty query, recent files come first.
+  const orderedFiles = useMemo(() => {
+    if (!filesRoot || recentPaths.length === 0) return files;
+    const known = new Set(files);
+    const recent = recentPaths
+      .map((path) => toRelative(filesRoot, path))
+      .filter((path): path is string => path !== null && known.has(path));
+    if (recent.length === 0) return files;
+    const recentSet = new Set(recent);
+    return [...recent, ...files.filter((path) => !recentSet.has(path))];
+  }, [files, filesRoot, recentPaths]);
+
   const results = useMemo(
-    () => rankPaths(deferredQuery, files, RESULT_LIMIT),
-    [deferredQuery, files],
+    () =>
+      rankPaths(
+        deferredQuery,
+        deferredQuery.trim() ? files : orderedFiles,
+        RESULT_LIMIT,
+      ),
+    [deferredQuery, files, orderedFiles],
   );
 
   // Drop the cached list when the workspace changes.
