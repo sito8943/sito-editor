@@ -1,0 +1,46 @@
+.StatusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-0) var(--space-3);
+  border-top: var(--size-border) solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-panel-raised);
+  font-size: var(--font-size-xs);
+}
+
+.StatusBar_group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.StatusBar_group > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.StatusBar_branch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.StatusBar_button {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.StatusBar_button:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}

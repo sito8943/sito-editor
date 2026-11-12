@@ -1,5 +1,6 @@
 use std::path::Path;
 
+mod git;
 mod terminal;
 
 use tauri::{Emitter, Manager};
@@ -56,6 +57,7 @@ pub fn run() {
         .manage(terminal::TerminalRegistry::default())
         .invoke_handler(tauri::generate_handler![
             get_launch_path,
+            git::git_branch,
             terminal::terminal_spawn,
             terminal::terminal_write,
             terminal::terminal_resize,
