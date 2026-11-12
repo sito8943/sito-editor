@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.7.0]
+
+### Added
+
+- Ghostty terminal engine (beta): pick "Terminal engine → Ghostty (beta)" in the "Spaces: N" menu to draw the terminal with Ghostty's engine instead of xterm.js. Open terminals restart with it; xterm.js stays the default (`3ca1581`, `e62487c`)
+- With Ghostty: Option+←/→ move by word, ⌘C copies, anything you select is copied, double-click selects whole paths, URLs and user@host, and triple-click selects the line (`3ca1581`)
+
+### Fixed
+
+- The selection is visible again on the line where the cursor is, in the editor (`527f9eb`)
+- Selected text in the terminal keeps a readable color (`3ca1581`)
+
 ## [0.6.0]
 
 ### Added
