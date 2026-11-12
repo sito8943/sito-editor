@@ -6,6 +6,8 @@ import {
 } from "@sito/commands/react";
 
 import App from "./app/App";
+import { USAGE_FEATURES } from "./app/usage";
+import { UsageProvider } from "./shared/usage";
 import {
   APP_HOTKEY_CONFIG,
   APP_KEYMAP,
@@ -30,7 +32,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         keymap={APP_KEYMAP}
         config={APP_HOTKEY_CONFIG}
       >
-        <App />
+        <UsageProvider features={USAGE_FEATURES}>
+          <App />
+        </UsageProvider>
       </HotkeyProvider>
     </CommandProvider>
   </React.StrictMode>,

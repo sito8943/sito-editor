@@ -29,6 +29,9 @@ importers:
       '@sito/commands':
         specifier: link:../../lib/sito-commands
         version: link:../../lib/sito-commands
+      '@sito/feature-usage':
+        specifier: github:sito8943/sito-feature-usage-js#v0.1.0-alpha.4
+        version: https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00(react@19.2.8)
       '@sito/plugin-workspace':
         specifier: link:../tauri-plugin-sito-workspace
         version: link:../tauri-plugin-sito-workspace
@@ -620,6 +623,15 @@ packages:
     resolution: {integrity: sha512-BfzEnDJOt9T8M989/lA37EcJgat01wLRnoi5dQf3QzOH7jzpqTAzdDbVfRljVr5r+jzKqpbHeyOfAaXxAd0PAA==}
     cpu: [x64]
     os: [win32]
+
+  '@sito/feature-usage@https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00':
+    resolution: {gitHosted: true, integrity: sha512-E8pakVYs0JtnstP68CX48nvkpsaRrm/QprTt+MBUCC0TLEF5huOsNFfh2NGC1M+Qre4h8VOzhQPOVJReVyzDJg==, tarball: https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00}
+    version: 0.1.0-alpha.4
+    peerDependencies:
+      react: ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@tauri-apps/api@2.11.1':
     resolution: {integrity: sha512-M2FPuYND2m+wh5hfW9ZpSdxMPdEJovPBWwoHJmwUpysTYNHaOkVFN419m/K0LIgjb/7KU2vBgsUepJWugQCvAA==}
@@ -1577,6 +1589,10 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
+
+  '@sito/feature-usage@https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00(react@19.2.8)':
+    optionalDependencies:
+      react: 19.2.8
 
   '@tauri-apps/api@2.11.1': {}
 
