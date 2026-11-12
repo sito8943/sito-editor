@@ -12,6 +12,7 @@ import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 import type {
   DocumentsState,
+  EditorStatus,
   OpenDocument,
   RevealTarget,
 } from "../types";
@@ -56,6 +57,9 @@ export const useDocuments = (): DocumentsState => {
   const [loadingPath, setLoadingPath] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revealTarget, setRevealTarget] = useState<RevealTarget | null>(
+    null,
+  );
+  const [editorStatus, setEditorStatus] = useState<EditorStatus | null>(
     null,
   );
 
@@ -349,6 +353,8 @@ export const useDocuments = (): DocumentsState => {
       loadingPath,
       error,
       revealTarget,
+      editorStatus,
+      setEditorStatus,
       openDocument,
       openDocumentAt,
       clearReveal,
@@ -371,6 +377,7 @@ export const useDocuments = (): DocumentsState => {
       clearReveal,
       closeDocument,
       documents,
+      editorStatus,
       error,
       forgetDocuments,
       hasDirtyDocuments,
