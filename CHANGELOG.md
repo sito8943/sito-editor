@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.1]
+
+### Added
+
+- Install with Homebrew: `brew install --cask sito8943/tap/sito-editor`. It also puts `sito-editor` on your PATH, so `sito-editor .` works right away. Apple Silicon and Intel `.dmg`s are attached to each release (`efd43ce`, `19e3a98`)
+- MIT license (`fad23da`)
+
+### Changed
+
+- Requires macOS 14 (Sonoma) or later (`19e3a98`)
+
 ## [0.3.0]
 
 ### Added
