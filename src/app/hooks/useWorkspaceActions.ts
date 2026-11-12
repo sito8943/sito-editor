@@ -6,11 +6,18 @@ import { APP_COMMAND, type AppCommandContext } from "@/app/commands";
 import type { DocumentsState } from "@/features/editor";
 import type { WorkspaceTreeState } from "@/features/explorer";
 import { t } from "@/lang";
+import {
+  WORKSPACE_ENTRY_KIND,
+  statEntry,
+  workspaceErrorMessage,
+} from "@/shared/services/workspace";
 import { parentPath } from "@/shared/utils";
 
 export type WorkspaceActions = {
   openFolder: () => Promise<void>;
   openFile: () => Promise<void>;
+  /** Opens a folder as the workspace, or a file (see `sito-editor <path>`). */
+  openPath: (path: string) => Promise<void>;
 };
 
 /**
@@ -55,6 +62,34 @@ export const useWorkspaceActions = (
     await documents.openDocument(selected);
   }, [documents, tree]);
 
+  const openPath = useCallback(
+    async (path: string): Promise<void> => {
+      let isDirectory: boolean;
+      try {
+        isDirectory =
+          (await statEntry(path)).kind === WORKSPACE_ENTRY_KIND.DIRECTORY;
+      } catch (reason) {
+        await message(workspaceErrorMessage(reason), {
+          title: t.app.name,
+          kind: "error",
+        });
+        return;
+      }
+
+      if (isDirectory) {
+        if (path === tree.rootPath || !(await canLeaveWorkspace())) return;
+        await tree.openWorkspace(path);
+        return;
+      }
+
+      // Without a workspace, the file's folder becomes the workspace. A file
+      // outside the current workspace opens as a tab without switching.
+      if (!tree.rootPath) await tree.openWorkspace(parentPath(path));
+      await documents.openDocument(path);
+    },
+    [canLeaveWorkspace, documents, tree],
+  );
+
   useCommand<AppCommandContext>({
     id: APP_COMMAND.OPEN_FOLDER,
     title: () => t.app.openFolder,
@@ -83,5 +118,5 @@ export const useWorkspaceActions = (
     { allowInInput: true },
   );
 
-  return { openFolder, openFile };
+  return { openFolder, openFile, openPath };
 };

@@ -15,6 +15,7 @@ import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
 
+import { useLaunchPath } from "./hooks/useLaunchPath";
 import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
 import { useWorkspaceSession } from "./hooks/useWorkspaceSession";
 
@@ -25,10 +26,13 @@ const App = () => {
   const documents = useDocuments();
   useEditorCommands(documents);
   useExplorerCommands(workspaceTree);
+  const workspaceActions = useWorkspaceActions(workspaceTree, documents);
+  const launch = useLaunchPath(workspaceActions.openPath);
   const session = useWorkspaceSession({
     tree: workspaceTree,
     documents,
-    restoreLastWorkspace: true,
+    // A `sito-editor <path>` launch wins over reopening the last workspace.
+    restoreLastWorkspace: launch.ready ? !launch.hasLaunchPath : null,
   });
   const quickOpen = useQuickOpen({
     rootPath: workspaceTree.rootPath,
@@ -45,7 +49,6 @@ const App = () => {
     rootPath: workspaceTree.rootPath,
     onOpenMatch: documents.openDocumentAt,
   });
-  const workspaceActions = useWorkspaceActions(workspaceTree, documents);
 
   return (
     <div className="App">

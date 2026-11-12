@@ -14,6 +14,19 @@ documents can be edited and saved through atomic replacement with content-versio
 detection. File creation/deletion, watching and workspace-root permission scopes remain separate
 milestones.
 
+## Command line
+
+Open a folder or file from the terminal (macOS):
+
+```sh
+ln -s "$PWD/scripts/sito-editor" /usr/local/bin/sito-editor   # once
+sito-editor .            # current folder
+sito-editor src/main.ts  # a file; its folder becomes the workspace if none is open
+```
+
+If the editor is already running, the path opens in that window. Set `SITO_EDITOR_APP` when the
+app is not in `/Applications`. In development: `pnpm tauri dev -- -- /absolute/path`.
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
