@@ -18,7 +18,7 @@ export const Workbench = ({
 
   return (
     <main
-      className="Workbench"
+      className={agents ? "Workbench" : "Workbench Workbench--noAgents"}
       ref={layout.containerRef}
       style={layout.style}
     >
@@ -45,28 +45,32 @@ export const Workbench = ({
         onLostPointerCapture={layout.finishResize}
       />
       <div className="Workbench_editor">{editor}</div>
-      <div
-        className="Workbench_resizer Workbench_agentsResizer"
-        role="separator"
-        tabIndex={0}
-        aria-label={t.workbench.resizeAgents}
-        aria-orientation="vertical"
-        aria-valuemin={agentsLimits.min}
-        aria-valuemax={agentsLimits.max}
-        aria-valuenow={layout.sizes.agents}
-        onDoubleClick={() => layout.resetPane("agents")}
-        onKeyDown={(event) =>
-          layout.resizeWithKeyboard("agents", event)
-        }
-        onPointerDown={(event) =>
-          layout.startResize("agents", event)
-        }
-        onPointerMove={layout.moveResize}
-        onPointerUp={layout.finishResize}
-        onPointerCancel={layout.finishResize}
-        onLostPointerCapture={layout.finishResize}
-      />
-      <div className="Workbench_agents">{agents}</div>
+      {agents && (
+        <>
+          <div
+            className="Workbench_resizer Workbench_agentsResizer"
+            role="separator"
+            tabIndex={0}
+            aria-label={t.workbench.resizeAgents}
+            aria-orientation="vertical"
+            aria-valuemin={agentsLimits.min}
+            aria-valuemax={agentsLimits.max}
+            aria-valuenow={layout.sizes.agents}
+            onDoubleClick={() => layout.resetPane("agents")}
+            onKeyDown={(event) =>
+              layout.resizeWithKeyboard("agents", event)
+            }
+            onPointerDown={(event) =>
+              layout.startResize("agents", event)
+            }
+            onPointerMove={layout.moveResize}
+            onPointerUp={layout.finishResize}
+            onPointerCancel={layout.finishResize}
+            onLostPointerCapture={layout.finishResize}
+          />
+          <div className="Workbench_agents">{agents}</div>
+        </>
+      )}
       <div
         className="Workbench_resizer Workbench_terminalResizer"
         role="separator"

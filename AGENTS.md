@@ -31,5 +31,6 @@ Before analyzing or changing code:
 - This is an agentic programming workbench with a lightweight text editor and file tree.
 - It is not a Markdown editor and must not grow a rendered-preview architecture.
 - Reuse `@sito/ui`, `@sito/plugin-workspace` and established Tauri plugins.
-- Keep `libghostty` behind a native terminal contract; never simulate it with a fake terminal.
+- Keep the PTY behind the native terminal contract (`src-tauri/src/terminal.rs`); render with
+  xterm.js until `libghostty` replaces it, and never hand-roll terminal emulation.
 - Keep agent process protocols behind adapters instead of parsing terminal pixels or rendered text.

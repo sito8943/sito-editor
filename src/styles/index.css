@@ -30,7 +30,8 @@ textarea,
 .EditorSurface_error,
 .EditorSurface_notice,
 .Explorer_error,
-.ProjectSearch_preview {
+.ProjectSearch_preview,
+.xterm {
   -webkit-user-select: text;
   user-select: text;
 }
@@ -43,4 +44,9 @@ textarea {
 
 button {
   color: inherit;
+}
+
+/* Dark tooltips need an edge to stand out from the dark chrome. */
+.sito-ui-tooltip__content {
+  border: var(--size-border) solid var(--color-border-strong);
 }

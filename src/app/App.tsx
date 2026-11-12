@@ -1,4 +1,3 @@
-import { AgentDashboard } from "@/features/agents";
 import {
   EditorSurface,
   useDocuments,
@@ -14,9 +13,11 @@ import { ProjectSearch, useProjectSearch } from "@/features/search";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
-import { DataChoices, USAGE_EVENT, useUsage } from "@/shared/usage";
+import { DataChoices } from "@/shared/usage";
 
+import { StatusBar } from "./components/StatusBar";
 import { useFileOperations } from "./hooks/useFileOperations";
+import { useGitBranch } from "./hooks/useGitBranch";
 import { useLaunchPath } from "./hooks/useLaunchPath";
 import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
 import { useWorkspaceSession } from "./hooks/useWorkspaceSession";
@@ -25,13 +26,13 @@ import { useWorkspaceWatcher } from "./hooks/useWorkspaceWatcher";
 import "@/styles/views/App.css";
 
 const App = () => {
-  const usage = useUsage();
   const workspaceTree = useWorkspaceTree();
   const documents = useDocuments();
   useEditorCommands(documents);
   useExplorerCommands(workspaceTree);
   useFileOperations(workspaceTree, documents);
   useWorkspaceWatcher(workspaceTree, documents);
+  const gitBranch = useGitBranch(workspaceTree.rootPath);
   const workspaceActions = useWorkspaceActions(workspaceTree, documents);
   const launch = useLaunchPath(workspaceActions.openPath);
   const session = useWorkspaceSession({
@@ -80,24 +81,14 @@ const App = () => {
           />
         }
         editor={<EditorSurface state={documents} />}
-        agents={<AgentDashboard />}
-        terminal={<TerminalPanel />}
+        terminal={<TerminalPanel cwd={workspaceTree.rootPath} />}
       />
 
-      <footer className="App_status">
-        <span>{t.app.editingMilestone}</span>
-        <span>{workspaceTree.rootName ?? t.explorer.noWorkspace}</span>
-        <button
-          type="button"
-          className="App_statusButton"
-          onClick={() => {
-            usage.track(USAGE_EVENT.PRIVACY.OPEN_CHOICES);
-            usage.openNotice();
-          }}
-        >
-          {t.privacy.status(usage.analytics)}
-        </button>
-      </footer>
+      <StatusBar
+        rootName={workspaceTree.rootName}
+        branch={gitBranch}
+        editor={documents.activeDocument ? documents.editorStatus : null}
+      />
 
       <DataChoices />
     </div>

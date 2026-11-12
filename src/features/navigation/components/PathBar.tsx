@@ -1,7 +1,13 @@
 import { Fragment, type KeyboardEvent } from "react";
-import { IconButton } from "@sito/ui";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+
+import { Tooltip } from "@sito/ui";
 
 import { t } from "@/lang";
+import { SurfaceButton } from "@/shared/components";
 
 import type { PathBarProps, QuickOpenState } from "../types";
 import { breadcrumbSegments } from "../utils/breadcrumb";
@@ -12,19 +18,6 @@ import {
 } from "./QuickOpenResults";
 
 import "@/styles/components/PathBar.css";
-
-const Chevron = ({ direction }: { direction: "left" | "right" }) => (
-  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-    <path
-      d={direction === "left" ? "M10 3 5 8l5 5" : "M6 3l5 5-5 5"}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
 
 const QuickOpenInput = ({ state }: { state: QuickOpenState }) => {
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -90,23 +83,21 @@ export const PathBar = ({
   return (
     <nav className="PathBar" aria-label={t.navigation.label}>
       <div className="PathBar_history">
-        <IconButton
-          size="sm"
-          variant="text"
-          className="PathBar_historyButton"
-          aria-label={t.navigation.back}
-          title={`${t.navigation.back} (⌃-)`}
-          icon={<Chevron direction="left" />}
+        <SurfaceButton
+          size="md"
+          icon={faChevronLeft}
+          label={t.navigation.back}
+          hotkey="⌃-"
+          tooltipSide="bottom"
           disabled={!history.canGoBack}
           onClick={history.back}
         />
-        <IconButton
-          size="sm"
-          variant="text"
-          className="PathBar_historyButton"
-          aria-label={t.navigation.forward}
-          title={`${t.navigation.forward} (⌃⇧-)`}
-          icon={<Chevron direction="right" />}
+        <SurfaceButton
+          size="md"
+          icon={faChevronRight}
+          label={t.navigation.forward}
+          hotkey="⌃⇧-"
+          tooltipSide="bottom"
           disabled={!history.canGoForward}
           onClick={history.forward}
         />
@@ -125,48 +116,54 @@ export const PathBar = ({
         ) : quickOpen.open ? (
           <QuickOpenInput state={quickOpen} />
         ) : (
-          <div
-            className="PathBar_breadcrumb"
-            role="button"
-            tabIndex={0}
-            title={t.navigation.quickOpenHint}
-            onClick={() => quickOpen.show()}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                quickOpen.show();
-              }
-            }}
+          <Tooltip
+            className="PathBar_tooltip"
+            label={t.navigation.quickOpenHint}
+            hotkey={t.navigation.quickOpenShortcut}
+            side="bottom"
           >
-            {segments.map((segment, index) => (
-              <Fragment key={segment.relativePath || "root"}>
-                {index > 0 && (
-                  <span className="PathBar_separator" aria-hidden="true">
-                    ›
-                  </span>
-                )}
-                <button
-                  type="button"
-                  className={
-                    segment.isFile
-                      ? "PathBar_segment current"
-                      : "PathBar_segment"
-                  }
-                  tabIndex={-1}
-                  onClick={(event) => {
-                    // Folders open the search scoped to that folder.
-                    if (segment.isFile) return;
-                    event.stopPropagation();
-                    quickOpen.show(
-                      segment.relativePath ? `${segment.relativePath}/` : "",
-                    );
-                  }}
-                >
-                  {segment.name}
-                </button>
-              </Fragment>
-            ))}
-          </div>
+            <div
+              className="PathBar_breadcrumb"
+              role="button"
+              tabIndex={0}
+              onClick={() => quickOpen.show()}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  quickOpen.show();
+                }
+              }}
+            >
+              {segments.map((segment, index) => (
+                <Fragment key={segment.relativePath || "root"}>
+                  {index > 0 && (
+                    <span className="PathBar_separator" aria-hidden="true">
+                      ›
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    className={
+                      segment.isFile
+                        ? "PathBar_segment current"
+                        : "PathBar_segment"
+                    }
+                    tabIndex={-1}
+                    onClick={(event) => {
+                      // Folders open the search scoped to that folder.
+                      if (segment.isFile) return;
+                      event.stopPropagation();
+                      quickOpen.show(
+                        segment.relativePath ? `${segment.relativePath}/` : "",
+                      );
+                    }}
+                  >
+                    {segment.name}
+                  </button>
+                </Fragment>
+              ))}
+            </div>
+          </Tooltip>
         )}
       </div>
     </nav>

@@ -7,11 +7,11 @@ import {
   dropIndex,
   type TabDragState,
   type TabGeom,
-} from "../utils/tabDrag";
+} from "./tabDrag";
 
 /**
  * Horizontal drag-to-reorder for the tab strip, same behavior as
- * sito-file-browser's TabBar. Tabs need the `EditorSurface_tab` class.
+ * sito-file-browser's TabBar. Tabs need the `TabStrip_tab` class.
  */
 export const useTabDrag = (
   paths: readonly string[],
@@ -33,7 +33,7 @@ export const useTabDrag = (
         // Grabbing a tab activates it, like a browser.
         onSelect(paths[tabIndex]);
         const items = Array.from(
-          listRef.current?.querySelectorAll<HTMLElement>(".EditorSurface_tab") ??
+          listRef.current?.querySelectorAll<HTMLElement>(".TabStrip_tab") ??
             [],
         );
         geomRef.current =

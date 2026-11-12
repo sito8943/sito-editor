@@ -15,27 +15,19 @@
   border-bottom: var(--size-border) solid var(--color-border);
 }
 
-.Explorer_header div {
+.Explorer_title {
   min-width: 0;
-}
-
-.Explorer_header h2 {
   overflow: hidden;
-  margin: var(--space-1) var(--space-0) var(--space-0);
+  margin: 0;
   font-size: var(--font-size-md);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.Explorer_eyebrow {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.Explorer_refresh {
+.Explorer_actions {
+  display: flex;
   flex: 0 0 auto;
+  gap: var(--space-1);
 }
 
 .Explorer_tree {
@@ -52,7 +44,8 @@
 
 .Explorer_row {
   display: grid;
-  grid-template-columns: var(--size-tree-indent) minmax(0, 1fr) auto;
+  grid-template-columns: var(--size-tree-indent) auto minmax(0, 1fr) auto;
+  column-gap: var(--space-1);
   align-items: center;
   width: 100%;
   height: var(--size-tree-row);
@@ -74,13 +67,13 @@
 .Explorer_row:hover,
 .Explorer_row:focus-visible {
   outline: none;
-  background: var(--color-editor-active-line);
+  background: var(--color-row-hover);
 }
 
 .Explorer_row.active {
   box-shadow: inset 2px 0 var(--color-accent);
   color: var(--color-text);
-  background: var(--color-editor-active-line);
+  background: var(--color-row-active);
 }
 
 .Explorer_chevron {
@@ -173,4 +166,14 @@
 .is-entry-dragging.is-entry-no-drop,
 .is-entry-dragging.is-entry-no-drop * {
   cursor: no-drop !important;
+}
+
+.Explorer_nameTooltip {
+  display: flex;
+  min-width: 0;
+}
+
+.Explorer_nameTooltip .Explorer_nameInput {
+  flex: 1 1 auto;
+  width: 100%;
 }

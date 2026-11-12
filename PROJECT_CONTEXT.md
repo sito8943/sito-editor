@@ -8,7 +8,7 @@ Sito Editor is a lightweight agentic programming workbench:
 
 - a lazy workspace file tree;
 - a small text/code editor;
-- embedded native terminal surfaces powered by `libghostty`;
+- an embedded terminal: a native PTY host rendered with xterm.js today, `libghostty` later;
 - structured agent sessions and activity;
 - resizable panes and document/terminal tabs.
 
@@ -62,8 +62,12 @@ atomic replacement when their content hash still matches the opened snapshot. Wr
 explicit non-default capability. File events, creation/deletion and workspace-root scopes are
 separate milestones.
 
-Terminal integration is not implemented by the workspace plugin. `libghostty`, PTY lifecycle,
-focus/input, renderer hosting and terminal processes belong to a dedicated native terminal plugin.
+Terminal integration is not implemented by the workspace plugin. The PTY host lives in
+`src-tauri/src/terminal.rs` (`portable-pty`, the user's login shell) behind a narrow contract:
+`terminal_spawn` streams output/exit events over a channel; `terminal_write`, `terminal_resize`
+and `terminal_kill` drive the session. The webview renders it with xterm.js
+(`src/features/terminal`). That renderer is interim: `libghostty` can replace it behind the same
+contract, and the host can move to a dedicated terminal plugin.
 
 Agent state must use a structured adapter API for status, permissions, file changes and lifecycle.
 A visible terminal can be attached to the same run, but the dashboard must not infer state by
@@ -75,7 +79,7 @@ scraping terminal output.
 - `src/features/explorer`: workspace selection and lazy file tree.
 - `src/features/editor`: open documents, tabs and CodeMirror host.
 - `src/features/agents`: agent-session dashboard.
-- `src/features/terminal`: native terminal surface host/chrome.
+- `src/features/terminal`: terminal pane chrome and the xterm.js renderer.
 - `src/features/workbench`: pane composition and layout.
 - `src/shared`: cross-feature services and genuinely generic helpers.
 - `src/lang`: user-facing copy.
@@ -88,7 +92,7 @@ scraping terminal output.
 | Open folder, tree nodes, refresh | `src/features/explorer` |
 | Open document, tabs, CodeMirror | `src/features/editor` |
 | Agent runs/status/permissions | `src/features/agents` |
-| Ghostty, PTY, terminal focus | `src/features/terminal` and the future terminal plugin |
+| PTY, shell, terminal rendering/focus | `src-tauri/src/terminal.rs`, `src/features/terminal` |
 | Pane layout and resizing | `src/features/workbench` |
 | Native filesystem contract | `tauri-plugin-sito-workspace` sibling repository |
 | Shared primitive | `@sito/ui` first |
@@ -97,6 +101,6 @@ scraping terminal output.
 
 - Markdown rendering or preview.
 - LSP, debugger, extension marketplace or Git workbench.
-- Fake terminal emulation in React.
+- Hand-rolled terminal emulation (use xterm.js now, `libghostty` later).
 - Parsing agent status from terminal presentation.
 - Writing files before version conflicts and atomic replacement are implemented.

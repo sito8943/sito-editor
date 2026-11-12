@@ -14,6 +14,16 @@
   min-height: 0;
 }
 
+/* No agents pane yet: the editor and terminal take its width. */
+.Workbench--noAgents {
+  grid-template-columns:
+    var(--workbench-explorer-width, var(--size-explorer))
+    var(--size-resizer)
+    minmax(0, 1fr)
+    0
+    0;
+}
+
 .Workbench_explorer {
   grid-column: 1;
   grid-row: 1 / 4;

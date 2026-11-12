@@ -18,6 +18,7 @@ export const CONSENT_VERSION = 1;
 export const USAGE_PREFIX = {
   HOTKEY: "hotkey",
   EXPLORER_MENU: "explorer.menu",
+  EXPLORER_TOOLBAR: "explorer.toolbar",
 } as const;
 
 /**
@@ -83,6 +84,14 @@ export const USAGE_EVENT = {
     EXTERNAL_RELOAD: "disk.external_reload",
     EXTERNAL_CONFLICT: "disk.external_conflict",
     EXTERNAL_DELETE: "disk.external_delete",
+  },
+  TERMINAL: {
+    // A shell session started (first open, new workspace, +).
+    OPEN: "terminal.open",
+    NEW_SESSION: "terminal.new_session",
+    CLOSE_SESSION: "terminal.close_session",
+    SWITCH_SESSION: "terminal.switch_session",
+    REORDER_SESSION: "terminal.reorder_session",
   },
   PRIVACY: {
     OPEN_CHOICES: "privacy.open_choices",

@@ -39,9 +39,11 @@
 
 ## 6. Terminal and agents
 
-- Keep `libghostty` and PTY code out of the workspace plugin.
-- React owns terminal layout/chrome, not terminal emulation.
-- The native terminal host owns renderer, process, input and lifecycle.
+- Keep PTY (and future `libghostty`) code out of the workspace plugin.
+- The native terminal host (`src-tauri/src/terminal.rs`) owns the process, the PTY and its
+  lifecycle; the webview only renders and forwards input and size through its contract.
+- Rendering uses xterm.js for now; `libghostty` may replace it behind the same contract. Never
+  write terminal emulation by hand.
 - Agent integrations implement a typed adapter with structured events.
 - Do not infer agent status by scraping terminal rendering.
 

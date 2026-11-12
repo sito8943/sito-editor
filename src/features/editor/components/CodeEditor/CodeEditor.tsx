@@ -7,7 +7,7 @@ import { gotoLine, searchPanelOpen } from "@codemirror/search";
 import { USAGE_EVENT, useUsage } from "@/shared/usage";
 
 import { EDITOR_EXTENSIONS } from "./constants";
-import { loadLanguage } from "./language";
+import { describeLanguage, loadLanguage } from "./language";
 import type { CodeEditorProps } from "../../types";
 
 import "@/styles/components/CodeEditor.css";
@@ -19,6 +19,7 @@ export const CodeEditor = ({
   readonly,
   reveal,
   onRevealed,
+  onStatus,
   onChange,
 }: CodeEditorProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -31,12 +32,24 @@ export const CodeEditor = ({
 
   onChangeRef.current = onChange;
   onRevealedRef.current = onRevealed;
+  const onStatusRef = useRef(onStatus);
+  onStatusRef.current = onStatus;
 
   useEffect(() => {
     if (!hostRef.current) return;
 
     const languageCompartment = new Compartment();
     let disposed = false;
+    const language = describeLanguage(path)?.name ?? null;
+    const reportStatus = (view: EditorView) => {
+      const head = view.state.selection.main.head;
+      const line = view.state.doc.lineAt(head);
+      onStatusRef.current?.({
+        line: line.number,
+        column: head - line.from + 1,
+        language,
+      });
+    };
 
     const view = new EditorView({
       doc: value,
@@ -67,12 +80,16 @@ export const CodeEditor = ({
           if (update.docChanged) {
             onChangeRef.current(update.state.doc.toString());
           }
+          if (update.selectionSet || update.docChanged) {
+            reportStatus(update.view);
+          }
         }),
         EditorView.contentAttributes.of({ "aria-label": label }),
       ],
       parent: hostRef.current,
     });
     viewRef.current = view;
+    reportStatus(view);
 
     void loadLanguage(path).then((language) => {
       if (disposed || !language) return;

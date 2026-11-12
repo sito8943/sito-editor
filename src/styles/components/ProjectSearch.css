@@ -64,27 +64,6 @@
 
 .ProjectSearch_toggle {
   flex: 0 0 auto;
-  min-width: 1.5rem;
-  height: 1.375rem;
-  padding: 0 var(--space-1);
-  border: var(--size-border) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-panel-raised);
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  cursor: pointer;
-}
-
-.ProjectSearch_toggle:hover {
-  border-color: var(--color-border-strong);
-  color: var(--color-text);
-}
-
-.ProjectSearch_toggle[aria-pressed="true"] {
-  border-color: var(--color-accent);
-  background: rgb(122 162 247 / 0.15);
-  color: var(--color-accent);
 }
 
 .ProjectSearch_dropdown {

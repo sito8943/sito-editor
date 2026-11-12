@@ -4,7 +4,6 @@ export const en = {
     openFolder: "Open folder",
     openFile: "Open file",
     openFileTitle: "Open a file",
-    editingMilestone: "Safe workspace editing",
   },
   explorer: {
     title: "Explorer",
@@ -48,7 +47,7 @@ export const en = {
     editorLabel: "Text editor",
     save: "Save",
     saving: "Saving…",
-    saveShortcut: "⌘/Ctrl S",
+    saveShortcut: "⌘S",
     unsaved: "Unsaved changes",
     discardChanges: "Discard the unsaved changes in this document?",
     discardWorkspaceChanges:
@@ -68,7 +67,8 @@ export const en = {
     forward: "Go forward",
     noWorkspace: "Open a folder to start",
     openShortcuts: "⌘O folder · ⌘⇧O file",
-    quickOpenHint: "Search files (⌘P)",
+    quickOpenHint: "Go to file",
+    quickOpenShortcut: "⌘P",
   },
   quickOpen: {
     title: "Go to file",
@@ -91,6 +91,11 @@ export const en = {
         files === 1 ? "file" : "files"
       }`,
   },
+  status: {
+    branch: "Git branch",
+    position: (line: number, column: number) => `Ln ${line}, Col ${column}`,
+    plainText: "Plain Text",
+  },
   privacy: {
     notice: {
       title: "Help improve Sito Editor",
@@ -109,8 +114,12 @@ export const en = {
   },
   terminal: {
     title: "Terminal",
-    pendingTitle: "Native terminal host",
-    pendingBody:
-      "This pane is reserved for the libghostty surface and PTY lifecycle.",
+    focus: "Focus terminal",
+    newSession: "New terminal",
+    closeSession: "Kill terminal",
+    exited: (code: number | null) =>
+      code === null
+        ? "[Process ended]"
+        : `[Process exited with code ${code}]`,
   },
 } as const;

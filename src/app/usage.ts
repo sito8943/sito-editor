@@ -1,4 +1,7 @@
-import { EXPLORER_MENU_ACTION } from "@/features/explorer";
+import {
+  EXPLORER_MENU_ACTION,
+  EXPLORER_TOOLBAR_ACTION,
+} from "@/features/explorer";
 import { USAGE_EVENT, USAGE_PREFIX, usageFeature } from "@/shared/usage";
 
 import { APP_KEYMAP } from "./commands";
@@ -14,6 +17,9 @@ export const USAGE_FEATURES: readonly string[] = [
   ),
   ...Object.values(EXPLORER_MENU_ACTION).map((action) =>
     usageFeature(USAGE_PREFIX.EXPLORER_MENU, action),
+  ),
+  ...Object.values(EXPLORER_TOOLBAR_ACTION).map((action) =>
+    usageFeature(USAGE_PREFIX.EXPLORER_TOOLBAR, action),
   ),
   ...Object.values(USAGE_EVENT).flatMap((group) => Object.values(group)),
 ];

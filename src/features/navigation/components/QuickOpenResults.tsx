@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 import { t } from "@/lang";
+import { FileIcon } from "@/shared/components";
 
 import type { FuzzyMatch, QuickOpenState } from "../types";
 
@@ -45,6 +46,7 @@ const ResultLabel = ({ match }: { match: FuzzyMatch }) => {
 
   return (
     <>
+      <FileIcon name={name} />
       <span className="PathBar_resultName">
         {highlight(name, match.indices, nameStart)}
       </span>

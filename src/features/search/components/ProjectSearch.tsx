@@ -1,6 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
 
 import { t } from "@/lang";
+import { FileIcon, SurfaceButton } from "@/shared/components";
 import type { TextSearchMatch } from "@/shared/services/workspace";
 
 import type { ProjectSearchProps } from "../types";
@@ -53,18 +54,16 @@ const Toggle = ({
   pressed: boolean;
   onToggle: () => void;
 }) => (
-  <button
-    type="button"
+  <SurfaceButton
+    size="xs"
     className="ProjectSearch_toggle"
-    aria-label={label}
-    aria-pressed={pressed}
-    title={label}
+    icon={text}
+    label={label}
+    pressed={pressed}
     // Keep focus (and the dropdown) in the input.
     onMouseDown={(event) => event.preventDefault()}
     onClick={onToggle}
-  >
-    {text}
-  </button>
+  />
 );
 
 export const ProjectSearch = ({ state }: ProjectSearchProps) => {
@@ -194,6 +193,7 @@ export const ProjectSearch = ({ state }: ProjectSearchProps) => {
                     aria-label={group.path}
                   >
                     <div className="ProjectSearch_file">
+                      <FileIcon name={group.path.slice(nameStart)} />
                       <span className="ProjectSearch_fileName">
                         {group.path.slice(nameStart)}
                       </span>

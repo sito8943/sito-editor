@@ -6,7 +6,8 @@ name: Build macOS
 # (the .dmgs are kept as run artifacts). Never runs on pushes or PRs.
 #
 # The editor links sibling sources (see package.json and src-tauri/Cargo.toml):
-#   ../../lib/ui, ../../lib/sito-commands, ../tauri-plugin-sito-workspace
+#   ../../lib/ui, ../../lib/sito-commands, ../../lib/sito-file-icons,
+#   ../tauri-plugin-sito-workspace
 # so the job recreates that layout inside the workspace and builds them first.
 on:
   release:
@@ -60,6 +61,12 @@ jobs:
           repository: sito8943/sito-commands
           path: lib/sito-commands
 
+      - name: Checkout @sito/file-icons
+        uses: actions/checkout@v4
+        with:
+          repository: sito8943/sito-file-icons
+          path: lib/sito-file-icons
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -82,7 +89,7 @@ jobs:
 
       - name: Build linked libraries
         run: |
-          for dir in lib/ui lib/sito-commands tauri-utilities/tauri-plugin-sito-workspace; do
+          for dir in lib/ui lib/sito-commands lib/sito-file-icons tauri-utilities/tauri-plugin-sito-workspace; do
             echo "::group::$dir"
             (cd "$dir" && pnpm install --frozen-lockfile && pnpm build)
             echo "::endgroup::"

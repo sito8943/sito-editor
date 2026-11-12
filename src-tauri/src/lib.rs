@@ -1,5 +1,8 @@
 use std::path::Path;
 
+mod git;
+mod terminal;
+
 use tauri::{Emitter, Manager};
 
 /// Event emitted when another `sito-editor <path>` launch is forwarded to this instance.
@@ -51,7 +54,15 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_sito_workspace::init())
         .manage(LaunchPath(launch_path))
-        .invoke_handler(tauri::generate_handler![get_launch_path])
+        .manage(terminal::TerminalRegistry::default())
+        .invoke_handler(tauri::generate_handler![
+            get_launch_path,
+            git::git_branch,
+            terminal::terminal_spawn,
+            terminal::terminal_write,
+            terminal::terminal_resize,
+            terminal::terminal_kill,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

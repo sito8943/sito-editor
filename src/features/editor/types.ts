@@ -25,6 +25,15 @@ export type RevealTarget = {
   length: number;
 };
 
+/** What the status bar shows about the active editor. */
+export type EditorStatus = {
+  /** 1-based cursor line and column. */
+  line: number;
+  column: number;
+  /** Language name, or null for plain text. */
+  language: string | null;
+};
+
 export type DocumentsState = {
   documents: OpenDocument[];
   hasDirtyDocuments: boolean;
@@ -34,6 +43,9 @@ export type DocumentsState = {
   loadingPath: string | null;
   error: string | null;
   revealTarget: RevealTarget | null;
+  /** Cursor and language of the active editor; null without one. */
+  editorStatus: EditorStatus | null;
+  setEditorStatus: (status: EditorStatus | null) => void;
   openDocument: (path: string) => Promise<void>;
   /** Opens `path` and selects `length` units at `line`/`column`. */
   openDocumentAt: (
@@ -78,5 +90,7 @@ export type CodeEditorProps = {
   /** Selected and scrolled into view once, then `onRevealed` is called. */
   reveal?: Omit<RevealTarget, "path"> | null;
   onRevealed?: () => void;
+  /** Cursor moves and the detected language. */
+  onStatus?: (status: EditorStatus) => void;
   onChange: (value: string) => void;
 };

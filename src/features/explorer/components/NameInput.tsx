@@ -1,6 +1,8 @@
 import { useRef, useState, type KeyboardEvent } from "react";
+import { Tooltip } from "@sito/ui";
 
 import { t } from "@/lang";
+import { FileIcon } from "@/shared/components";
 
 import type { NameEditMode } from "../types";
 
@@ -56,29 +58,36 @@ export const NameInput = ({
       <span className="Explorer_chevron" aria-hidden="true">
         {mode === "folder" ? "▸" : ""}
       </span>
-      <input
-        className={invalid ? "Explorer_nameInput invalid" : "Explorer_nameInput"}
-        type="text"
-        value={name}
-        aria-label={t.explorer.nameLabel}
-        aria-invalid={invalid}
-        title={invalid ? t.explorer.invalidName : undefined}
-        autoFocus
-        spellCheck={false}
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        onFocus={(event) => {
-          const dot = initialName.lastIndexOf(".");
-          event.currentTarget.setSelectionRange(
-            0,
-            mode === "rename" && dot > 0 ? dot : initialName.length,
-          );
-        }}
-        onChange={(event) => setName(event.target.value)}
-        onKeyDown={onKeyDown}
-        onBlur={() => finish(true)}
-      />
+      <FileIcon name={name} directory={mode === "folder"} />
+      <Tooltip
+        className="Explorer_nameTooltip"
+        label={invalid ? t.explorer.invalidName : t.explorer.nameLabel}
+        side="bottom"
+        align="start"
+      >
+        <input
+          className={invalid ? "Explorer_nameInput invalid" : "Explorer_nameInput"}
+          type="text"
+          value={name}
+          aria-label={t.explorer.nameLabel}
+          aria-invalid={invalid}
+          autoFocus
+          spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          onFocus={(event) => {
+            const dot = initialName.lastIndexOf(".");
+            event.currentTarget.setSelectionRange(
+              0,
+              mode === "rename" && dot > 0 ? dot : initialName.length,
+            );
+          }}
+          onChange={(event) => setName(event.target.value)}
+          onKeyDown={onKeyDown}
+          onBlur={() => finish(true)}
+        />
+      </Tooltip>
     </div>
   );
 };

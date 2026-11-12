@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Button } from "@sito/ui";
+import { Button, Tooltip } from "@sito/ui";
+import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import {
   useCommandRegistry,
   useCommandState,
@@ -10,11 +10,11 @@ import {
   type AppCommandContext,
 } from "@/app/commands";
 import { t } from "@/lang";
+import { FileIcon, SurfaceButton, TabStrip } from "@/shared/components";
 import { USAGE_EVENT, useUsage } from "@/shared/usage";
 import { pathName } from "@/shared/utils";
 
 import { CodeEditor } from "./CodeEditor/CodeEditor";
-import { useTabDrag } from "../hooks/useTabDrag";
 import type { EditorSurfaceProps } from "../types";
 
 import "@/styles/components/EditorSurface.css";
@@ -30,105 +30,53 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
     APP_COMMAND.SAVE_DOCUMENT,
     saveContext,
   );
-  const tabDrag = useTabDrag(
-    state.documents.map((document) => document.path),
-    state.selectDocument,
-    state.moveDocument,
-  );
-
-  // Keep the active tab visible when it changes (Ctrl+Tab, quick open…).
-  useEffect(() => {
-    tabDrag.listRef.current
-      ?.querySelector<HTMLElement>(".EditorSurface_tab.active")
-      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
-  }, [state.activePath, tabDrag.listRef]);
-
   const closeTab = (path: string) =>
     void commands.execute(APP_COMMAND.CLOSE_DOCUMENT, { path });
 
   return (
     <section className="EditorSurface" aria-label={t.editor.title}>
       <header className="EditorSurface_tabs">
-        <div
-          className={
-            tabDrag.snapping
-              ? "EditorSurface_tabList snapping"
-              : "EditorSurface_tabList"
+        <TabStrip
+          ariaLabel={t.editor.title}
+          activeId={state.activePath}
+          items={state.documents.map((document) => ({
+            id: document.path,
+            label: pathName(document.path),
+            icon: <FileIcon name={pathName(document.path)} />,
+            tooltip: document.path,
+            struck: document.missing,
+            closeDisabled: document.saving,
+            decoration: document.dirty ? (
+              <Tooltip label={t.editor.unsaved} side="bottom">
+                <span
+                  className="EditorSurface_dirty"
+                  aria-label={t.editor.unsaved}
+                >
+                  ●
+                </span>
+              </Tooltip>
+            ) : undefined,
+          }))}
+          closeLabel={(item) => `${t.editor.close}: ${item.label}`}
+          onSelect={(path) => {
+            if (path !== state.activePath) {
+              track(USAGE_EVENT.EDITOR.SWITCH_TAB);
+            }
+            state.selectDocument(path);
+          }}
+          onClose={closeTab}
+          onMiddleClose={() =>
+            track(USAGE_EVENT.EDITOR.CLOSE_TAB_MIDDLE_CLICK)
           }
-          role="tablist"
-          ref={tabDrag.listRef}
-        >
-          {state.documents.map((document, index) => (
-            <div
-              className={[
-                "EditorSurface_tab",
-                document.path === state.activePath && "active",
-                tabDrag.draggingIndex === index && "dragging",
-                document.missing && "missing",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              key={document.path}
-              role="tab"
-              aria-selected={document.path === state.activePath}
-              style={
-                tabDrag.translateFor(index)
-                  ? {
-                      transform: `translateX(${tabDrag.translateFor(index)}px)`,
-                    }
-                  : undefined
-              }
-              // Middle click closes, like a browser tab.
-              onMouseDown={(event) => {
-                if (event.button === 1) event.preventDefault();
-              }}
-              onAuxClick={(event) => {
-                if (event.button === 1 && !document.saving) {
-                  track(USAGE_EVENT.EDITOR.CLOSE_TAB_MIDDLE_CLICK);
-                  closeTab(document.path);
-                }
-              }}
-            >
-              <button
-                className="EditorSurface_tabSelect"
-                // Only the label drags: use-gesture swallows clicks it didn't
-                // see start as a tap, which would break the close button.
-                {...tabDrag.bind(index)}
-                type="button"
-                onClick={() => {
-                  if (document.path !== state.activePath) {
-                    track(USAGE_EVENT.EDITOR.SWITCH_TAB);
-                  }
-                  state.selectDocument(document.path);
-                }}
-              >
-                {pathName(document.path)}
-                {document.dirty && (
-                  <span
-                    className="EditorSurface_dirty"
-                    aria-label={t.editor.unsaved}
-                    title={t.editor.unsaved}
-                  >
-                    ●
-                  </span>
-                )}
-              </button>
-              <button
-                className="EditorSurface_tabClose"
-                type="button"
-                disabled={document.saving}
-                aria-label={`${t.editor.close}: ${pathName(document.path)}`}
-                onClick={() => closeTab(document.path)}
-              >
-                ×
-              </button>
-            </div>
-          ))}
-        </div>
+          onMove={state.moveDocument}
+        />
         <div className="EditorSurface_actions">
-          <span>{t.editor.saveShortcut}</span>
-          <Button
-            size="sm"
+          <SurfaceButton
+            icon={faFloppyDisk}
+            label={t.editor.save}
+            hotkey={t.editor.saveShortcut}
+            tooltipSide="bottom"
+            loading={saveState.running || activeDocument?.saving}
             disabled={!saveState.enabled}
             onClick={() => {
               void commands.execute(
@@ -136,11 +84,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 saveContext,
               );
             }}
-          >
-            {saveState.running || activeDocument?.saving
-              ? t.editor.saving
-              : t.editor.save}
-          </Button>
+          />
         </div>
       </header>
 
@@ -167,6 +111,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 : null
             }
             onRevealed={state.clearReveal}
+            onStatus={state.setEditorStatus}
             onChange={(draft) =>
               state.updateDocument(activeDocument.path, draft)
             }

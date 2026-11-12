@@ -4,6 +4,7 @@ export { useEditorCommands } from "./hooks/useEditorCommands";
 export type {
   CodeEditorProps,
   DocumentsState,
+  EditorStatus,
   EditorSurfaceProps,
   OpenDocument,
 } from "./types";

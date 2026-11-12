@@ -1,3 +1,11 @@
+/** Explorer header buttons, counted as `explorer.toolbar.<id>`. */
+export const EXPLORER_TOOLBAR_ACTION = {
+  NEW_FILE: "new_file",
+  NEW_FOLDER: "new_folder",
+  REFRESH: "refresh",
+  COLLAPSE_ALL: "collapse_all",
+} as const;
+
 /** Explorer context-menu items, counted as `explorer.menu.<id>`. */
 export const EXPLORER_MENU_ACTION = {
   OPEN: "open",

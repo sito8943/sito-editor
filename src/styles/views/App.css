@@ -37,36 +37,3 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.App_status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-0) var(--space-3);
-  border-top: var(--size-border) solid var(--color-border);
-  color: var(--color-text-muted);
-  background: var(--color-panel-raised);
-  font-size: var(--font-size-xs);
-}
-
-.App_status span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.App_statusButton {
-  flex: 0 0 auto;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.App_statusButton:hover {
-  color: var(--color-text);
-  text-decoration: underline;
-}
