@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.0]
+
+### Added
+
+- Built-in terminal: your login shell opens in the workspace folder, with colors, full-screen programs (vim, less, htop), copy/paste and resizing. Ctrl+` focuses it (`48740b7`, `34bbaee`)
+- Several terminals at once, one tab each: drag to reorder, close with × or a middle click, + for a new one and the trash to kill the current one. Switching keeps each shell and its scrollback (`cb64598`)
+- Status bar with the Git branch, cursor line and column, the file's language and the usage-sharing choice (`c7a026d`, `38e543d`)
+- File and folder icons in the Explorer, tabs, Go to file and search results (`e66dc65`, `8ea6362`, `fcfe94a`)
+- Explorer toolbar with New File, New Folder, Refresh and Collapse, and shortcuts: ⌘N new file, ⌘⇧N new folder, F2 rename, ⌘⌫ move to Trash, shown in the right-click menu (`8ea6362`)
+
+### Changed
+
+- Every icon button shares one look and shows a dark tooltip with its shortcut (`e66dc65`, `fcfe94a`)
+- Move to Trash is shown in red in the right-click menu (`8ea6362`)
+- The Agents pane is hidden until there is something to show, so the editor gets the space (`bb80729`)
+- The Explorer drops its "Explorer" heading; hovering a file is a shade darker than the open one (`8ea6362`)
+
 ## [0.3.1]
 
 ### Added
