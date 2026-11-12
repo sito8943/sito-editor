@@ -42,8 +42,9 @@
 - Keep PTY (and future `libghostty`) code out of the workspace plugin.
 - The native terminal host (`src-tauri/src/terminal.rs`) owns the process, the PTY and its
   lifecycle; the webview only renders and forwards input and size through its contract.
-- Rendering uses xterm.js for now; `libghostty` may replace it behind the same contract. Never
-  write terminal emulation by hand.
+- Rendering goes through `src/features/terminal/engines.ts`: xterm.js (default) or ghostty-web
+  (Ghostty's VT engine as WASM, beta), both behind the same contract. Never write terminal
+  emulation by hand; fixes on top of an engine stay in its adapter (or a `pnpm patch`).
 - Agent integrations implement a typed adapter with structured events.
 - Do not infer agent status by scraping terminal rendering.
 

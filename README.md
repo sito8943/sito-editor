@@ -7,7 +7,7 @@ The current scaffold establishes four independent surfaces:
 - workspace Explorer;
 - text/code editor;
 - structured agent dashboard;
-- native terminal host reserved for `libghostty`.
+- native terminal host (PTY) rendered with xterm.js or ghostty-web (beta).
 
 Filesystem access comes from the sibling `tauri-plugin-sito-workspace` project. Existing UTF-8
 documents can be edited and saved through atomic replacement with content-version conflict

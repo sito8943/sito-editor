@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  ghostty-web@0.4.0:
+    hash: ef717b4201f76d8c356a200581c530ad97e34109b41c2b5031acc5a12d382fea
+    path: patches/ghostty-web@0.4.0.patch
+
 importers:
 
   .:
@@ -71,6 +76,9 @@ importers:
       codemirror:
         specifier: ^6.0.2
         version: 6.0.2
+      ghostty-web:
+        specifier: 0.4.0
+        version: 0.4.0(patch_hash=ef717b4201f76d8c356a200581c530ad97e34109b41c2b5031acc5a12d382fea)
       react:
         specifier: ^19.1.0
         version: 19.2.8
@@ -887,6 +895,9 @@ packages:
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
+
+  ghostty-web@0.4.0:
+    resolution: {integrity: sha512-0puDBik2qapbD/QQBW9o5ZHfXnZBqZWx/ctBiVtKZ6ZLds4NYb+wZuw1cRLXZk9zYovIQ908z3rvFhexAvc5Hg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -1888,6 +1899,8 @@ snapshots:
     optional: true
 
   gensync@1.0.0-beta.2: {}
+
+  ghostty-web@0.4.0(patch_hash=ef717b4201f76d8c356a200581c530ad97e34109b41c2b5031acc5a12d382fea): {}
 
   js-tokens@4.0.0: {}
 

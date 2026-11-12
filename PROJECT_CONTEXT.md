@@ -8,7 +8,7 @@ Sito Editor is a lightweight agentic programming workbench:
 
 - a lazy workspace file tree;
 - a small text/code editor;
-- an embedded terminal: a native PTY host rendered with xterm.js today, `libghostty` later;
+- an embedded terminal: a native PTY host rendered with xterm.js or, in beta, ghostty-web;
 - structured agent sessions and activity;
 - resizable panes and document/terminal tabs.
 
@@ -65,9 +65,12 @@ separate milestones.
 Terminal integration is not implemented by the workspace plugin. The PTY host lives in
 `src-tauri/src/terminal.rs` (`portable-pty`, the user's login shell) behind a narrow contract:
 `terminal_spawn` streams output/exit events over a channel; `terminal_write`, `terminal_resize`
-and `terminal_kill` drive the session. The webview renders it with xterm.js
-(`src/features/terminal`). That renderer is interim: `libghostty` can replace it behind the same
-contract, and the host can move to a dedicated terminal plugin.
+and `terminal_kill` drive the session. The webview renders it through `features/terminal/engines.ts`
+with xterm.js (default) or ghostty-web (Ghostty's libghostty-vt as WASM, "Terminal engine" in the
+status-bar menu, beta). ghostty-web needs `'wasm-unsafe-eval'` and `data:` in the CSP, carries a
+local `pnpm patch` (selection on the cursor row) and gets Option-as-Meta, Cmd+C and Ghostty-style
+word/line selection from the adapter. Native libghostty (Metal surface) is not used: its embedding
+API is not stable. The host can move to a dedicated terminal plugin.
 
 Git is read-only and lives in `src-tauri/src/git.rs`: `git_branch` reads `.git/HEAD` directly;
 `git_status` (changed files + HEAD commit) and `git_head_file` (a file at HEAD) run the system
@@ -86,7 +89,7 @@ scraping terminal output.
 - `src/features/explorer`: workspace selection and lazy file tree.
 - `src/features/editor`: open documents, tabs and CodeMirror host.
 - `src/features/agents`: agent-session dashboard.
-- `src/features/terminal`: terminal pane chrome and the xterm.js renderer.
+- `src/features/terminal`: terminal pane chrome and the renderer adapters (xterm.js, ghostty-web).
 - `src/features/workbench`: pane composition and layout.
 - `src/shared`: cross-feature services and genuinely generic helpers.
 - `src/lang`: user-facing copy.
@@ -108,6 +111,6 @@ scraping terminal output.
 
 - Markdown rendering or preview.
 - LSP, debugger, extension marketplace or Git workbench (status colors and change marks only).
-- Hand-rolled terminal emulation (use xterm.js now, `libghostty` later).
+- Hand-rolled terminal emulation (use xterm.js or ghostty-web).
 - Parsing agent status from terminal presentation.
 - Writing files before version conflicts and atomic replacement are implemented.
