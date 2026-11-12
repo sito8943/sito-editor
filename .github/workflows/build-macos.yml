@@ -1,0 +1,115 @@
+name: Build macOS
+
+# Builds the unsigned Apple Silicon (arm64) and Intel (x86_64) .dmgs, like
+# sito-file-browser's build-macos-{arm,intel}.yml. Runs when you publish a
+# GitHub Release (the .dmgs are attached to it), or manually from the Actions tab
+# (the .dmgs are kept as run artifacts). Never runs on pushes or PRs.
+#
+# The editor links sibling sources (see package.json and src-tauri/Cargo.toml):
+#   ../../lib/ui, ../../lib/sito-commands, ../tauri-plugin-sito-workspace
+# so the job recreates that layout inside the workspace and builds them first.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: build-macos-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # attach the .dmgs to the release
+
+env:
+  EDITOR_DIR: tauri-utilities/sito-editor
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm
+            target: aarch64-apple-darwin
+          - arch: intel
+            target: x86_64-apple-darwin
+    # macos-15 for both: GitHub rejects macos-14 since 2026-11-05 and retires the
+    # Intel runners; the Intel .dmg is cross-compiled with --target.
+    runs-on: macos-15
+    steps:
+      - name: Checkout sito-editor
+        uses: actions/checkout@v4
+        with:
+          path: ${{ env.EDITOR_DIR }}
+
+      - name: Checkout tauri-plugin-sito-workspace
+        uses: actions/checkout@v4
+        with:
+          repository: sito8943/tauri-plugin-sito-workspace
+          path: tauri-utilities/tauri-plugin-sito-workspace
+
+      - name: Checkout @sito/ui
+        uses: actions/checkout@v4
+        with:
+          repository: sito8943/ui
+          path: lib/ui
+
+      - name: Checkout @sito/commands
+        uses: actions/checkout@v4
+        with:
+          repository: sito8943/sito-commands
+          path: lib/sito-commands
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ env.EDITOR_DIR }}/src-tauri
+
+      - name: Build linked libraries
+        run: |
+          for dir in lib/ui lib/sito-commands tauri-utilities/tauri-plugin-sito-workspace; do
+            echo "::group::$dir"
+            (cd "$dir" && pnpm install --frozen-lockfile && pnpm build)
+            echo "::endgroup::"
+          done
+
+      - name: Install dependencies
+        working-directory: ${{ env.EDITOR_DIR }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Build DMG (${{ matrix.target }})
+        working-directory: ${{ env.EDITOR_DIR }}
+        # Anonymous usage counts (opt-in in the app). Without the secret, tracking stays off.
+        env:
+          VITE_USAGE_URL: https://api.usage.sito8943.com
+          VITE_USAGE_KEY: ${{ secrets.VITE_USAGE_KEY }}
+        run: pnpm tauri build --target ${{ matrix.target }} --bundles dmg
+
+      # Manual runs have no release to attach to → keep the .dmg as an artifact.
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sito-editor-macos-${{ matrix.arch }}
+          path: ${{ env.EDITOR_DIR }}/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+
+      - name: Attach DMG to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.EDITOR_DIR }}/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
