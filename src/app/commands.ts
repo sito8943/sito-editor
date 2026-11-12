@@ -70,6 +70,24 @@ export const APP_KEYMAP: Keymap<AppCommandId> = {
     mod: true,
     shift: true,
   },
+  // Explorer (VS Code-like). Rename and trash act on the focused row, else the
+  // open file, and stay off while typing.
+  [APP_COMMAND.CREATE_FILE]: {
+    keys: ["n"],
+    mod: true,
+  },
+  [APP_COMMAND.CREATE_FOLDER]: {
+    keys: ["n"],
+    mod: true,
+    shift: true,
+  },
+  [APP_COMMAND.RENAME_ENTRY]: {
+    keys: ["F2"],
+  },
+  [APP_COMMAND.TRASH_ENTRY]: {
+    keys: ["Backspace"],
+    mod: true,
+  },
   [APP_COMMAND.QUICK_OPEN]: {
     keys: ["p"],
     mod: true,

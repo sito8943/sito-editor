@@ -1,6 +1,5 @@
 import { useState, type MouseEvent } from "react";
 import {
-  Button,
   ContextMenu,
   ContextMenuItem,
   ContextMenuSeparator,
@@ -13,9 +12,11 @@ import {
 
 import {
   APP_COMMAND,
+  APP_KEYMAP,
   type AppCommandContext,
   type AppCommandId,
 } from "@/app/commands";
+import { formatBinding } from "@sito/commands";
 import { t } from "@/lang";
 import {
   WORKSPACE_ENTRY_KIND,
@@ -28,11 +29,22 @@ import {
   USAGE_EVENT,
   USAGE_PREFIX,
   usageFeature,
+  useTrackedHotkey,
   useUsage,
 } from "@/shared/usage";
 import { joinPath, parentPath as parentOf, pathName } from "@/shared/utils";
+import { FileIcon, SurfaceButton } from "@/shared/components";
+import {
+  faAnglesUp,
+  faFileCirclePlus,
+  faFolderPlus,
+  faRotateRight,
+} from "@fortawesome/free-solid-svg-icons";
 
-import { EXPLORER_MENU_ACTION } from "../constants";
+import {
+  EXPLORER_MENU_ACTION,
+  EXPLORER_TOOLBAR_ACTION,
+} from "../constants";
 import { useEntryDragMove } from "../hooks/useEntryDragMove";
 
 import { NameInput } from "./NameInput";
@@ -100,13 +112,17 @@ const TreeLevel = ({
           {...bindDrag(entry.path)}
           aria-expanded={directory ? expanded : undefined}
           aria-current={entry.path === activePath ? "page" : undefined}
-          title={entry.path}
           onClick={() => onActivate(entry)}
           onContextMenu={(event) => onOpenContextMenu(event, entry)}
         >
           <span className="Explorer_chevron" aria-hidden="true">
             {directory ? (expanded ? "▾" : "▸") : ""}
           </span>
+          <FileIcon
+            name={entry.name}
+            directory={directory}
+            open={expanded}
+          />
           <span className="Explorer_name">{entry.name}</span>
           {loading && <span className="Explorer_loading">…</span>}
         </button>
@@ -164,6 +180,10 @@ export const Explorer = ({
     (typeof EXPLORER_MENU_ACTION)[keyof typeof EXPLORER_MENU_ACTION];
   const trackMenu = (action: MenuAction) =>
     track(usageFeature(USAGE_PREFIX.EXPLORER_MENU, action));
+  const trackToolbar = (
+    action: (typeof EXPLORER_TOOLBAR_ACTION)[keyof typeof EXPLORER_TOOLBAR_ACTION],
+  ) => track(usageFeature(USAGE_PREFIX.EXPLORER_TOOLBAR, action));
+
   const rootEntries = tree.rootPath
     ? (tree.childrenByPath[tree.rootPath] ?? [])
     : [];
@@ -204,21 +224,38 @@ export const Explorer = ({
   };
 
   /** Starts typing a new entry's name in the folder `target` belongs to. */
+  const beginCreate = (mode: "file" | "folder", parent: string) => {
+    if (parent !== tree.rootPath) void tree.expandDirectory(parent);
+    // After the menu returns focus to its trigger, or the field would blur
+    // (and cancel) right away.
+    window.setTimeout(() => setEdit({ mode, parentPath: parent }), 0);
+  };
+
+  /** From the context menu: inside the folder, or next to the file. */
   const startCreate = (
     mode: "file" | "folder",
     target: WorkspaceEntry | null,
   ) => {
     menu.close();
     if (!tree.rootPath) return;
-    const parent = !target
-      ? tree.rootPath
-      : target.kind === WORKSPACE_ENTRY_KIND.DIRECTORY && !target.isSymlink
-        ? target.path
-        : parentOf(target.path);
-    if (parent !== tree.rootPath) void tree.expandDirectory(parent);
-    // After the menu returns focus to its trigger, or the field would blur
-    // (and cancel) right away.
-    window.setTimeout(() => setEdit({ mode, parentPath: parent }), 0);
+    beginCreate(
+      mode,
+      !target
+        ? tree.rootPath
+        : target.kind === WORKSPACE_ENTRY_KIND.DIRECTORY && !target.isSymlink
+          ? target.path
+          : parentOf(target.path),
+    );
+  };
+
+  /** From the toolbar: next to the open file, like VS Code, else the root. */
+  const startCreateFromToolbar = (mode: "file" | "folder") => {
+    if (!tree.rootPath) return;
+    const inside =
+      activePath &&
+      activePath.startsWith(tree.rootPath) &&
+      /^[\\/]/.test(activePath.slice(tree.rootPath.length));
+    beginCreate(mode, inside ? parentOf(activePath) : tree.rootPath);
   };
 
   const startRename = (entry: WorkspaceEntry) => {
@@ -249,6 +286,54 @@ export const Explorer = ({
     }
   };
 
+  /** Shortcut label for a command, from the keymap (e.g. "⌘N"). */
+  const shortcutOf = (command: AppCommandId) =>
+    formatBinding(APP_KEYMAP[command]) || undefined;
+
+  /** The entry a hotkey acts on: the focused row, else the open file. */
+  const hotkeyTarget = (): WorkspaceEntry | null => {
+    const focused =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement.closest<HTMLElement>(
+            ".Explorer_row[data-path]",
+          )?.dataset.path
+        : undefined;
+    const path = focused ?? activePath;
+    if (!path) return null;
+    return (
+      tree.childrenByPath[parentOf(path)]?.find(
+        (entry) => entry.path === path,
+      ) ?? null
+    );
+  };
+
+  useTrackedHotkey(
+    APP_COMMAND.CREATE_FILE,
+    () => {
+      if (!tree.rootPath) return false;
+      startCreateFromToolbar("file");
+    },
+    { allowInInput: true },
+  );
+  useTrackedHotkey(
+    APP_COMMAND.CREATE_FOLDER,
+    () => {
+      if (!tree.rootPath) return false;
+      startCreateFromToolbar("folder");
+    },
+    { allowInInput: true },
+  );
+  useTrackedHotkey(APP_COMMAND.RENAME_ENTRY, () => {
+    const target = hotkeyTarget();
+    if (!target) return false;
+    startRename(target);
+  });
+  useTrackedHotkey(APP_COMMAND.TRASH_ENTRY, () => {
+    const target = hotkeyTarget();
+    if (!target) return false;
+    execute(APP_COMMAND.TRASH_ENTRY, { path: target.path });
+  });
+
   const activate = (entry: WorkspaceEntry) => {
     const context = { path: entry.path };
     if (
@@ -268,20 +353,45 @@ export const Explorer = ({
   return (
     <aside className="Explorer" aria-label={t.explorer.title}>
       <header className="Explorer_header">
-        <div>
-          <span className="Explorer_eyebrow">{t.explorer.title}</span>
-          <h2>{tree.rootName ?? t.app.name}</h2>
-        </div>
+        <h2 className="Explorer_title">{tree.rootName ?? t.app.name}</h2>
         {tree.rootPath && (
-          <Button
-            className="Explorer_refresh"
-            size="sm"
-            onClick={() =>
-              execute(APP_COMMAND.REFRESH_DIRECTORY, {})
-            }
-          >
-            {t.explorer.refresh}
-          </Button>
+          <div className="Explorer_actions">
+            <SurfaceButton
+              icon={faFileCirclePlus}
+              label={t.explorer.newFile}
+              hotkey={shortcutOf(APP_COMMAND.CREATE_FILE)}
+              onClick={() => {
+                trackToolbar(EXPLORER_TOOLBAR_ACTION.NEW_FILE);
+                startCreateFromToolbar("file");
+              }}
+            />
+            <SurfaceButton
+              icon={faFolderPlus}
+              label={t.explorer.newFolder}
+              hotkey={shortcutOf(APP_COMMAND.CREATE_FOLDER)}
+              onClick={() => {
+                trackToolbar(EXPLORER_TOOLBAR_ACTION.NEW_FOLDER);
+                startCreateFromToolbar("folder");
+              }}
+            />
+            <SurfaceButton
+              icon={faRotateRight}
+              label={t.explorer.refresh}
+              onClick={() => {
+                trackToolbar(EXPLORER_TOOLBAR_ACTION.REFRESH);
+                execute(APP_COMMAND.REFRESH_DIRECTORY, {});
+              }}
+            />
+            <SurfaceButton
+              icon={faAnglesUp}
+              label={t.explorer.collapseAll}
+              disabled={!collapseAllState.enabled}
+              onClick={() => {
+                trackToolbar(EXPLORER_TOOLBAR_ACTION.COLLAPSE_ALL);
+                execute(APP_COMMAND.COLLAPSE_EXPLORER, {});
+              }}
+            />
+          </div>
         )}
       </header>
 
@@ -335,6 +445,7 @@ export const Explorer = ({
       >
         {targetFile && target ? (
           <ContextMenuItem
+            shortcut="↵"
             onClick={() =>
               executeFromMenu(EXPLORER_MENU_ACTION.OPEN, APP_COMMAND.OPEN_DOCUMENT, {
                 path: target.path,
@@ -373,6 +484,7 @@ export const Explorer = ({
         ) : null}
         <ContextMenuItem
           disabled={!tree.rootPath}
+          shortcut={shortcutOf(APP_COMMAND.CREATE_FILE)}
           onClick={() => {
             trackMenu(EXPLORER_MENU_ACTION.NEW_FILE);
             startCreate("file", target);
@@ -382,6 +494,7 @@ export const Explorer = ({
         </ContextMenuItem>
         <ContextMenuItem
           disabled={!tree.rootPath}
+          shortcut={shortcutOf(APP_COMMAND.CREATE_FOLDER)}
           onClick={() => {
             trackMenu(EXPLORER_MENU_ACTION.NEW_FOLDER);
             startCreate("folder", target);
@@ -392,6 +505,7 @@ export const Explorer = ({
         {target ? (
           <>
             <ContextMenuItem
+              shortcut={shortcutOf(APP_COMMAND.RENAME_ENTRY)}
               onClick={() => {
                 trackMenu(EXPLORER_MENU_ACTION.RENAME);
                 startRename(target);
@@ -400,6 +514,8 @@ export const Explorer = ({
               {t.explorer.rename}
             </ContextMenuItem>
             <ContextMenuItem
+              color="error"
+              shortcut={shortcutOf(APP_COMMAND.TRASH_ENTRY)}
               onClick={() =>
                 executeFromMenu(EXPLORER_MENU_ACTION.MOVE_TO_TRASH, APP_COMMAND.TRASH_ENTRY, {
                   path: target.path,
