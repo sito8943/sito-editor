@@ -16,6 +16,7 @@ import {
   FONT_SIZES,
   FONT_TARGET,
   TAB_SIZES,
+  TERMINAL_ENGINE,
   useSettings,
 } from "@/shared/settings";
 import { USAGE_EVENT, useUsage } from "@/shared/usage";
@@ -28,6 +29,12 @@ import "@/styles/components/StatusBar.css";
 const FONT_MENUS = [
   { target: FONT_TARGET.EDITOR, label: t.settings.editorFontSize },
   { target: FONT_TARGET.TERMINAL, label: t.settings.terminalFontSize },
+] as const;
+
+/** Switching restarts the open terminals (see TerminalPanel). */
+const TERMINAL_ENGINES = [
+  { engine: TERMINAL_ENGINE.XTERM, label: t.settings.engineXterm },
+  { engine: TERMINAL_ENGINE.GHOSTTY, label: t.settings.engineGhostty },
 ] as const;
 
 type StatusBarProps = {
@@ -136,6 +143,17 @@ export const StatusBar = ({ rootName, branch, editor }: StatusBarProps) => {
             ))}
           </ContextMenuSubmenu>
         ))}
+        <ContextMenuSubmenu label={t.settings.terminalEngine}>
+          {TERMINAL_ENGINES.map(({ engine, label }) => (
+            <ContextMenuItem
+              key={engine}
+              checked={settings.terminalEngine === engine}
+              onClick={pick(() => editorSettings.setTerminalEngine(engine))}
+            >
+              {label}
+            </ContextMenuItem>
+          ))}
+        </ContextMenuSubmenu>
         <ContextMenuSeparator />
         <ContextMenuSubmenu label={t.settings.tabSize}>
           {TAB_SIZES.map((size) => (

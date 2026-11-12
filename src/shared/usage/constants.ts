@@ -106,6 +106,7 @@ export const USAGE_EVENT = {
     TERMINAL_FONT_SMALLER: "settings.terminal_font_smaller",
     TERMINAL_FONT_RESET: "settings.terminal_font_reset",
     TERMINAL_FONT_SIZE: "settings.terminal_font_size",
+    TERMINAL_ENGINE: "settings.terminal_engine",
   },
   PRIVACY: {
     OPEN_CHOICES: "privacy.open_choices",

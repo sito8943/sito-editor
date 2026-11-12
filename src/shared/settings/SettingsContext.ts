@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { EditorSettings, FontTarget } from "./constants";
+import type { EditorSettings, FontTarget, TerminalEngine } from "./constants";
 
 export type SettingsValue = {
   settings: EditorSettings;
@@ -9,6 +9,7 @@ export type SettingsValue = {
   resetFontSize: (target: FontTarget) => void;
   setTabSize: (size: number) => void;
   toggleWordWrap: () => void;
+  setTerminalEngine: (engine: TerminalEngine) => void;
 };
 
 export const SettingsContext = createContext<SettingsValue | null>(null);
