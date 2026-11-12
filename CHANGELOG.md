@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.2]
+
+### Changed
+
+- Shared Sito packages are installed from npm instead of local folders, so the app builds on its own; nothing changes in use (`536e31e`, `4c37157`)
+
 ## [0.4.1]
 
 ### Fixed

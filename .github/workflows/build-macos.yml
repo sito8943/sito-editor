@@ -5,10 +5,9 @@ name: Build macOS
 # GitHub Release (the .dmgs are attached to it), or manually from the Actions tab
 # (the .dmgs are kept as run artifacts). Never runs on pushes or PRs.
 #
-# The editor links sibling sources (see package.json and src-tauri/Cargo.toml):
-#   ../../lib/ui, ../../lib/sito-commands, ../../lib/sito-file-icons,
-#   ../tauri-plugin-sito-workspace
-# so the job recreates that layout inside the workspace and builds them first.
+# The JS packages come from npm. The Rust side of the workspace plugin is a path
+# dependency (src-tauri/Cargo.toml: ../../tauri-plugin-sito-workspace), so the
+# job checks it out next to the editor.
 on:
   release:
     types: [published]
@@ -49,23 +48,6 @@ jobs:
           repository: sito8943/tauri-plugin-sito-workspace
           path: tauri-utilities/tauri-plugin-sito-workspace
 
-      - name: Checkout @sito/ui
-        uses: actions/checkout@v4
-        with:
-          repository: sito8943/ui
-          path: lib/ui
-
-      - name: Checkout @sito/commands
-        uses: actions/checkout@v4
-        with:
-          repository: sito8943/sito-commands
-          path: lib/sito-commands
-
-      - name: Checkout @sito/file-icons
-        uses: actions/checkout@v4
-        with:
-          repository: sito8943/sito-file-icons
-          path: lib/sito-file-icons
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -86,14 +68,6 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: ${{ env.EDITOR_DIR }}/src-tauri
-
-      - name: Build linked libraries
-        run: |
-          for dir in lib/ui lib/sito-commands lib/sito-file-icons tauri-utilities/tauri-plugin-sito-workspace; do
-            echo "::group::$dir"
-            (cd "$dir" && pnpm install --frozen-lockfile && pnpm build)
-            echo "::endgroup::"
-          done
 
       - name: Install dependencies
         working-directory: ${{ env.EDITOR_DIR }}

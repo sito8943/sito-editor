@@ -36,20 +36,20 @@ importers:
         specifier: ^1.2.3
         version: 1.2.3
       '@sito/commands':
-        specifier: link:../../lib/sito-commands
-        version: link:../../lib/sito-commands
+        specifier: 0.1.0-alpha.1
+        version: 0.1.0-alpha.1(react@19.2.8)
       '@sito/feature-usage':
-        specifier: github:sito8943/sito-feature-usage-js#v0.1.0-alpha.4
-        version: https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00(react@19.2.8)
+        specifier: 0.1.0-alpha.4
+        version: 0.1.0-alpha.4(react@19.2.8)
       '@sito/file-icons':
-        specifier: link:../../lib/sito-file-icons
-        version: link:../../lib/sito-file-icons
+        specifier: 0.1.0
+        version: 0.1.0(@fortawesome/fontawesome-svg-core@7.2.0)(@fortawesome/free-solid-svg-icons@7.2.0)
       '@sito/plugin-workspace':
-        specifier: link:../tauri-plugin-sito-workspace
-        version: link:../tauri-plugin-sito-workspace
+        specifier: 0.3.0
+        version: 0.3.0
       '@sito/ui':
-        specifier: link:../../lib/ui
-        version: link:../../lib/ui
+        specifier: 0.12.0
+        version: 0.12.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
@@ -661,14 +661,34 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sito/feature-usage@https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00':
-    resolution: {gitHosted: true, integrity: sha512-E8pakVYs0JtnstP68CX48nvkpsaRrm/QprTt+MBUCC0TLEF5huOsNFfh2NGC1M+Qre4h8VOzhQPOVJReVyzDJg==, tarball: https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00}
-    version: 0.1.0-alpha.4
+  '@sito/commands@0.1.0-alpha.1':
+    resolution: {integrity: sha512-XclDk8Tr7dMCUPRFSdxwmHfM0ioefpa44+JNUZaOxoxJRWjY62mLMFzAr6XZQ/0fWoOcOujrmVyuk/pN1z6XNw==}
+    peerDependencies:
+      react: ^19.0.0
+
+  '@sito/feature-usage@0.1.0-alpha.4':
+    resolution: {integrity: sha512-i6rm9srBus725PVLIJHVh+g3x9xh4tVL6V9w9ScCuXHBdsoR6w2/5sqrKKlYHML84w545Q2Rw3QYaol3pQwVpQ==}
     peerDependencies:
       react: ^19.0.0
     peerDependenciesMeta:
       react:
         optional: true
+
+  '@sito/file-icons@0.1.0':
+    resolution: {integrity: sha512-WAtUD9KepC7g1zMpKa0OOtPngT9lYxwhTQWDsDXYjm913BVrZCLu9JfbGGbsotVSRLKnbgh/c5ppOwv9XXc3zA==}
+    peerDependencies:
+      '@fortawesome/fontawesome-svg-core': ^7.2.0
+      '@fortawesome/free-solid-svg-icons': ^7.2.0
+
+  '@sito/plugin-workspace@0.3.0':
+    resolution: {integrity: sha512-n16HCXXLr49AIWGeFN1D40F/7VluV6iPPtUvo05MEAssh3TKLxjQkrxhsye68RPJFBsDyTGpUQaj4uAaGCg1BA==}
+
+  '@sito/ui@0.12.0':
+    resolution: {integrity: sha512-g3bp9Y457+fAN8Z4EBxij6ZDlTrbAW3GAJzyMBZLoc2o3YLZ1kzd+t3mlYtwVVD8+GZvUVj3QdmozXfI3Ni8wA==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+    peerDependencies:
+      react: ^19.0.0
+      react-dom: ^19.0.0
 
   '@tauri-apps/api@2.11.1':
     resolution: {integrity: sha512-M2FPuYND2m+wh5hfW9ZpSdxMPdEJovPBWwoHJmwUpysTYNHaOkVFN419m/K0LIgjb/7KU2vBgsUepJWugQCvAA==}
@@ -1648,9 +1668,27 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@sito/feature-usage@https://codeload.github.com/sito8943/sito-feature-usage-js/tar.gz/66b7fe7753b5693a7dc4abaf13cfd786def5aa00(react@19.2.8)':
+  '@sito/commands@0.1.0-alpha.1(react@19.2.8)':
+    dependencies:
+      react: 19.2.8
+
+  '@sito/feature-usage@0.1.0-alpha.4(react@19.2.8)':
     optionalDependencies:
       react: 19.2.8
+
+  '@sito/file-icons@0.1.0(@fortawesome/fontawesome-svg-core@7.2.0)(@fortawesome/free-solid-svg-icons@7.2.0)':
+    dependencies:
+      '@fortawesome/fontawesome-svg-core': 7.2.0
+      '@fortawesome/free-solid-svg-icons': 7.2.0
+
+  '@sito/plugin-workspace@0.3.0':
+    dependencies:
+      '@tauri-apps/api': 2.11.1
+
+  '@sito/ui@0.12.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   '@tauri-apps/api@2.11.1': {}
 
