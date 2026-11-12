@@ -6,12 +6,24 @@
   --color-panel-raised: #1d2129;
   --color-editor: #12151a;
   --color-editor-active-line: #1a1f27;
+  --color-editor-caret: #ffffff;
   --color-border: #2a303a;
   --color-border-strong: #3a4350;
   --color-text: #e7eaf0;
   --color-text-muted: #8f98a8;
   --color-accent: #7aa2f7;
   --color-danger: #f7768e;
+
+  --color-syntax-keyword: #bb9af7;
+  --color-syntax-string: #9ece6a;
+  --color-syntax-number: #ff9e64;
+  --color-syntax-comment: #565f89;
+  --color-syntax-function: #7aa2f7;
+  --color-syntax-type: #2ac3de;
+  --color-syntax-property: #73daca;
+  --color-syntax-operator: #89ddff;
+  --color-syntax-tag: #f7768e;
+  --color-syntax-heading: #e0af68;
 
   --space-0: 0;
   --space-1: 0.25rem;

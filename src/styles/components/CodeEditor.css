@@ -7,3 +7,18 @@
 .CodeEditor .cm-editor.cm-focused {
   outline: none;
 }
+
+/* I-beam pointer over editable documents; read-only keeps the default arrow. */
+.CodeEditor .cm-editor:has(.cm-content[contenteditable="true"]) .cm-scroller {
+  cursor: text;
+}
+
+.CodeEditor .cm-content[contenteditable="false"] {
+  cursor: default;
+}
+
+/* Caret: higher specificity than CodeMirror's injected base theme. */
+.CodeEditor .cm-editor .cm-cursorLayer .cm-cursor,
+.CodeEditor .cm-editor .cm-dropCursor {
+  border-left: 2px solid var(--color-editor-caret);
+}

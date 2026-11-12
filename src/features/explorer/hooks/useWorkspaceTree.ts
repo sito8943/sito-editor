@@ -37,6 +37,16 @@ export const useWorkspaceTree = (): WorkspaceTreeState => {
     }
   }, []);
 
+  const openWorkspace = useCallback(
+    async (path: string): Promise<void> => {
+      setRootPath(path);
+      setChildrenByPath({});
+      setExpandedPaths(new Set([path]));
+      await loadDirectory(path);
+    },
+    [loadDirectory],
+  );
+
   const chooseWorkspace = useCallback(async (): Promise<string | null> => {
     const selected = await open({
       directory: true,
@@ -45,12 +55,9 @@ export const useWorkspaceTree = (): WorkspaceTreeState => {
     });
     if (typeof selected !== "string") return null;
 
-    setRootPath(selected);
-    setChildrenByPath({});
-    setExpandedPaths(new Set([selected]));
-    await loadDirectory(selected);
+    await openWorkspace(selected);
     return selected;
-  }, [loadDirectory]);
+  }, [openWorkspace]);
 
   const refreshRoot = useCallback(async (): Promise<void> => {
     if (rootPath) await loadDirectory(rootPath);
@@ -93,6 +100,7 @@ export const useWorkspaceTree = (): WorkspaceTreeState => {
       loadingPaths,
       error,
       chooseWorkspace,
+      openWorkspace,
       collapseAll,
       refreshDirectory,
       refreshRoot,
@@ -105,6 +113,7 @@ export const useWorkspaceTree = (): WorkspaceTreeState => {
       error,
       expandedPaths,
       loadingPaths,
+      openWorkspace,
       refreshDirectory,
       refreshRoot,
       rootPath,

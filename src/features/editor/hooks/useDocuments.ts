@@ -9,7 +9,11 @@ import {
   type TextDocumentSnapshot,
 } from "@/shared/services/workspace";
 
-import type { DocumentsState, OpenDocument } from "../types";
+import type {
+  DocumentsState,
+  OpenDocument,
+  RevealTarget,
+} from "../types";
 
 const normalizeEditorContent = (content: string): string =>
   content.replace(/\r\n/g, "\n");
@@ -43,6 +47,9 @@ export const useDocuments = (): DocumentsState => {
   const [activePath, setActivePath] = useState<string | null>(null);
   const [loadingPath, setLoadingPath] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [revealTarget, setRevealTarget] = useState<RevealTarget | null>(
+    null,
+  );
 
   const openDocument = useCallback(
     async (path: string): Promise<void> => {
@@ -66,8 +73,49 @@ export const useDocuments = (): DocumentsState => {
     [documents],
   );
 
+  const openDocumentAt = useCallback(
+    async (
+      path: string,
+      line: number,
+      column: number,
+      length = 0,
+    ): Promise<void> => {
+      await openDocument(path);
+      setRevealTarget({ path, line, column, length });
+    },
+    [openDocument],
+  );
+
+  const clearReveal = useCallback(() => setRevealTarget(null), []);
+
   const selectDocument = useCallback((path: string) => {
     setActivePath(path);
+  }, []);
+
+  const selectRelative = useCallback(
+    (delta: number) => {
+      if (documents.length === 0) return;
+      const index = documents.findIndex(
+        (document) => document.path === activePath,
+      );
+      const next =
+        (Math.max(index, 0) + delta + documents.length) % documents.length;
+      setActivePath(documents[next].path);
+    },
+    [activePath, documents],
+  );
+
+  const moveDocument = useCallback((path: string, toIndex: number) => {
+    setDocuments((current) => {
+      const from = current.findIndex((document) => document.path === path);
+      if (from < 0) return current;
+      const target = Math.min(Math.max(toIndex, 0), current.length - 1);
+      if (from === target) return current;
+      const next = [...current];
+      const [moved] = next.splice(from, 1);
+      next.splice(target, 0, moved);
+      return next;
+    });
   }, []);
 
   const closeDocument = useCallback(
@@ -185,6 +233,7 @@ export const useDocuments = (): DocumentsState => {
     setActivePath(null);
     setLoadingPath(null);
     setError(null);
+    setRevealTarget(null);
   }, []);
 
   const activeDocument =
@@ -201,8 +250,13 @@ export const useDocuments = (): DocumentsState => {
       activeDocument,
       loadingPath,
       error,
+      revealTarget,
       openDocument,
+      openDocumentAt,
+      clearReveal,
       selectDocument,
+      selectRelative,
+      moveDocument,
       closeDocument,
       updateDocument,
       saveDocument,
@@ -212,17 +266,22 @@ export const useDocuments = (): DocumentsState => {
     [
       activeDocument,
       activePath,
+      clearReveal,
       closeDocument,
       documents,
       error,
       hasDirtyDocuments,
       hasSavingDocuments,
       loadingPath,
+      moveDocument,
       openDocument,
+      openDocumentAt,
       reloadDocument,
       resetDocuments,
+      revealTarget,
       saveDocument,
       selectDocument,
+      selectRelative,
       updateDocument,
     ],
   );

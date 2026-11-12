@@ -1,7 +1,9 @@
 export const en = {
   app: {
     name: "Sito Editor",
-    openWorkspace: "Open workspace",
+    openFolder: "Open folder",
+    openFile: "Open file",
+    openFileTitle: "Open a file",
     editingMilestone: "Safe workspace editing",
   },
   explorer: {
@@ -31,6 +33,8 @@ export const en = {
     emptyBody: "Choose a text file from the Explorer.",
     loading: "Opening document…",
     close: "Close document",
+    nextDocument: "Next tab",
+    previousDocument: "Previous tab",
     editorLabel: "Text editor",
     save: "Save",
     saving: "Saving…",
@@ -44,6 +48,35 @@ export const en = {
     mixedLineEndings:
       "Files with mixed line endings are read-only until preservation is supported.",
     reloadDiscard: "Reload and discard draft",
+  },
+  navigation: {
+    label: "File path",
+    back: "Go back",
+    forward: "Go forward",
+    noWorkspace: "Open a folder to start",
+    openShortcuts: "⌘O folder · ⌘⇧O file",
+    quickOpenHint: "Search files (⌘P)",
+  },
+  quickOpen: {
+    title: "Go to file",
+    placeholder: "Search files by name",
+    loading: "Listing files…",
+    empty: "No matching files.",
+    truncated: "Showing the first files only; the workspace is very large.",
+  },
+  search: {
+    label: "Search in project",
+    placeholder: "Search in project",
+    shortcut: "⌘⇧F",
+    caseSensitive: "Match case",
+    regex: "Use regular expression",
+    searching: "Searching…",
+    empty: "No results.",
+    truncated: "Too many results; showing the first ones.",
+    summary: (results: number, files: number) =>
+      `${results} ${results === 1 ? "result" : "results"} in ${files} ${
+        files === 1 ? "file" : "files"
+      }`,
   },
   agents: {
     title: "Agents",

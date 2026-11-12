@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Opens a folder or file in Sito Editor: `sito-editor [path]` (default: current folder).
+# If the editor is already running, the path is handed to that window.
+#
+# Install: ln -s "$PWD/scripts/sito-editor" /usr/local/bin/sito-editor
+# Override the app location with SITO_EDITOR_APP=/path/to/Sito\ Editor.app
+set -euo pipefail
+
+target="${1:-.}"
+if [ ! -e "$target" ]; then
+  echo "sito-editor: no such file or directory: $target" >&2
+  exit 1
+fi
+
+if [ -d "$target" ]; then
+  absolute="$(cd "$target" && pwd)"
+else
+  absolute="$(cd "$(dirname "$target")" && pwd)/$(basename "$target")"
+fi
+
+app="${SITO_EDITOR_APP:-/Applications/Sito Editor.app}"
+binary="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -perm -111 2>/dev/null | head -n 1)"
+if [ -z "$binary" ]; then
+  echo "sito-editor: app not found at $app (set SITO_EDITOR_APP)" >&2
+  exit 1
+fi
+
+# Launch detached; a second instance forwards the path and exits.
+nohup "$binary" "$absolute" >/dev/null 2>&1 &

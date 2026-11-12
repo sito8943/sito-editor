@@ -32,6 +32,43 @@
   color: var(--color-text-muted);
 }
 
+/* Draggable tabs (see useTabDrag): the gesture owns horizontal moves; the
+   others ease into the gap, the dragged one follows the pointer 1:1. */
+.EditorSurface_tab {
+  position: relative;
+  touch-action: none;
+  transition: transform 0.16s ease;
+}
+
+/* Drag cursors: `grab` on a resting tab, `grabbing` app-wide while one is
+   lifted (class set by useTabDrag). The close button stays a plain pointer. */
+.EditorSurface_tab,
+.EditorSurface_tabSelect {
+  cursor: grab;
+}
+
+.EditorSurface_tabClose {
+  cursor: pointer;
+}
+
+.is-dragging-tab,
+.is-dragging-tab * {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.EditorSurface_tabList.snapping .EditorSurface_tab {
+  transition: none;
+}
+
+.EditorSurface_tab.dragging {
+  z-index: 2;
+  background: var(--color-panel-raised);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.35);
+  cursor: grabbing;
+  transition: none;
+}
+
 .EditorSurface_tab.active {
   color: var(--color-text);
   background: var(--color-editor);
@@ -70,9 +107,36 @@
   font-size: var(--font-size-xs);
 }
 
-.EditorSurface_tabClose {
-  padding: var(--space-0) var(--space-2);
+/* Small surface, like the search toggles, so it reads as a button. */
+.EditorSurface_tab .EditorSurface_tabClose {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: var(--space-2);
+  padding: 0;
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-panel-raised);
   color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.EditorSurface_tab .EditorSurface_tabClose:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.EditorSurface_tab .EditorSurface_tabClose:disabled {
+  opacity: 0.5;
+}
+
+/* Like VS Code: the close button only shows on the active tab, on hover or
+   when focused. It keeps its space so tabs don't shift. */
+.EditorSurface_tab:not(.active):not(:hover) .EditorSurface_tabClose:not(:focus-visible) {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .EditorSurface_tabSelect:hover,

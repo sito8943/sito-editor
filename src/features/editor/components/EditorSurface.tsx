@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@sito/ui";
 import {
   useCommandRegistry,
@@ -12,6 +13,7 @@ import { t } from "@/lang";
 import { pathName } from "@/shared/utils";
 
 import { CodeEditor } from "./CodeEditor/CodeEditor";
+import { useTabDrag } from "../hooks/useTabDrag";
 import type { EditorSurfaceProps } from "../types";
 
 import "@/styles/components/EditorSurface.css";
@@ -26,24 +28,68 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
     APP_COMMAND.SAVE_DOCUMENT,
     saveContext,
   );
+  const tabDrag = useTabDrag(
+    state.documents.map((document) => document.path),
+    state.selectDocument,
+    state.moveDocument,
+  );
+
+  // Keep the active tab visible when it changes (Ctrl+Tab, quick open…).
+  useEffect(() => {
+    tabDrag.listRef.current
+      ?.querySelector<HTMLElement>(".EditorSurface_tab.active")
+      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [state.activePath, tabDrag.listRef]);
+
+  const closeTab = (path: string) =>
+    void commands.execute(APP_COMMAND.CLOSE_DOCUMENT, { path });
 
   return (
     <section className="EditorSurface" aria-label={t.editor.title}>
       <header className="EditorSurface_tabs">
-        <div className="EditorSurface_tabList" role="tablist">
-          {state.documents.map((document) => (
+        <div
+          className={
+            tabDrag.snapping
+              ? "EditorSurface_tabList snapping"
+              : "EditorSurface_tabList"
+          }
+          role="tablist"
+          ref={tabDrag.listRef}
+        >
+          {state.documents.map((document, index) => (
             <div
-              className={
-                document.path === state.activePath
-                  ? "EditorSurface_tab active"
-                  : "EditorSurface_tab"
-              }
+              className={[
+                "EditorSurface_tab",
+                document.path === state.activePath && "active",
+                tabDrag.draggingIndex === index && "dragging",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               key={document.path}
               role="tab"
               aria-selected={document.path === state.activePath}
+              style={
+                tabDrag.translateFor(index)
+                  ? {
+                      transform: `translateX(${tabDrag.translateFor(index)}px)`,
+                    }
+                  : undefined
+              }
+              // Middle click closes, like a browser tab.
+              onMouseDown={(event) => {
+                if (event.button === 1) event.preventDefault();
+              }}
+              onAuxClick={(event) => {
+                if (event.button === 1 && !document.saving) {
+                  closeTab(document.path);
+                }
+              }}
             >
               <button
                 className="EditorSurface_tabSelect"
+                // Only the label drags: use-gesture swallows clicks it didn't
+                // see start as a tap, which would break the close button.
+                {...tabDrag.bind(index)}
                 type="button"
                 onClick={() => state.selectDocument(document.path)}
               >
@@ -63,11 +109,7 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
                 type="button"
                 disabled={document.saving}
                 aria-label={`${t.editor.close}: ${pathName(document.path)}`}
-                onClick={() =>
-                  void commands.execute(APP_COMMAND.CLOSE_DOCUMENT, {
-                    path: document.path,
-                  })
-                }
+                onClick={() => closeTab(document.path)}
               >
                 ×
               </button>
@@ -104,11 +146,18 @@ export const EditorSurface = ({ state }: EditorSurfaceProps) => {
         {!state.loadingPath && activeDocument && (
           <CodeEditor
             key={activeDocument.path}
+            path={activeDocument.path}
             label={`${t.editor.editorLabel}: ${pathName(
               activeDocument.path,
             )}`}
             value={activeDocument.draft}
             readonly={!activeDocument.editable}
+            reveal={
+              state.revealTarget?.path === activeDocument.path
+                ? state.revealTarget
+                : null
+            }
+            onRevealed={state.clearReveal}
             onChange={(draft) =>
               state.updateDocument(activeDocument.path, draft)
             }

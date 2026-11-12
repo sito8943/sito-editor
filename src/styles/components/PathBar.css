@@ -1,0 +1,198 @@
+.PathBar {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: var(--space-2);
+}
+
+.PathBar_history {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+}
+
+/* Enabled arrows share the breadcrumb surface; disabled ones stay flat. */
+.PathBar .PathBar_historyButton {
+  width: 1.875rem;
+  height: 1.875rem;
+  border: var(--size-border) solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.PathBar .PathBar_historyButton:not(:disabled) {
+  border-color: var(--color-border);
+  background: var(--color-editor);
+  color: var(--color-text);
+}
+
+.PathBar .PathBar_historyButton:not(:disabled):hover {
+  border-color: var(--color-border-strong);
+}
+
+.PathBar_field {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 1.875rem;
+}
+
+.PathBar_breadcrumb,
+.PathBar_input {
+  width: 100%;
+  height: 100%;
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-editor);
+  font-size: var(--font-size-sm);
+}
+
+.PathBar_breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+  overflow: hidden;
+  cursor: text;
+  white-space: nowrap;
+}
+
+.PathBar_breadcrumb:hover,
+.PathBar_breadcrumb:focus-visible {
+  border-color: var(--color-border-strong);
+  outline: none;
+}
+
+/* Plain trigger: no press/scale feedback, just a hover border. */
+.PathBar_openFolder {
+  justify-content: space-between;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.PathBar_openFolder:hover {
+  color: var(--color-text);
+}
+
+.PathBar_shortcut {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: var(--font-size-xs);
+}
+
+.PathBar_separator {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+}
+
+.PathBar_segment {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0.125rem var(--space-1);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.PathBar_segment:hover {
+  background: var(--color-panel-raised);
+  color: var(--color-text);
+}
+
+.PathBar_segment.current {
+  flex-shrink: 0;
+  color: var(--color-text);
+  cursor: text;
+}
+
+.PathBar_segment.current:hover {
+  background: none;
+}
+
+.PathBar_input {
+  padding: 0 var(--space-3);
+  border-color: var(--color-accent);
+  color: var(--color-text);
+  font-family: inherit;
+  caret-color: var(--color-editor-caret);
+}
+
+.PathBar_input:focus {
+  outline: none;
+}
+
+.PathBar_dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  max-height: min(24rem, 60vh);
+  padding: var(--space-1);
+  border: var(--size-border) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+.PathBar_results {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.PathBar_result {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.PathBar_result.active {
+  background: var(--color-editor-active-line);
+}
+
+.PathBar_resultName {
+  flex: 0 0 auto;
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+}
+
+.PathBar_resultDirectory {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+}
+
+.PathBar_dropdown mark {
+  background: none;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.PathBar_status {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

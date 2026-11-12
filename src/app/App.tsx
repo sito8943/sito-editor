@@ -1,6 +1,3 @@
-import { Button } from "@sito/ui";
-import { confirm, message } from "@tauri-apps/plugin-dialog";
-
 import { AgentDashboard } from "@/features/agents";
 import {
   EditorSurface,
@@ -12,9 +9,15 @@ import {
   useExplorerCommands,
   useWorkspaceTree,
 } from "@/features/explorer";
+import { PathBar, useFileHistory, useQuickOpen } from "@/features/navigation";
+import { ProjectSearch, useProjectSearch } from "@/features/search";
 import { TerminalPanel } from "@/features/terminal";
 import { Workbench } from "@/features/workbench";
 import { t } from "@/lang";
+
+import { useLaunchPath } from "./hooks/useLaunchPath";
+import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
+import { useWorkspaceSession } from "./hooks/useWorkspaceSession";
 
 import "@/styles/views/App.css";
 
@@ -23,45 +26,44 @@ const App = () => {
   const documents = useDocuments();
   useEditorCommands(documents);
   useExplorerCommands(workspaceTree);
+  const workspaceActions = useWorkspaceActions(workspaceTree, documents);
+  const launch = useLaunchPath(workspaceActions.openPath);
+  const session = useWorkspaceSession({
+    tree: workspaceTree,
+    documents,
+    // A `sito-editor <path>` launch wins over reopening the last workspace.
+    restoreLastWorkspace: launch.ready ? !launch.hasLaunchPath : null,
+  });
+  const quickOpen = useQuickOpen({
+    rootPath: workspaceTree.rootPath,
+    recentPaths: session.recentPaths,
+    onOpenFile: documents.openDocument,
+  });
+  const fileHistory = useFileHistory({
+    rootPath: workspaceTree.rootPath,
+    activePath: documents.activePath,
+    onOpenFile: documents.openDocument,
+  });
 
-  const chooseWorkspace = async () => {
-    if (documents.hasSavingDocuments) {
-      await message(t.editor.waitForSave, {
-        title: t.app.name,
-        kind: "warning",
-      });
-      return;
-    }
-
-    if (
-      documents.hasDirtyDocuments &&
-      !(await confirm(t.editor.discardWorkspaceChanges, {
-        title: t.app.name,
-        kind: "warning",
-      }))
-    ) {
-      return;
-    }
-
-    const selected = await workspaceTree.chooseWorkspace();
-    if (selected) documents.resetDocuments();
-  };
+  const projectSearch = useProjectSearch({
+    rootPath: workspaceTree.rootPath,
+    onOpenMatch: documents.openDocumentAt,
+  });
 
   return (
     <div className="App">
       <header className="App_header">
         <div className="App_identity">
           <strong>{t.app.name}</strong>
-          <span>{workspaceTree.rootPath ?? t.app.editingMilestone}</span>
         </div>
-        <Button
-          color="primary"
-          size="sm"
-          variant="outlined"
-          onClick={() => void chooseWorkspace()}
-        >
-          {t.app.openWorkspace}
-        </Button>
+        <PathBar
+          rootPath={workspaceTree.rootPath}
+          activePath={documents.activePath}
+          history={fileHistory}
+          quickOpen={quickOpen}
+          onOpenFolder={() => void workspaceActions.openFolder()}
+        />
+        <ProjectSearch state={projectSearch} />
       </header>
 
       <Workbench

@@ -4,6 +4,8 @@ export {
   LINE_ENDING,
   WORKSPACE_ENTRY_KIND,
   listDirectory,
+  listWorkspaceFiles,
+  searchText,
   readTextFile,
   statEntry,
   writeTextFile,
@@ -15,6 +17,10 @@ export type {
   WorkspaceEntry,
   WorkspaceEntryKind,
   WorkspaceError,
+  SearchTextOptions,
+  TextSearchMatch,
+  TextSearchResult,
+  WorkspaceFileList,
 } from "@sito/plugin-workspace";
 
 export type { WorkspaceErrorCode };
