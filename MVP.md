@@ -37,8 +37,12 @@ Done when items 1-3 work: the editor is usable day to day.
 - [x] 3. Project search: "Search in project" box next to the path bar (Cmd+Shift+F, `features/search`),
   backed by `search_text` in the plugin; opens the match selected. Verified at runtime 2026-11-12.
 - [x] 4. Find/replace, go to line: `@codemirror/search` + line numbers in `CodeEditor/constants.ts`. Verified at runtime 2026-11-11 (incl. high-contrast caret + I-beam pointer).
-- [ ] 5. Tabs + recent files
-- [ ] 6. Open from the terminal
+- [x] 5. Tabs + recent files: drag to reorder, middle-click close, Ctrl+Tab; open tabs, active tab and
+  recent files remembered per workspace (localStorage), last workspace reopened on launch; recent
+  files first in Cmd+P. Verified at runtime 2026-11-12.
+- [x] 6. Open from the terminal: `scripts/sito-editor [path]` + `tauri-plugin-single-instance`; the
+  path reaches the frontend via `get_launch_path` or the `sito-editor://open-path` event.
+  Verified at runtime 2026-11-12.
 
 ## Reuse from `sito-file-browser`
 
