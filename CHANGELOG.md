@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.0]
+
+### Added
+
+- Text size per area: ⌘= bigger, ⌘- smaller and ⌘0 default change only the editor or only the terminal, wherever the caret is. Each keeps its own size (10–24 px) (`24ee86e`, `233feb4`)
+- Word wrap on/off with ⌥Z, and tab width of 2, 4 or 8 spaces (`24ee86e`, `233feb4`)
+- "Spaces: N" in the status bar opens the editor settings: text size for the editor and for the terminal, tab width and word wrap, with their shortcuts. Settings are remembered (`233feb4`)
+
 ## [0.5.0]
 
 ### Added
