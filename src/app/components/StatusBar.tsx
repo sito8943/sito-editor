@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCodeBranch } from "@fortawesome/free-solid-svg-icons";
+import { faCodeBranch, faRobot } from "@fortawesome/free-solid-svg-icons";
 import {
   ContextMenu,
   ContextMenuItem,
@@ -42,10 +42,22 @@ type StatusBarProps = {
   branch: string | null;
   /** Null when no document is open. */
   editor: EditorStatus | null;
+  /** The Agents pane toggle: live sessions and whether one needs you. */
+  agents: {
+    count: number;
+    needsYou: boolean;
+    open: boolean;
+    onToggle: () => void;
+  };
 };
 
 /** Bottom bar: workspace and branch on the left; cursor, language and usage choice on the right. */
-export const StatusBar = ({ rootName, branch, editor }: StatusBarProps) => {
+export const StatusBar = ({
+  rootName,
+  branch,
+  editor,
+  agents,
+}: StatusBarProps) => {
   const usage = useUsage();
   const editorSettings = useSettings();
   const { settings } = editorSettings;
@@ -93,6 +105,19 @@ export const StatusBar = ({ rootName, branch, editor }: StatusBarProps) => {
             <span>{editor.language ?? t.status.plainText}</span>
           </>
         )}
+        <button
+          type="button"
+          className={
+            agents.needsYou
+              ? "StatusBar_button StatusBar_agents StatusBar_agents--needsYou"
+              : "StatusBar_button StatusBar_agents"
+          }
+          aria-pressed={agents.open}
+          onClick={agents.onToggle}
+        >
+          <FontAwesomeIcon icon={faRobot} />
+          {t.agents.statusCount(agents.count)}
+        </button>
         <button
           type="button"
           className="StatusBar_button"
