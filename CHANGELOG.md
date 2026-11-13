@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.8.0]
+
+### Added
+
+- Terminal tabs show what is running: the program's name (`npm run dev`, `claude`, `vim README.md`), a spinner only while it is working, and the full command and elapsed time on hover (`348b0e0`, `4dbf703`)
+- A dot on a terminal tab when a long command (10 s or more) finishes or a bell rings while you look elsewhere, and a macOS notification when the window is in the background (`348b0e0`, `4dbf703`)
+- Benchmark against VS Code (`scripts/bench.sh`, results in `BENCHMARK.md`) (``)
+
+### Changed
+
+- Roadmap: agents and terminals come first, go to definition last (`ROADMAP.md`) (`217304c`)
+
 ## [0.7.1]
 
 ### Fixed

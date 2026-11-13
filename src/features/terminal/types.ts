@@ -10,6 +10,20 @@ export type TerminalSession = {
   id: number;
   /** The shell exited; the tab stays until closed. */
   exited: boolean;
+  /** Native session id (src-tauri/src/terminal.rs), once the shell started. */
+  nativeId?: number;
+  /** Foreground program (short), null at the prompt. */
+  command: string | null;
+  /** Its full command line, for the tooltip. */
+  detail: string | null;
+  /** Using CPU right now (a build, an agent thinking), not waiting for input. */
+  working: boolean;
+  /** Last CPU reading of the foreground group, to measure activity. */
+  cpuMs: number | null;
+  /** When the current command started (ms), for the elapsed time. */
+  since: number | null;
+  /** Something happened here while you looked elsewhere (finished command, bell). */
+  attention: boolean;
 };
 
 export type TerminalViewProps = {
@@ -18,6 +32,8 @@ export type TerminalViewProps = {
   engine: TerminalEngine;
   /** Receives a function that focuses this terminal, and null on unmount. */
   onFocusReady?: (focus: (() => void) | null) => void;
-  onSpawn?: () => void;
+  /** The shell started; receives its native session id. */
+  onSpawn?: (nativeId: number) => void;
+  onBell?: () => void;
   onExit?: (code: number | null) => void;
 };

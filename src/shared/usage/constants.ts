@@ -92,6 +92,9 @@ export const USAGE_EVENT = {
     CLOSE_SESSION: "terminal.close_session",
     SWITCH_SESSION: "terminal.switch_session",
     REORDER_SESSION: "terminal.reorder_session",
+    // A long command finished, or a bell rang, in a tab you were not watching.
+    COMMAND_FINISHED_NOTICE: "terminal.command_finished_notice",
+    BELL_NOTICE: "terminal.bell_notice",
   },
   SETTINGS: {
     OPEN_MENU: "settings.open_menu",

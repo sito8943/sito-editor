@@ -56,6 +56,7 @@ export const TerminalView = ({
   engine,
   onFocusReady,
   onSpawn,
+  onBell,
   onExit,
 }: TerminalViewProps) => {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -66,6 +67,8 @@ export const TerminalView = ({
   const onSpawnRef = useRef(onSpawn);
   const onFocusReadyRef = useRef(onFocusReady);
   const onExitRef = useRef(onExit);
+  const onBellRef = useRef(onBell);
+  onBellRef.current = onBell;
   onFocusReadyRef.current = onFocusReady;
   onSpawnRef.current = onSpawn;
   onExitRef.current = onExit;
@@ -108,7 +111,7 @@ export const TerminalView = ({
             return;
           }
           sessionId = id;
-          onSpawnRef.current?.();
+          onSpawnRef.current?.(id);
           // The size may have changed while the shell started.
           void resizeTerminal(id, terminal.cols, terminal.rows);
         })
@@ -119,6 +122,7 @@ export const TerminalView = ({
       const input = terminal.onData((data) => {
         if (sessionId !== null) void writeTerminal(sessionId, data);
       });
+      const bell = terminal.onBell(() => onBellRef.current?.());
 
       const refit = () => {
         const { cols, rows } = terminal;
@@ -149,6 +153,7 @@ export const TerminalView = ({
         cancelAnimationFrame(frame);
         observer.disconnect();
         input.dispose();
+        bell.dispose();
         if (sessionId !== null) void killTerminal(sessionId);
         onFocusReadyRef.current?.(null);
         terminal.dispose();

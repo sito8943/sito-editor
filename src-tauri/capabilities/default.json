@@ -8,6 +8,7 @@
     "dialog:allow-confirm",
     "dialog:allow-message",
     "dialog:allow-open",
+    "notification:default",
     "sito-workspace:default",
     "sito-workspace:allow-write-text-file",
     "sito-workspace:allow-create-file",
