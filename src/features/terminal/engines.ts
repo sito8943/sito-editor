@@ -18,6 +18,8 @@ export type TerminalSurface = {
   fit: () => void;
   setFontSize: (size: number) => void;
   onData: (listener: (data: string) => void) => { dispose: () => void };
+  /** The program rang the bell (BEL), e.g. a finished job or an agent waiting. */
+  onBell: (listener: () => void) => { dispose: () => void };
   dispose: () => void;
 };
 
@@ -57,6 +59,7 @@ const createXterm = (host: HTMLElement, options: SurfaceOptions) => {
       fit.fit();
     },
     onData: (listener) => terminal.onData(listener),
+    onBell: (listener) => terminal.onBell(listener),
     dispose: () => terminal.dispose(),
   };
   return surface;
@@ -260,6 +263,7 @@ const createGhostty = async (host: HTMLElement, options: SurfaceOptions) => {
       dataListeners.add(listener);
       return { dispose: () => dataListeners.delete(listener) };
     },
+    onBell: (listener) => terminal.onBell(listener),
     dispose: () => {
       stopSelection();
       dataListeners.clear();

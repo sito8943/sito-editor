@@ -133,6 +133,13 @@ export const en = {
     focus: "Focus terminal",
     newSession: "New terminal",
     closeSession: "Kill terminal",
+    finished: (command: string) => `“${command}” finished`,
+    bell: (what: string) => `${what} needs you`,
+    running: (command: string, elapsed: string) =>
+      `Working: ${command} · ${elapsed}`,
+    waiting: (command: string, elapsed: string) =>
+      `Idle: ${command} · ${elapsed}`,
+    attention: "Something happened here",
     exited: (code: number | null) =>
       code === null
         ? "[Process ended]"

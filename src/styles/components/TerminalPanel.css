@@ -55,3 +55,25 @@
 .TerminalView .xterm-viewport {
   background-color: transparent !important;
 }
+
+/* A command is running: the spinner takes the accent color. */
+.TerminalPanel_busy {
+  color: var(--color-accent);
+}
+
+/* Something happened in a tab you were not watching (finished command, bell). */
+.TerminalPanel_attention {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: terminal-attention-in var(--motion-medium) var(--motion-ease);
+}
+
+@keyframes terminal-attention-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}

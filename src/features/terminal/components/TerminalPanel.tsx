@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCircleNotch,
   faPlus,
   faTerminal,
   faTrashCan,
@@ -13,6 +14,7 @@ import { useSettings } from "@/shared/settings";
 import { USAGE_EVENT, useTrackedHotkey, useUsage } from "@/shared/usage";
 import { pathName } from "@/shared/utils";
 
+import { formatElapsed, useTerminalActivity } from "../hooks/useTerminalActivity";
 import type { TerminalPanelProps, TerminalSession } from "../types";
 import { TerminalView } from "./TerminalView";
 
@@ -29,6 +31,12 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
   const newSession = (): TerminalSession => ({
     id: nextIdRef.current++,
     exited: false,
+    command: null,
+    detail: null,
+    working: false,
+    cpuMs: null,
+    since: null,
+    attention: false,
   });
   const [sessions, setSessions] = useState<TerminalSession[]>(() => [
     newSession(),
@@ -88,6 +96,14 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
   };
 
   const selectSession = (id: number) => {
+    // Clicking the tab you are on still clears its badge.
+    setSessions((current) =>
+      current.map((session) =>
+        session.id === id && session.attention
+          ? { ...session, attention: false }
+          : session,
+      ),
+    );
     if (id === activeId) return;
     track(USAGE_EVENT.TERMINAL.SWITCH_SESSION);
     setActiveId(id);
@@ -105,6 +121,12 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
   );
 
   const folder = cwd ? pathName(cwd) : "~";
+  const activity = useTerminalActivity({
+    sessions,
+    setSessions,
+    activeId,
+    folder,
+  });
 
   return (
     <section className="TerminalPanel" aria-label={t.terminal.title}>
@@ -114,9 +136,33 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
           activeId={String(activeId)}
           items={sessions.map((session, index) => ({
             id: String(session.id),
-            label: sessions.length > 1 ? `${folder} ${index + 1}` : folder,
-            icon: <FontAwesomeIcon icon={faTerminal} fixedWidth />,
-            tooltip: cwd ?? "~",
+            label:
+              session.command ??
+              (sessions.length > 1 ? `${folder} ${index + 1}` : folder),
+            icon: session.working ? (
+              <FontAwesomeIcon
+                icon={faCircleNotch}
+                spin
+                fixedWidth
+                className="TerminalPanel_busy"
+              />
+            ) : (
+              <FontAwesomeIcon icon={faTerminal} fixedWidth />
+            ),
+            tooltip:
+              session.command && session.since !== null
+                ? (session.working ? t.terminal.running : t.terminal.waiting)(
+                    session.detail ?? session.command,
+                    formatElapsed(activity.now - session.since),
+                  )
+                : (cwd ?? "~"),
+            decoration: session.attention ? (
+              <span
+                className="TerminalPanel_attention"
+                role="status"
+                aria-label={t.terminal.attention}
+              />
+            ) : undefined,
             struck: session.exited,
           }))}
           closeLabel={() => t.terminal.closeSession}
@@ -151,7 +197,15 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
                 if (focus) focusers.current.set(session.id, focus);
                 else focusers.current.delete(session.id);
               }}
-              onSpawn={() => track(USAGE_EVENT.TERMINAL.OPEN)}
+              onSpawn={(nativeId) => {
+                track(USAGE_EVENT.TERMINAL.OPEN);
+                setSessions((current) =>
+                  current.map((item) =>
+                    item.id === session.id ? { ...item, nativeId } : item,
+                  ),
+                );
+              }}
+              onBell={() => activity.onBell(session.id)}
               onExit={() =>
                 setSessions((current) =>
                   current.map((item) =>
