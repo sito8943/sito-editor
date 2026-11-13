@@ -1,0 +1,20 @@
+#!/bin/sh
+# Sito Editor hook for Claude Code (installed by "Connect Claude Code").
+#
+# Claude Code runs it on each event with the event as JSON on stdin. Inside a
+# Sito Editor terminal it drops that event, tagged with the terminal, into the
+# folder the editor reads ($SITO_AGENT_EVENTS). Anywhere else it does nothing.
+# It never blocks or fails Claude Code: it always exits 0.
+dir="$SITO_AGENT_EVENTS"
+if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+  cat >/dev/null
+  exit 0
+fi
+tmp="$(mktemp "$dir/.event.XXXXXX" 2>/dev/null)" || { cat >/dev/null; exit 0; }
+{
+  printf '{"terminal":"%s","event":' "${SITO_TERMINAL_ID:-}"
+  cat
+  printf '}\n'
+} >"$tmp" 2>/dev/null && mv "$tmp" "$dir/${tmp##*/.}.json" 2>/dev/null
+rm -f "$tmp" 2>/dev/null
+exit 0

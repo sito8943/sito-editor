@@ -122,6 +122,7 @@ impl Utf8Stream {
 #[tauri::command]
 pub async fn terminal_spawn(
     registry: tauri::State<'_, TerminalRegistry>,
+    agents: tauri::State<'_, crate::agents::AgentHub>,
     cwd: Option<String>,
     cols: u16,
     rows: u16,
@@ -144,6 +145,8 @@ pub async fn terminal_spawn(
     // Lets tools started here (agent hooks) say which terminal they run in.
     let id = registry.next_id.fetch_add(1, Ordering::Relaxed) + 1;
     command.env("SITO_TERMINAL_ID", id.to_string());
+    // Where agent hooks drop their events (see agents.rs).
+    command.env("SITO_AGENT_EVENTS", &agents.events_dir);
 
     let child = pair
         .slave
