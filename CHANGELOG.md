@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.9.0]
+
+### Added
+
+- Agents pane: Claude Code sessions running in Sito Editor terminals, each with its status (working, needs permission, waiting for you, ended), what it is doing, your last prompt, elapsed time and the files it changed (click to open). Clicking a card goes to its terminal (`3fa350b`, `e263490`)
+- "Connect Claude Code" adds Sito Editor's hook to `~/.claude/settings.json` (a backup is kept; everything else stays as is) and can disconnect it later. The hook does nothing outside Sito Editor (`3fa350b`)
+- "Agents" in the status bar opens the pane and turns amber when an agent needs your permission; terminal tabs get an amber or green dot, and a notification goes out when the window is in the background (`e263490`)
+
 ## [0.8.1]
 
 ### Fixed
