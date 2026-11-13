@@ -38,3 +38,18 @@ export const resizeTerminal = async (
 
 export const killTerminal = async (id: number): Promise<void> =>
   await invoke("terminal_kill", { id });
+
+/** What a session runs in the foreground; `command` is null at the prompt. */
+export type TerminalStatus = {
+  id: number;
+  /** Short program label (`claude`, `npm run dev`). */
+  command: string | null;
+  /** Full command line. */
+  detail: string | null;
+  /** CPU time used so far by the foreground process group (ms). */
+  cpuMs: number | null;
+};
+
+/** Foreground command of every live session (from the pty, not the screen). */
+export const getTerminalStatus = async (): Promise<TerminalStatus[]> =>
+  await invoke<TerminalStatus[]>("terminal_status");

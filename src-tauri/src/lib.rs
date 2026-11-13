@@ -52,6 +52,7 @@ pub fn run() {
             }
         }))
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_sito_workspace::init())
         .manage(LaunchPath(launch_path))
         .manage(terminal::TerminalRegistry::default())
@@ -64,6 +65,7 @@ pub fn run() {
             terminal::terminal_write,
             terminal::terminal_resize,
             terminal::terminal_kill,
+            terminal::terminal_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
