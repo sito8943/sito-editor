@@ -1,6 +1,6 @@
 # Sito Editor - Roadmap
 
-Updated: 2026-11-13. Goal unchanged (see `MVP.md`): **read code and make focused edits**, lighter
+Updated: 2026-11-13 (B shipped in 0.9.0). Goal unchanged (see `MVP.md`): **read code and make focused edits**, lighter
 than VS Code. Every item is QA'd by hand in `pnpm tauri dev` before it is committed.
 
 ## Shipped
@@ -29,6 +29,7 @@ Effort: S small, M medium, L large.
 | A | **Terminal status**: each tab shows what runs in the foreground (idle shell, `npm run dev`, `claude`, `vim`) from the native pty (foreground process group), a busy indicator, elapsed time, and a badge + notification when a long command or a bell happens in a tab you are not looking at | S-M |
 | B | **Claude Code adapter** via its hooks: our terminals export `SITO_TERMINAL_ID`, a hook sends each event (prompt, tool + files, permission request, stop) to the editor. The Agents pane lists sessions with status (working / needs permission / waiting / done), current tool, touched files (open, diff), elapsed time and "go to terminal"; native notification when an agent needs you. "Connect Claude Code" installs the hooks with consent | M |
 | C | **Actions and more agents**: start an agent from the pane (new terminal running it), Codex adapter (`notify`). Permission answers stay in the terminal (the pane jumps there) | M-L |
+| C | **Cmd+click a file path in a terminal** (Claude Code output, compiler errors, `git status`, `rg` results) opens it in an editor tab, at `path:line:col` when given. Paths resolve against the terminal's folder; only files that exist become links. Both engines expose a link provider (xterm.js `registerLinkProvider`, ghostty-web `LinkDetector`) | S-M |
 
 ### Reading and editing
 

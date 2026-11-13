@@ -25,7 +25,11 @@ import "@/styles/components/TerminalPanel.css";
  * when inactive) so switching tabs keeps its shell and scrollback. A new
  * workspace replaces all sessions with one in its folder.
  */
-export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
+export const TerminalPanel = ({
+  cwd,
+  focusRequest,
+  agentStatus,
+}: TerminalPanelProps) => {
   const { track } = useUsage();
   const nextIdRef = useRef(1);
   const newSession = (): TerminalSession => ({
@@ -120,7 +124,39 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
     { allowInInput: true },
   );
 
+  // "Go to terminal" from the Agents pane.
+  useEffect(() => {
+    if (!focusRequest) return;
+    const target = sessions.find(
+      (session) => session.nativeId === focusRequest.terminal,
+    );
+    if (target) selectSession(target.id);
+    requestAnimationFrame(() =>
+      focusers.current.get(target?.id ?? activeId)?.(),
+    );
+    // Only a new request moves the focus.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusRequest]);
+
   const folder = cwd ? pathName(cwd) : "~";
+  /** An agent waiting on you in this terminal: permission (amber) or its turn ended (green). */
+  const agentDot = (session: TerminalSession) => {
+    const status =
+      session.nativeId === undefined ? undefined : agentStatus?.get(session.nativeId);
+    if (status !== "permission" && status !== "waiting") return null;
+    return (
+      <span
+        className={`TerminalPanel_agent TerminalPanel_agent--${status}`}
+        role="status"
+        aria-label={
+          status === "permission"
+            ? t.agents.status.permission
+            : t.agents.status.waiting
+        }
+      />
+    );
+  };
+
   const activity = useTerminalActivity({
     sessions,
     setSessions,
@@ -156,13 +192,13 @@ export const TerminalPanel = ({ cwd }: TerminalPanelProps) => {
                     formatElapsed(activity.now - session.since),
                   )
                 : (cwd ?? "~"),
-            decoration: session.attention ? (
+            decoration: agentDot(session) ?? (session.attention ? (
               <span
                 className="TerminalPanel_attention"
                 role="status"
                 aria-label={t.terminal.attention}
               />
-            ) : undefined,
+            ) : undefined),
             struck: session.exited,
           }))}
           closeLabel={() => t.terminal.closeSession}

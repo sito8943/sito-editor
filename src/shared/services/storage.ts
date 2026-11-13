@@ -5,6 +5,7 @@
  */
 export const STORAGE_KEY = {
   LAST_WORKSPACE: "sito-editor:last-workspace",
+  AGENTS_OPEN: "sito-editor:agents-open",
   session: (rootPath: string) => `sito-editor:session:${rootPath}`,
 } as const;
 

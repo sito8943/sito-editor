@@ -1,5 +1,6 @@
 use std::path::Path;
 
+mod agents;
 mod git;
 mod terminal;
 
@@ -56,6 +57,7 @@ pub fn run() {
         .plugin(tauri_plugin_sito_workspace::init())
         .manage(LaunchPath(launch_path))
         .manage(terminal::TerminalRegistry::default())
+        .manage(agents::AgentHub::default())
         .invoke_handler(tauri::generate_handler![
             get_launch_path,
             git::git_branch,
@@ -66,6 +68,10 @@ pub fn run() {
             terminal::terminal_resize,
             terminal::terminal_kill,
             terminal::terminal_status,
+            agents::agent_events,
+            agents::claude_connection,
+            agents::connect_claude,
+            agents::disconnect_claude,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

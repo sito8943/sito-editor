@@ -124,9 +124,33 @@ export const en = {
   },
   agents: {
     title: "Agents",
+    claude: "Claude Code",
+    close: "Hide agents",
+    toggle: "Agents",
+    statusCount: (count: number) => (count ? `Agents · ${count}` : "Agents"),
+    connectTitle: "Watch your agents",
+    connectBody:
+      "Claude Code sessions you start in these terminals will show here: what they are doing, when they need your permission and when they finish.",
+    connect: "Connect Claude Code",
+    connectConfirm: (path: string) =>
+      `Sito Editor will add its hook to ${path} (a backup is kept next to it). Outside Sito Editor the hook does nothing. Claude Code sessions already running need a restart to pick it up.`,
+    disconnect: "Disconnect Claude Code",
+    disconnectConfirm:
+      "Remove Sito Editor's hook from Claude Code's settings? Everything else there stays as it is.",
+    connectFailed: (reason: string) => `Could not change Claude Code's settings: ${reason}`,
     emptyTitle: "No agent sessions",
-    emptyBody:
-      "Structured agent adapters will appear here without scraping terminal output.",
+    emptyBody: "Run claude in a terminal here; its sessions show up as they work.",
+    status: {
+      working: "Working",
+      permission: "Needs permission",
+      waiting: "Waiting for you",
+      ended: "Ended",
+    },
+    terminal: (id: number) => `Terminal ${id}`,
+    files: "Changed files",
+    goToTerminal: "Go to terminal",
+    notifyPermission: (where: string) => `Claude needs permission · ${where}`,
+    notifyDone: (where: string) => `Claude finished · ${where}`,
   },
   terminal: {
     title: "Terminal",

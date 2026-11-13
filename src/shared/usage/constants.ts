@@ -96,6 +96,15 @@ export const USAGE_EVENT = {
     COMMAND_FINISHED_NOTICE: "terminal.command_finished_notice",
     BELL_NOTICE: "terminal.bell_notice",
   },
+  AGENTS: {
+    CONNECT: "agents.connect",
+    DISCONNECT: "agents.disconnect",
+    // A Claude Code session showed up (first event seen).
+    SESSION_SEEN: "agents.session_seen",
+    OPEN_FILE: "agents.open_file",
+    GO_TO_TERMINAL: "agents.go_to_terminal",
+    TOGGLE_PANE: "agents.toggle_pane",
+  },
   SETTINGS: {
     OPEN_MENU: "settings.open_menu",
     FONT_BIGGER: "settings.font_bigger",

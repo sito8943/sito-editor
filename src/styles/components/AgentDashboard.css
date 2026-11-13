@@ -9,6 +9,7 @@
 .AgentDashboard > header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: var(--space-0) var(--space-3);
   border-bottom: var(--size-border) solid var(--color-border);
   color: var(--color-text-muted);
@@ -31,4 +32,171 @@
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   line-height: 1.5;
+}
+
+.AgentDashboard_actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.AgentDashboard_body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.AgentDashboard_empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* One agent session. The status color drives the dot and the status label. */
+.AgentCard {
+  --agent-status-color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-panel-raised);
+  font-size: var(--font-size-sm);
+  position: relative;
+  animation: agent-card-in var(--motion-medium) var(--motion-ease);
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
+}
+
+/* Clicking the card goes to the agent's terminal. */
+.AgentCard--link {
+  cursor: pointer;
+}
+
+.AgentCard--link:hover,
+.AgentCard--link:focus-visible {
+  outline: none;
+  border-color: var(--color-border-strong);
+  background: var(--color-row-hover);
+}
+
+.AgentCard_terminal {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  transition: color var(--motion-fast) var(--motion-ease);
+}
+
+.AgentCard--link:hover .AgentCard_terminal,
+.AgentCard--link:focus-visible .AgentCard_terminal {
+  color: var(--color-accent);
+}
+
+.AgentCard--working { --agent-status-color: var(--color-accent); }
+.AgentCard--permission { --agent-status-color: var(--color-git-modified); }
+.AgentCard--waiting { --agent-status-color: var(--color-git-added); }
+.AgentCard--ended { opacity: 0.6; }
+
+@keyframes agent-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+.AgentCard_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.AgentCard_status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--agent-status-color);
+  font-weight: 600;
+  transition: color var(--motion-medium) var(--motion-ease);
+}
+
+.AgentCard_dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--agent-status-color);
+}
+
+.AgentCard--working .AgentCard_dot {
+  animation: agent-pulse 1.2s var(--motion-ease) infinite;
+}
+
+@keyframes agent-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.AgentCard_elapsed,
+.AgentCard_where {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.AgentCard_where,
+.AgentCard_prompt,
+.AgentCard_activity {
+  margin: var(--space-0);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.AgentCard_activity {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.AgentCard_files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+.AgentCard_file {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.125rem var(--space-2);
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-editor);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: border-color var(--motion-fast) var(--motion-ease);
+}
+
+.AgentCard_file:hover {
+  border-color: var(--color-border-strong);
+}
+
+.AgentCard_more {
+  align-self: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
 }

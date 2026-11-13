@@ -3,6 +3,10 @@ import type { TerminalEngine } from "@/shared/settings";
 export type TerminalPanelProps = {
   /** Workspace folder the shells start in; null starts them in $HOME. */
   cwd: string | null;
+  /** Show and focus the terminal with this native id (changes on each request). */
+  focusRequest?: { terminal: number; at: number } | null;
+  /** Agent status per native terminal id, shown on its tab. */
+  agentStatus?: ReadonlyMap<number, "working" | "permission" | "waiting" | "ended">;
 };
 
 export type TerminalSession = {

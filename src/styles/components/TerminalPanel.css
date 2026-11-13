@@ -77,3 +77,21 @@
     transform: scale(0.4);
   }
 }
+
+/* An agent in this terminal needs you: amber for a permission, green when its turn ended. */
+.TerminalPanel_agent {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  animation: terminal-attention-in var(--motion-medium) var(--motion-ease);
+}
+
+.TerminalPanel_agent--permission {
+  background: var(--color-git-modified);
+  box-shadow: 0 0 0 3px rgb(224 175 104 / 0.2);
+}
+
+.TerminalPanel_agent--waiting {
+  background: var(--color-git-added);
+}
