@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.8.1]
+
+### Fixed
+
+- The macOS build of 0.8.0 failed on mismatched notification plugin versions, so 0.8.0 shipped no DMG; 0.8.1 is the first downloadable build with the 0.8.0 features (`8c77d0c`)
+
 ## [0.8.0]
 
 ### Added
