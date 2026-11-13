@@ -67,6 +67,7 @@ file-name search filters, the DnD/marquee hooks.
 
 ## Out of scope
 
-- LSP / go-to-definition (project search covers most of this need).
+- LSP (go-to-definition moved to `ROADMAP.md`: a light heuristic first, an optional language
+  server later).
 - Debugger, extensions, Git workbench.
 - Markdown preview (see `AGENTS.md`).
